@@ -1,4 +1,4 @@
-package com.example.orbital2019;
+package wjhj.orbital.sportsmatchfindingapp;
 
 import org.junit.Test;
 
