@@ -1,31 +1,3 @@
-
-<!----- Conversion time: 1.22 seconds.
-
-
-Using this Markdown file:
-
-1. Cut and paste this output into your source file.
-2. See the notes and action items below regarding this conversion run.
-3. Check the rendered output (headings, lists, code blocks, tables) for proper
-   formatting and use a linkchecker before you publish this page.
-
-Conversion notes:
-
-* Docs to Markdown version 1.0?17
-* Fri May 31 2019 04:59:48 GMT-0700 (PDT)
-* Source doc: https://docs.google.com/open?id=13RKDUrKJOhKQtflhalDn_HdUPbyL3z8dvKW8RIIYMMU
-* This document has images: check for >>>>>  gd2md-html alert:  inline image link in generated source and store images to your server.
------>
-
-
-<p style="color: red; font-weight: bold">>>>>>  gd2md-html alert:  ERRORs: 0; WARNINGs: 0; ALERTS: 1.</p>
-<ul style="color: red; font-weight: bold"><li>See top comment block for details on ERRORs and WARNINGs. <li>In the converted Markdown or HTML, search for inline alerts that start with >>>>>  gd2md-html alert:  for specific instances that need correction.</ul>
-
-<p style="color: red; font-weight: bold">Links to alert messages:</p><a href="#gdcalert1">alert1</a>
-
-<p style="color: red; font-weight: bold">>>>>> PLEASE check and correct alert issues and delete this message and the inline alerts.<hr></p>
-
-
 Proposed Level of Achievement: Apollo 11
 
 
@@ -80,11 +52,11 @@ Our objective is to provide a service that addresses the above issues in an Andr
 
 ### Projected Technologies Used:
 
-![technologies](images/technologies.png)
+![technologies-used](images/technologies-small.png)
 
 
 
-### **Core Features: **
+### Core Features: 
 
 
 
@@ -130,4 +102,3 @@ Our objective is to provide a service that addresses the above issues in an Andr
 
 
 ## Program Overview (WireFrame)
-
