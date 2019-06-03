@@ -34,21 +34,18 @@ As of present, we feel like there is a lack of a centralized platform for sports
 
 
 
-2. 
-As a sports player, I want to be able to quickly find a joinable match that conforms to my constraints, such as time and location requirements.
+2. As a sports player, I want to be able to quickly find a joinable match that conforms to my constraints, such as time and location requirements.
 
 
-3. 
-As a new sport player, I want to be able to find matches of the appropriate skill level which are also welcoming of new players.
+3. As a new sport player, I want to be able to find matches of the appropriate skill level which are also welcoming of new players.
 
 
 4. As a sports player/match organizer, I want to be able to easily communicate with players in the same game as me to settle details or simply have a chat.
 
 
+5. As a sports venue owner, I can promote my venue to groups of sport players by organizing matches when my venue is unbooked.
 
-5. 
-As a sports venue owner, I can promote my venue to groups of sport players by organizing matches when my venue is unbooked.
-**_<span style="text-decoration:underline;">Project Scope</span>_**
+## **_<span style="text-decoration:underline;">Project Scope</span>_**
 
 
 ### **Aim**:
@@ -57,17 +54,14 @@ Our objective is to provide a service that addresses the above issues in an Andr
 
 
 
-1. 
-Providing said centralized platform for players to set-up and join games.
+1. Providing said centralized platform for players to set-up and join games.
 
 
-2. 
-Providing an integrated service to communicate, coordinate and manage all the details regarding the game.
+2. Providing an integrated service to communicate, coordinate and manage all the details regarding the game.
 
 ### **Projected Technologies Used:**
-  
-![technologies-used](images/technologies-small.png)
 
+![technologies-used](images/technologies-small.png)
 
 
 ### **Core Features:**
@@ -110,7 +104,6 @@ Providing an integrated service to communicate, coordinate and manage all the de
 *   Form groups with other users
 *   Search for games with your friends
 *   View and post on your friends’ activity feeds
-*   
 4. **Incognito matchmaking**
 *   Unable to find any suitable games?
 *   Let the app search for games in the background and notify you once a game is found
@@ -126,5 +119,5 @@ Providing an integrated service to communicate, coordinate and manage all the de
 
 ![application flowchart](images/sportal-flow.png)
 
-Blue boxes: App pages
+Blue boxes: App pages <br>
 Yellow boxes: Overlays and Fragments
