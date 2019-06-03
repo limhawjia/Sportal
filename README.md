@@ -101,7 +101,7 @@ Providing an integrated service to communicate, coordinate and manage all the de
 
 1. **Explore page**
 *   Get recommendations for possible games to join
-*   Find out what’s happening near you
+*   Find out whatï¿½s happening near you
 2. **Chat function**
 *   Interact with other users on a more personal level
 *   Make new friends
@@ -109,7 +109,7 @@ Providing an integrated service to communicate, coordinate and manage all the de
 *   Add other users as friends
 *   Form groups with other users
 *   Search for games with your friends
-*   View and post on your friends’ activity feeds
+*   View and post on your friendsï¿½ activity feeds
 *   
 4. **Incognito matchmaking**
 *   Unable to find any suitable games?
@@ -126,5 +126,5 @@ Providing an integrated service to communicate, coordinate and manage all the de
 
 ![application flowchart](images/sportal-flow.png)
 
-Blue boxes: App pages
+Blue boxes: App pages <br>
 Yellow boxes: Overlays and Fragments
