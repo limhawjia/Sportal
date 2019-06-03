@@ -95,7 +95,7 @@ Our objective is to provide a service that addresses the above issues in an Andr
 
 1. **Explore page**
 *   Get recommendations for possible games to join
-*   Find out what’s happening near you
+*   Find out whatï¿½s happening near you
 2. **Chat function**
 *   Interact with other users on a more personal level
 *   Make new friends
@@ -103,7 +103,7 @@ Our objective is to provide a service that addresses the above issues in an Andr
 *   Add other users as friends
 *   Form groups with other users
 *   Search for games with your friends
-*   View and post on your friends’ activity feeds
+*   View and post on your friendsï¿½ activity feeds
 4. **Incognito matchmaking**
 *   Unable to find any suitable games?
 *   Let the app search for games in the background and notify you once a game is found
