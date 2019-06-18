@@ -1,4 +1,4 @@
-package wjhj.orbital.sportsmatchfindingapp.database;
+package wjhj.orbital.sportsmatchfindingapp.repo;
 
 import android.util.Log;
 

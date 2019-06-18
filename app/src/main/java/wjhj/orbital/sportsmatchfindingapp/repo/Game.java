@@ -1,4 +1,4 @@
-package wjhj.orbital.sportsmatchfindingapp.database;
+package wjhj.orbital.sportsmatchfindingapp.repo;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,7 +70,13 @@ public class Game {
         public Builder addUserName(String... usernames) {
             List<String> existingUsers;
             final String[] input = usernames;
-            Data.db.collection("Admin").document("Usernames").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+
+            // REFACTOR THIS GAME CLASS SHOULD NOT HAVE A REFERENCE TO DATABASE
+            FirebaseFirestore.getInstance()
+                    .collection("Admin")
+                    .document("Usernames")
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     Log.d(GAME_DEBUG, "Verified users");
@@ -91,7 +98,7 @@ public class Game {
             return this;
         }
         public Builder setSkill(String skill) {
-            if (skill != "beginner" && skill != "intermediate" && skill != "advanced") {
+            if (!skill.equals("beginner") && !skill.equals("intermediate") && skill != "advanced") {
                 throw new IllegalArgumentException("Enter a valid skill level: beginner, intermediate, advanced.");
             }
             this.skill = skill;

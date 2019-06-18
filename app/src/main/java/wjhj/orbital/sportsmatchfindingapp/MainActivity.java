@@ -1,29 +1,21 @@
 package wjhj.orbital.sportsmatchfindingapp;
 
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Calendar;
 
-import wjhj.orbital.sportsmatchfindingapp.database.Data;
-import wjhj.orbital.sportsmatchfindingapp.database.Game;
-import wjhj.orbital.sportsmatchfindingapp.database.User;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalDB;
+import wjhj.orbital.sportsmatchfindingapp.repo.Game;
+import wjhj.orbital.sportsmatchfindingapp.repo.User;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Data.addUser("haw_jiaa",
+        SportalDB sportalDB = new SportalDB();
+        sportalDB.addUser("haw_jiaa",
                 User.Builder.startBuilder()
                         .setFirstName("hj")
                         .setLastName("l")
@@ -33,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
                         .setLocation("Singapore")
                         .setPreferences("Football")
                         .build());
-        Data.addGame(Game.Builder.startBuilder()
+        sportalDB.addGame(Game.Builder.startBuilder()
                 .setEndTime(new Date(System.currentTimeMillis()))
                 .setStartTime(new Date(System.currentTimeMillis()))
                 .setMaxPlayers(5)
