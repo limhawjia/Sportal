@@ -20,13 +20,13 @@ public class SportalDB {
                 .document("Usernames")
                 .update(username, true)
                 .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, "Add user 1/2 complete"))
-                .addOnFailureListener(e -> Log.e(DATA_DEBUG, "User add failed", e));
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "User add failed", e));
 
         db.collection("Users")
                 .document(username)
                 .set(user)
                 .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, "Add user 2/2 complete"))
-                .addOnFailureListener(e -> Log.e(DATA_DEBUG, "User add failed", e));
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "User add failed", e));
     }
 
 
@@ -47,7 +47,7 @@ public class SportalDB {
                         addGameToUser(user, gameID);
                     }
                 })
-                .addOnFailureListener(e -> Log.e(DATA_DEBUG, "Add game failed.", e));
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game failed.", e));
 
     }
 
@@ -58,7 +58,7 @@ public class SportalDB {
                 .document(username)
                 .update("pendingGames", FieldValue.arrayUnion(gameID))
                 .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, "Added game to " + username))
-                .addOnFailureListener(e -> Log.e(DATA_DEBUG, "Add game to " + username + " failed", e));
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game to " + username + " failed", e));
     }
 
     public Task<User> getUser(String username) {
@@ -96,7 +96,7 @@ public class SportalDB {
                 .document(docID)
                 .get()
                 .addOnSuccessListener(snapshot -> Log.d(DATA_DEBUG, "Document retrieval success"))
-                .addOnFailureListener(e -> Log.e(DATA_DEBUG, "Document retrieval failed", e));
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Document retrieval failed", e));
     }
 
 }
