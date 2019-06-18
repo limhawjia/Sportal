@@ -9,11 +9,15 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
+import java.util.List;
+import java.util.function.Predicate;
+
 import wjhj.orbital.sportsmatchfindingapp.auth.UserState;
 
-public class SportalDB {
+public class SportalDB implements ISportalDB {
     private static final String DATA_DEBUG = "SportalDB";
 
+    @Override
     public void addUser(String userUid, User user) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -24,11 +28,28 @@ public class SportalDB {
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "User add failed", e));
     }
 
+    @Override
+    public void updateUser(String userUid, User user) {
+
+    }
+
+    @Override
     public Task<User> getUser(String userUid) {
         return convertToObject(getDocumentFromCollection(userUid, "Users"), User.class);
     }
 
-    public void addGame(Game game, String currUserUid) {
+    @Override
+    public Task<List<User>> selectUsers(Predicate<User> pred) {
+        return null;
+    }
+
+    @Override
+    public void deleteUser(String userUid) {
+
+    }
+
+    @Override
+    public void addGame(String currUserUid, Game game) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         DocumentReference docRef = db.collection("Games")
@@ -50,8 +71,24 @@ public class SportalDB {
 
     }
 
+    @Override
+    public void updateGame(String gameId, Game game) {
+
+    }
+
+    @Override
     public Task<Game> getGame(String gameID) {
         return convertToObject(getDocumentFromCollection(gameID, "Games"), Game.class);
+    }
+
+    @Override
+    public Task<List<Game>> selectGames(Predicate<Game> pred) {
+        return null;
+    }
+
+    @Override
+    public void deleteGame(String gameId) {
+
     }
 
     private void addGameToUser(String username, String gameID) {
