@@ -1,143 +1,28 @@
 package wjhj.orbital.sportsmatchfindingapp.repo;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 public class Game {
-    public static final String GAME_DATE_FORMAT = "EEE dd-MM-YYYY HH:mm";
     public static final String GAME_DEBUG = "game";
 
     private String details;
     private String location;
     private String name;
-    private Integer minPlayers;
-    private Integer maxPlayers;
+    private int minPlayers;
+    private int maxPlayers;
     private List<String> usernames;
-    private String skill;
+    private Difficulty skillLevel;
     private String sport;
-    private String startTime;
-    private String endTime;
-
-    //Builder pattern for creating new game instances ourselves
-    public static class Builder {
-        private String details = "";
-        private String location = null;
-        private String name = null;
-        private Integer minPlayers = 0;
-        private Integer maxPlayers = 0;
-        private List<String> usernames = new ArrayList<>();
-        private String skill = "Intermediate";
-        private String sport = null;
-        private String startTime = "Mon 01-01-0001 00:00";
-        private String endTime = "Mon 01-01-0001 00:00";
-
-        public Builder addDetails(String details) {
-            this.details = details;
-            return this;
-        }
-        public Builder addLocation(String location) {
-            this.location = location;
-            return this;
-        }
-        public Builder addName(String name) {
-            this.name = name;
-            return this;
-        }
-        public Builder setMinPlayers(Integer minPlayers) {
-            this.minPlayers = minPlayers;
-            return this;
-        }
-        public Builder setMaxPlayers(Integer maxPlayers) {
-            this.maxPlayers = maxPlayers;
-            return this;
-        }
-        public Builder addUserName(String... usernames) {
-            List<String> existingUsers;
-            final String[] input = usernames;
-
-            // REFACTOR THIS!!!!! GAME CLASS SHOULD NOT HAVE A REFERENCE TO DATABASE
-            FirebaseFirestore.getInstance()
-                    .collection("Admin")
-                    .document("Usernames")
-                    .get()
-                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    Log.d(GAME_DEBUG, "Verified users");
-                    Map<String, Object> registeredUsers = documentSnapshot.getData();
-                    for (String user : input) {
-                        if (!registeredUsers.containsKey(user)) {
-                            throw new IllegalArgumentException("User not registered: " + user);
-                        }
-                    }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d(GAME_DEBUG, "Failed to verify users");
-                    throw new RuntimeException("Failed to verify users");
-                }
-            });
-            this.usernames.addAll(Arrays.asList(usernames));
-            return this;
-        }
-
-        public Builder setSkill(String skill) {
-            if (!skill.equals("beginner") && !skill.equals("intermediate") && !skill.equals("advanced")) {
-                throw new IllegalArgumentException("Enter a valid skill level: beginner, intermediate, advanced.");
-            }
-            this.skill = skill;
-            return this;
-        }
-
-        public Builder setSport(String sport) {
-            this.sport = sport;
-            return this;
-        }
-
-        public Builder setStartTime(Date startTime) {
-            this.startTime = new SimpleDateFormat(GAME_DATE_FORMAT).format(startTime);
-            return this;
-        }
-
-        public Builder setEndTime(Date endTime) {
-            this.startTime = new SimpleDateFormat(GAME_DATE_FORMAT).format(endTime);
-            return this;
-        }
-
-        public Game build() {
-            Game game = new Game();
-            game.setDetails(this.details);
-            game.setLocation(this.location);
-            game.setName(this.name);
-            game.setSkill(this.skill);
-            game.setSport(this.sport);
-            game.setMinPlayers(this.minPlayers);
-            game.setMaxPlayers(this.maxPlayers);
-            game.setUsernames(this.usernames);
-            game.setStartTime(this.startTime);
-            game.setEndTime(this.endTime);
-
-            if (game.location == null || game.name == null || game.sport == null || game.minPlayers == 0) {
-                Log.d(GAME_DEBUG, "Unable to create game due to missing fields.");
-                throw new RuntimeException("Unable to create game due to missing fields");
-            }
-
-            return game;
-        }
-    }
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     //Compulsory public no-argument constructor
     public Game() {
@@ -172,12 +57,12 @@ public class Game {
         this.name = name;
     }
 
-    public String getSkill() {
-        return skill;
+    public Difficulty getSkill() {
+        return skillLevel;
     }
 
-    public void setSkill(String skill) {
-        this.skill = skill;
+    public void setSkill(Difficulty skillLevel) {
+        this.skillLevel = skillLevel;
     }
 
     public String getSport() {
@@ -188,7 +73,7 @@ public class Game {
         this.sport = sport;
     }
 
-    public Integer getMinPlayers() {
+    public int getMinPlayers() {
         return minPlayers;
     }
 
@@ -196,7 +81,7 @@ public class Game {
         this.minPlayers = minPlayers;
     }
 
-    public Integer getMaxPlayers() {
+    public int getMaxPlayers() {
         return maxPlayers;
     }
 
@@ -212,19 +97,141 @@ public class Game {
         this.usernames = usernames;
     }
 
-    public String getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public String getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    //Builder pattern for creating new game instances ourselves
+    public static class Builder {
+        private String details;
+        private String location;
+        private String name;
+        private int minPlayers;
+        private int maxPlayers;
+        private List<String> usernames;
+        private Difficulty skillLevel;
+        private String sport;
+        private LocalDateTime startTime;
+        private LocalDateTime endTime;
+
+        private Builder() {
+            usernames = new ArrayList<>();
+            skillLevel = Difficulty.INTERMEDIATE;
+        }
+
+        public Builder addDetails(String details) {
+            this.details = details;
+            return this;
+        }
+        public Builder addLocation(String location) {
+            this.location = location;
+            return this;
+        }
+        public Builder addName(String name) {
+            this.name = name;
+            return this;
+        }
+        public Builder setMinPlayers(Integer minPlayers) {
+            this.minPlayers = minPlayers;
+            return this;
+        }
+        public Builder setMaxPlayers(Integer maxPlayers) {
+            this.maxPlayers = maxPlayers;
+            return this;
+        }
+        public Builder addUserName(String... usernames) {
+            List<String> existingUsers;
+            final String[] input = usernames;
+
+            // REFACTOR THIS!!!!! GAME CLASS SHOULD NOT HAVE A REFERENCE TO DATABASE
+            FirebaseFirestore.getInstance()
+                    .collection("Admin")
+                    .document("Usernames")
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        Log.d(GAME_DEBUG, "Verified users");
+                        Map<String, Object> registeredUsers = documentSnapshot.getData();
+                        for (String user : input) {
+                            if (!registeredUsers.containsKey(user)) {
+                                throw new IllegalArgumentException("User not registered: " + user);
+                            }
+                        }
+                    }).addOnFailureListener(e -> {
+                        Log.d(GAME_DEBUG, "Failed to verify users");
+                        throw new RuntimeException("Failed to verify users");
+                    });
+            this.usernames.addAll(Arrays.asList(usernames));
+            return this;
+        }
+
+        public Builder setSkill(Difficulty skillLevel) {
+            this.skillLevel = skillLevel;
+            return this;
+        }
+
+        public Builder setSport(String sport) {
+            this.sport = sport;
+            return this;
+        }
+
+        public Builder setStartTime(LocalDateTime startTime) {
+            this.startTime = startTime;
+            return this;
+        }
+
+        public Builder setEndTime(LocalDateTime endTime) {
+            this.endTime = endTime;
+            return this;
+        }
+
+        public Game build() {
+            Game game = new Game();
+            game.setDetails(this.details);
+            game.setLocation(this.location);
+            game.setName(this.name);
+            game.setSkill(this.skillLevel);
+            game.setSport(this.sport);
+            game.setMinPlayers(this.minPlayers);
+            game.setMaxPlayers(this.maxPlayers);
+            game.setUsernames(this.usernames);
+            game.setStartTime(this.startTime);
+            game.setEndTime(this.endTime);
+            // Weird.. refactor
+            if (game.location == null || game.name == null || game.sport == null || game.minPlayers == 0) {
+                Log.d(GAME_DEBUG, "Unable to create game due to missing fields.");
+                throw new RuntimeException("Unable to create game due to missing fields");
+            }
+
+            return game;
+        }
+    }
+
+    private enum Difficulty {
+        BEGINNER("Beginner"),
+        INTERMEDIATE("Intermediate"),
+        ADVANCED("Advanced");
+
+        private String str;
+
+        private Difficulty(String str) {
+            this.str = str;
+        }
+
+        @Override
+        public String toString() {
+            return str;
+        }
     }
 }

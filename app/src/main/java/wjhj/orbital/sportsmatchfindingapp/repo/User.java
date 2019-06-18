@@ -2,14 +2,12 @@ package wjhj.orbital.sportsmatchfindingapp.repo;
 
 import android.util.Log;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 public class User {
-    public static final String USER_BIRTHDAY_FORMAT = "dd-MM-yyyy";
     public static final String USER_DEBUG = "user";
 
     private String uid;
@@ -18,7 +16,7 @@ public class User {
     private String lastName;
     private String email;
     private String gender;
-    private String birthday;
+    private LocalDate birthday;
     private String location;
     private List<String> preferences;
     private List<String> pendingGames;
@@ -35,11 +33,7 @@ public class User {
     }
 
     //Compulsory public getters and setters for each field
-    public static String getUserBirthdayFormat() {
-        return USER_BIRTHDAY_FORMAT;
-    }
-
-    public String getUid() {
+        public String getUid() {
         return uid;
     }
 
@@ -87,11 +81,11 @@ public class User {
         this.gender = gender;
     }
 
-    public String getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 
@@ -144,7 +138,7 @@ public class User {
         private String lastName = null;
         private String email = null;
         private String gender = null;
-        private String birthday = null;
+        private LocalDate birthday = null;
         private String location = null;
         private List<String> preferences = new ArrayList<>();
         private List<String> pendingGames = new ArrayList<>();
@@ -189,8 +183,8 @@ public class User {
             return this;
         }
 
-        public Builder setBirthday(Date birthday) {
-            this.birthday = new SimpleDateFormat(USER_BIRTHDAY_FORMAT).format(birthday);
+        public Builder setBirthday(LocalDate birthday) {
+            this.birthday = birthday;
             return this;
         }
 
