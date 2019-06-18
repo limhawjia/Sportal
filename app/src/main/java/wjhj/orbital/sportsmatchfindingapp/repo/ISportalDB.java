@@ -13,10 +13,9 @@ public interface ISportalDB {
 
     Task<User> getUser(String userUid);
 
-    Task<List<User>> selectUsers(Predicate<User> pred);
+    Task<List<User>> selectUsers(String field, String queryText);
 
     void deleteUser(String userUid);
-
 
     void addGame(String currUserUid, Game game);
 
@@ -24,7 +23,7 @@ public interface ISportalDB {
 
     Task<Game> getGame(String gameId);
 
-    Task<List<Game>> selectGames(Predicate<Game> pred);
+    Task<List<Game>> selectGames(String field, String queryText);
 
     void deleteGame(String gameId);
 }

@@ -7,10 +7,11 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 
 import java.util.List;
-import java.util.function.Predicate;
 
 import wjhj.orbital.sportsmatchfindingapp.auth.UserState;
 
@@ -24,13 +25,13 @@ public class SportalDB implements ISportalDB {
         db.collection("Users")
                 .document(userUid)
                 .set(user)
-                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, "Add user complete"))
+                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, "Add user success"))
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "User add failed", e));
     }
 
     @Override
     public void updateUser(String userUid, User user) {
-
+        update(userUid, "Users", user);
     }
 
     @Override
@@ -39,13 +40,14 @@ public class SportalDB implements ISportalDB {
     }
 
     @Override
-    public Task<List<User>> selectUsers(Predicate<User> pred) {
-        return null;
+    public Task<List<User>> selectUsers(String field, String queryText) {
+        return queryCollection("Users", field, queryText)
+                .continueWith(task -> task.getResult().toObjects(User.class));
     }
 
     @Override
     public void deleteUser(String userUid) {
-
+        delete(userUid, "Users");
     }
 
     @Override
@@ -73,7 +75,7 @@ public class SportalDB implements ISportalDB {
 
     @Override
     public void updateGame(String gameId, Game game) {
-
+        update(gameId, "Games", game);
     }
 
     @Override
@@ -82,15 +84,17 @@ public class SportalDB implements ISportalDB {
     }
 
     @Override
-    public Task<List<Game>> selectGames(Predicate<Game> pred) {
-        return null;
+    public Task<List<Game>> selectGames(String field, String queryText) {
+        return queryCollection("Games", field, queryText)
+                .continueWith(task -> task.getResult().toObjects(Game.class));
     }
 
     @Override
     public void deleteGame(String gameId) {
-
+        delete(gameId, "Games");
     }
 
+    //Helper methods
     private void addGameToUser(String username, String gameID) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -99,6 +103,16 @@ public class SportalDB implements ISportalDB {
                 .update("pendingGames", FieldValue.arrayUnion(gameID))
                 .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, "Added game to " + username))
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game to " + username + " failed", e));
+    }
+
+    private void update(String docId, String collectionPath, Object obj) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection(collectionPath)
+                .document(docId)
+                .set(obj, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, docId + " update success"))
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, docId + "update failure", e));
     }
 
     private Task<DocumentSnapshot> getDocumentFromCollection(String docID, String collectionPath) {
@@ -121,5 +135,25 @@ public class SportalDB implements ISportalDB {
                 return null;
             }
         });
+    }
+
+    private Task<QuerySnapshot> queryCollection(String collection, String field, String queryText) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        return db.collection(collection)
+                .orderBy(field)
+                .startAt(queryText)
+                .endAt(queryText + "\uf8ff") // StackOverflow hacks...
+                .get();
+    }
+
+    private void delete(String docID, String collectionPath) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection(collectionPath)
+                .document(docID)
+                .delete()
+                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, docID + " successfully deleted!"))
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Error deleting document", e));
     }
 }
