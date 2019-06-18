@@ -12,6 +12,7 @@ public class User {
     public static final String USER_BIRTHDAY_FORMAT = "dd-MM-yyyy";
     public static final String USER_DEBUG = "user";
 
+    private String uid;
     private String firstName;
     private String middleName;
     private String lastName;
@@ -24,108 +25,26 @@ public class User {
     private List<String> confirmedGames;
     private List<String> completedGames;
 
-    //Builder pattern for creating new user instances ourselves
-    public static class Builder {
-        private String firstName = null;
-        private String middleName = null;
-        private String lastName = null;
-        private String email = null;
-        private String gender = null;
-        private String birthday = null;
-        private String location = null;
-        private List<String> preferences = new ArrayList<>();
-        private List<String> pendingGames = new ArrayList<>();
-        private List<String> confirmedGames = new ArrayList<>();
-        private List<String> completedGames = new ArrayList<>();
-
-        private Builder() {
-        }
-
-        public static Builder startBuilder() {
-            return new Builder();
-        }
-
-        public Builder setFirstName(String firstName) {
-            this.firstName = firstName;
-            return this;
-        }
-
-        public Builder setMiddleName(String middleName) {
-            this.middleName = middleName;
-            return this;
-        }
-
-        public Builder setLastName(String lastName) {
-            this.lastName = lastName;
-            return this;
-        }
-
-        public Builder setEmail(String email) {
-            if (!email.contains("@")) {
-                Log.d(USER_DEBUG, "Invalid email.");
-                throw new IllegalArgumentException("Invalid email.");
-            }
-            this.email = email;
-            return this;
-        }
-
-        public Builder setGender(String gender) {
-            if (gender != "male" && gender != "female") {
-                Log.d(USER_DEBUG, "Invalid gender.");
-                throw new IllegalArgumentException("Invalid gender.");
-            }
-            this.gender = gender;
-            return this;
-        }
-
-        public Builder setBirthday(Date birthday) {
-            this.birthday = new SimpleDateFormat(USER_BIRTHDAY_FORMAT).format(birthday);
-            return this;
-        }
-
-        public Builder setLocation(String location) {
-            this.location = location;
-            return this;
-        }
-
-        public Builder setPreferences(String... preferences) {
-            this.preferences = Arrays.asList(preferences);
-            return this;
-        }
-
-        public User build() {
-            if (this.firstName == null || this.lastName == null || this.email == null
-                    || this.birthday == null || this.gender == null || this.location == null
-                    || this.preferences.size() < 1) {
-                Log.d(USER_DEBUG, "Unable to create game due to missing fields.");
-                throw new RuntimeException("Unable to create game due to missing fields");
-            }
-
-            User user = new User();
-            user.setFirstName(this.firstName);
-            user.setMiddleName(this.middleName);
-            user.setLastName(this.lastName);
-            user.setEmail(this.email);
-            user.setGender(this.gender);
-            user.setBirthday(this.birthday);
-            user.setLocation(this.location);
-            user.setPreferences(this.preferences);
-            user.setPendingGames(this.pendingGames);
-            user.setConfirmedGames(this.confirmedGames);
-            user.setCompletedGames(this.completedGames);
-
-            return user;
-        }
-    }
-
 
     //Compulsory public no-argument constructor
     public User() {
     }
 
+    public static User.Builder builder() {
+        return new User.Builder();
+    }
+
     //Compulsory public getters and setters for each field
     public static String getUserBirthdayFormat() {
         return USER_BIRTHDAY_FORMAT;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getFirstName() {
@@ -215,4 +134,105 @@ public class User {
     public void setCompletedGames(List<String> completedGames) {
         this.completedGames = completedGames;
     }
+
+
+    //Builder pattern for creating new user instances ourselves
+    public static class Builder {
+        private String uid;
+        private String firstName = null;
+        private String middleName = null;
+        private String lastName = null;
+        private String email = null;
+        private String gender = null;
+        private String birthday = null;
+        private String location = null;
+        private List<String> preferences = new ArrayList<>();
+        private List<String> pendingGames = new ArrayList<>();
+        private List<String> confirmedGames = new ArrayList<>();
+        private List<String> completedGames = new ArrayList<>();
+
+        public Builder setUid(String uid) {
+            this.uid = uid;
+            return this;
+        }
+
+        public Builder setFirstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public Builder setMiddleName(String middleName) {
+            this.middleName = middleName;
+            return this;
+        }
+
+        public Builder setLastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public Builder setEmail(String email) {
+            if (!email.contains("@")) {
+                Log.d(USER_DEBUG, "Invalid email.");
+                throw new IllegalArgumentException("Invalid email.");
+            }
+            this.email = email;
+            return this;
+        }
+
+        public Builder setGender(String gender) {
+            if (!gender.equals("male") && !gender.equals("female")) {
+                Log.d(USER_DEBUG, "Invalid gender.");
+                throw new IllegalArgumentException("Invalid gender.");
+            }
+            this.gender = gender;
+            return this;
+        }
+
+        public Builder setBirthday(Date birthday) {
+            this.birthday = new SimpleDateFormat(USER_BIRTHDAY_FORMAT).format(birthday);
+            return this;
+        }
+
+        public Builder setLocation(String location) {
+            this.location = location;
+            return this;
+        }
+
+        public Builder setPreferences(String... preferences) {
+            this.preferences = Arrays.asList(preferences);
+            return this;
+        }
+
+        public User build() {
+            if (uid == null) {
+                Log.d(USER_DEBUG, "UID missing!");
+                throw new IllegalArgumentException("UID missing");
+            }
+
+            if (this.firstName == null || this.lastName == null || this.email == null
+                    || this.birthday == null || this.gender == null || this.location == null
+                    || this.preferences.size() < 1) {
+                Log.d(USER_DEBUG, "Unable to create user due to missing fields.");
+                throw new IllegalArgumentException("Unable to create user due to missing fields");
+            }
+
+            User user = new User();
+            user.setUid(this.uid);
+            user.setFirstName(firstName);
+            user.setMiddleName(this.middleName);
+            user.setLastName(this.lastName);
+            user.setEmail(this.email);
+            user.setGender(this.gender);
+            user.setBirthday(this.birthday);
+            user.setLocation(this.location);
+            user.setPreferences(this.preferences);
+            user.setPendingGames(this.pendingGames);
+            user.setConfirmedGames(this.confirmedGames);
+            user.setCompletedGames(this.completedGames);
+
+            return user;
+        }
+    }
+
 }

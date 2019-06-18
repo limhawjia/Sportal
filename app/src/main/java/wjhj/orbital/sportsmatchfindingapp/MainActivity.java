@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         SportalDB sportalDB = new SportalDB();
         sportalDB.addUser("haw_jiaa",
-                User.Builder.startBuilder()
+                User.builder()
                         .setFirstName("hj")
                         .setLastName("l")
                         .setBirthday(new Date(1997, 2, 6))
