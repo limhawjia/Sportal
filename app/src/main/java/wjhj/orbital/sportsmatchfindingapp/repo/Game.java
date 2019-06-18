@@ -43,10 +43,6 @@ public class Game {
         private String startTime = "Mon 01-01-0001 00:00";
         private String endTime = "Mon 01-01-0001 00:00";
 
-        private Builder(){}
-        public static Builder startBuilder() {
-            return new Builder();
-        }
         public Builder addDetails(String details) {
             this.details = details;
             return this;
@@ -97,21 +93,25 @@ public class Game {
             this.usernames.addAll(Arrays.asList(usernames));
             return this;
         }
+
         public Builder setSkill(String skill) {
-            if (!skill.equals("beginner") && !skill.equals("intermediate") && skill != "advanced") {
+            if (!skill.equals("beginner") && !skill.equals("intermediate") && !skill.equals("advanced")) {
                 throw new IllegalArgumentException("Enter a valid skill level: beginner, intermediate, advanced.");
             }
             this.skill = skill;
             return this;
         }
+
         public Builder setSport(String sport) {
             this.sport = sport;
             return this;
         }
+
         public Builder setStartTime(Date startTime) {
             this.startTime = new SimpleDateFormat(GAME_DATE_FORMAT).format(startTime);
             return this;
         }
+
         public Builder setEndTime(Date endTime) {
             this.startTime = new SimpleDateFormat(GAME_DATE_FORMAT).format(endTime);
             return this;
@@ -141,6 +141,10 @@ public class Game {
 
     //Compulsory public no-argument constructor
     public Game() {
+    }
+
+    public static Game.Builder builder() {
+        return new Game.Builder();
     }
 
     //Compulsory public getters and setters for each field

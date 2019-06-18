@@ -3,6 +3,9 @@ package wjhj.orbital.sportsmatchfindingapp;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.Date;
 
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalDB;
@@ -11,9 +14,14 @@ import wjhj.orbital.sportsmatchfindingapp.repo.User;
 
 public class MainActivity extends AppCompatActivity {
 
+    private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        FirebaseUser currUser = mAuth.getCurrentUser();
+
         SportalDB sportalDB = new SportalDB();
         sportalDB.addUser("haw_jiaa",
                 User.builder()
@@ -25,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
                         .setLocation("Singapore")
                         .setPreferences("Football")
                         .build());
-        sportalDB.addGame(Game.Builder.startBuilder()
+        sportalDB.addGame(currUser.getUid(), Game.builder()
                 .setEndTime(new Date(System.currentTimeMillis()))
                 .setStartTime(new Date(System.currentTimeMillis()))
                 .setMaxPlayers(5)

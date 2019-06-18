@@ -3,7 +3,6 @@ package wjhj.orbital.sportsmatchfindingapp.repo;
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public interface ISportalDB {
 
