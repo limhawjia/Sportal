@@ -71,7 +71,7 @@ public class Game {
             List<String> existingUsers;
             final String[] input = usernames;
 
-            // REFACTOR THIS GAME CLASS SHOULD NOT HAVE A REFERENCE TO DATABASE
+            // REFACTOR THIS!!!!! GAME CLASS SHOULD NOT HAVE A REFERENCE TO DATABASE
             FirebaseFirestore.getInstance()
                     .collection("Admin")
                     .document("Usernames")
