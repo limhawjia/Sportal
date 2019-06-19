@@ -1,5 +1,6 @@
 package wjhj.orbital.sportsmatchfindingapp.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
@@ -8,10 +9,19 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
@@ -21,10 +31,13 @@ import wjhj.orbital.sportsmatchfindingapp.R;
 
 public class LoginActivity extends AppCompatActivity {
     public static final String LOGIN_DEBUG = "login";
+    public static final int GOOGLE_SIGN_IN_RC = 1;
 
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mFirebaseAuth;
+    private GoogleSignInClient mGoogleSignInClient;
     private TextInputEditText mEmailField;
     private TextInputEditText mPasswordField;
+    private SignInButton mGoogleSignInButton;
     private ImageButton mFacebookLogin;
     private ImageButton mGoogleLogin;
     private ImageButton mTwitterLogin;
@@ -38,14 +51,22 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.login_activity);
 
-        mAuth = FirebaseAuth.getInstance();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
         mEmailField = findViewById(R.id.email_field);
         mPasswordField = findViewById(R.id.password_field);
+        mGoogleSignInButton = findViewById(R.id.google_login_button);
         mFacebookLogin = findViewById(R.id.login_facebook);
         mGoogleLogin = findViewById(R.id.login_google);
         mTwitterLogin = findViewById(R.id.login_twitter);
         mSignupButton = findViewById(R.id.signup_button);
         mLoginButton = findViewById(R.id.login_button);
+
 
         mEmailField.setOnKeyListener((view, i, keyEvent) -> {
             if (isEmailValid(mEmailField.getText())) {
@@ -61,6 +82,11 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         });
 
+        mGoogleSignInButton.setOnClickListener(view -> {
+            Intent googleSignInIntent = mGoogleSignInClient.getSignInIntent();
+            startActivityForResult(googleSignInIntent, GOOGLE_SIGN_IN_RC);
+        });
+
         mLoginButton.setOnClickListener(view -> {
             if (!isPasswordValid(mPasswordField.getText())) {
                 mPasswordField.setError("Password must be at least 8 characters!");
@@ -71,19 +97,38 @@ public class LoginActivity extends AppCompatActivity {
                 trySignIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
             }
         });
-
-        mSignupButton.setOnClickListener(view -> {
-        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        FirebaseUser currUser = mAuth.getCurrentUser();
+        FirebaseUser currUser = mFirebaseAuth.getCurrentUser();
 
         if (currUser != null) {
             updateOnLoggedIn(currUser);
+        }
+
+        GoogleSignInAccount googleAccount = GoogleSignIn.getLastSignedInAccount(this);
+
+        if (googleAccount != null) {
+            //update w google
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == GOOGLE_SIGN_IN_RC) {
+            //Task returned here is always completed, no need to attach a listener.
+            Task<GoogleSignInAccount> signInTask = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = signInTask.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account);
+            } catch (ApiException e) {
+                Log.d(LOGIN_DEBUG, "Google sign in fail", e);
+            }
         }
     }
 
@@ -96,16 +141,33 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void trySignIn(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
+        mFirebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         Log.d(LOGIN_DEBUG, "sign in w email/password success");
-                        updateOnLoggedIn(mAuth.getCurrentUser());
+                        updateOnLoggedIn(mFirebaseAuth.getCurrentUser());
                     } else {
                         Log.d(LOGIN_DEBUG, "sign in w email/password failure", task.getException());
                         Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT)
                                 .show();
                     }
+                });
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        Log.d(LOGIN_DEBUG, "firebaseAuth with Google: " + account.getId());
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        mFirebaseAuth.signInWithCredential(credential)
+                .addOnSuccessListener(this, result -> {
+                    Log.d(LOGIN_DEBUG, "Sign in with Google credentials success");
+                    FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                    updateOnLoggedIn(user);
+                })
+                .addOnFailureListener(this, e -> {
+                    Log.d(LOGIN_DEBUG, "Sign in with Google credentials failure", e);
+                    Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT)
+                        .show();
                 });
     }
 
