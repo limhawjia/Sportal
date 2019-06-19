@@ -1,44 +1,46 @@
 package wjhj.orbital.sportsmatchfindingapp;
 
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Calendar;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
 
-import wjhj.orbital.sportsmatchfindingapp.database.Data;
-import wjhj.orbital.sportsmatchfindingapp.database.Game;
-import wjhj.orbital.sportsmatchfindingapp.database.User;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalDB;
+import wjhj.orbital.sportsmatchfindingapp.repo.Game;
+import wjhj.orbital.sportsmatchfindingapp.repo.User;
 
 public class MainActivity extends AppCompatActivity {
+
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Data.addUser("haw_jiaa",
-                User.Builder.startBuilder()
+
+        FirebaseUser currUser = mAuth.getCurrentUser();
+
+        SportalDB sportalDB = new SportalDB();
+        sportalDB.addUser("haw_jiaa",
+                User.builder()
                         .setFirstName("hj")
                         .setLastName("l")
-                        .setBirthday(new Date(1997, 2, 6))
+                        .setBirthday(LocalDate.of(1997, 2, 6))
                         .setEmail("abc@hi.com")
                         .setGender("male")
                         .setLocation("Singapore")
                         .setPreferences("Football")
                         .build());
-        Data.addGame(Game.Builder.startBuilder()
-                .setEndTime(new Date(System.currentTimeMillis()))
-                .setStartTime(new Date(System.currentTimeMillis()))
+
+        sportalDB.addGame(currUser.getUid(), Game.builder()
+                .setEndTime(LocalDateTime.now())
+                .setStartTime(LocalDateTime.now())
                 .setMaxPlayers(5)
                 .setMinPlayers(5)
-                .setSkill("beginner")
+                .setSkill(Game.Difficulty.BEGINNER)
                 .setSport("frisbee")
                 .addDetails("frisbeeeee")
                 .addLocation("nus science")

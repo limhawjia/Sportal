@@ -5,12 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 
@@ -19,17 +21,18 @@ public class LoginActivity extends AppCompatActivity {
     private static final String USERNAME_INPUT = "usernameInput";
     private static final String PASSWORD_INPUT = "passwordInput";
 
-    EditText mUsernameField;
-    EditText mPasswordField;
-    ImageButton mFacebookLogin;
-    ImageButton mGoogleLogin;
-    ImageButton mInstagramLogin;
-    ImageButton mTwitterLogin;
-    TextView mSignupButton;
-    Button mLoginButton;
+    private FirebaseAuth mAuth;
+    private EditText mUsernameField;
+    private EditText mPasswordField;
+    private ImageButton mFacebookLogin;
+    private ImageButton mGoogleLogin;
+    private ImageButton mInstagramLogin;
+    private ImageButton mTwitterLogin;
+    private TextView mSignupButton;
+    private Button mLoginButton;
 
-    String mUsernameInput;
-    String mPasswordInput;
+    private String mUsernameInput;
+    private String mPasswordInput;
 
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(LOGIN_DEBUG, "Login activity created");
@@ -37,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.login_activity);
 
+        mAuth = FirebaseAuth.getInstance();
         mUsernameField = findViewById(R.id.username_field);
         mPasswordField = findViewById(R.id.password_field);
         mFacebookLogin = findViewById(R.id.login_facebook);
@@ -109,6 +113,14 @@ public class LoginActivity extends AppCompatActivity {
                 //Do something...
             }
         });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        FirebaseUser currUser = mAuth.getCurrentUser();
+        //WIP HELP
     }
 
     @Override
