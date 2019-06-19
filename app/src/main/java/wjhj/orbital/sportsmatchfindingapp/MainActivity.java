@@ -6,7 +6,8 @@ import android.os.Bundle;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.Date;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
 
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalDB;
 import wjhj.orbital.sportsmatchfindingapp.repo.Game;
@@ -27,18 +28,19 @@ public class MainActivity extends AppCompatActivity {
                 User.builder()
                         .setFirstName("hj")
                         .setLastName("l")
-                        .setBirthday(new Date(1997, 2, 6))
+                        .setBirthday(LocalDate.of(1997, 2, 6))
                         .setEmail("abc@hi.com")
                         .setGender("male")
                         .setLocation("Singapore")
                         .setPreferences("Football")
                         .build());
+
         sportalDB.addGame(currUser.getUid(), Game.builder()
-                .setEndTime(new Date(System.currentTimeMillis()))
-                .setStartTime(new Date(System.currentTimeMillis()))
+                .setEndTime(LocalDateTime.now())
+                .setStartTime(LocalDateTime.now())
                 .setMaxPlayers(5)
                 .setMinPlayers(5)
-                .setSkill("beginner")
+                .setSkill(Game.Difficulty.BEGINNER)
                 .setSport("frisbee")
                 .addDetails("frisbeeeee")
                 .addLocation("nus science")

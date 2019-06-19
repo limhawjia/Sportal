@@ -4,7 +4,8 @@ import android.util.Log;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.time.LocalDateTime;
+import org.threeten.bp.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -218,7 +219,7 @@ public class Game {
         }
     }
 
-    private enum Difficulty {
+    public enum Difficulty {
         BEGINNER("Beginner"),
         INTERMEDIATE("Intermediate"),
         ADVANCED("Advanced");
