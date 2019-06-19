@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('C:\\Users\\Wei Jie\\keystores\\orbital-keystore.jks')
+            storePassword 'wjhjAngryOnion'
+            keyAlias = 'sportalKey'
+            keyPassword 'sportalAngryOnion'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "wjhj.orbital.sportsmatchfindingapp"
@@ -15,11 +23,16 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
+    }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
     }
 }
 
@@ -27,9 +40,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:17.0.0' // Add FireBase SDK
     implementation 'com.google.firebase:firebase-firestore:20.0.0'
     implementation 'com.google.firebase:firebase-auth:18.0.0'
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1' // ThreeTenABP - replacement for java.time package
     implementation 'com.google.android.material:material:1.1.0-alpha07' // Google's Material Design
-    implementation 'commons-validator:commons-validator:1.6'
+    implementation 'commons-validator:commons-validator:1.6' // Apache Commons Validator
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.media:media:1.0.1'

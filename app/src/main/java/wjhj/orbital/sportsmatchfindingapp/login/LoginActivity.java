@@ -21,8 +21,6 @@ import wjhj.orbital.sportsmatchfindingapp.R;
 
 public class LoginActivity extends AppCompatActivity {
     public static final String LOGIN_DEBUG = "login";
-    private static final String EMAIL_INPUT_TAG = "emailInput";
-    private static final String PASSWORD_INPUT_TAG = "passwordInput";
 
     private FirebaseAuth mAuth;
     private TextInputEditText mEmailField;
