@@ -1,7 +1,7 @@
 package wjhj.orbital.sportsmatchfindingapp.login;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -26,7 +26,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPasswordField;
     private ImageButton mFacebookLogin;
     private ImageButton mGoogleLogin;
-    private ImageButton mInstagramLogin;
     private ImageButton mTwitterLogin;
     private TextView mSignupButton;
     private Button mLoginButton;
@@ -45,7 +44,6 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordField = findViewById(R.id.password_field);
         mFacebookLogin = findViewById(R.id.login_facebook);
         mGoogleLogin = findViewById(R.id.login_google);
-        mInstagramLogin = findViewById(R.id.login_instagram);
         mTwitterLogin = findViewById(R.id.login_twitter);
         mSignupButton = findViewById(R.id.signup_button);
         mLoginButton = findViewById(R.id.login_button);
@@ -83,12 +81,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         mGoogleLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Do something...
-            }
-        });
-        mInstagramLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Do something...

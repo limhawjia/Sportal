@@ -1,11 +1,15 @@
 <resources>
+    <!-- login page -->
     <string name="app_name">Sportal</string>
     <string name="username">Username</string>
     <string name="enter_username">Enter username</string>
     <string name="password">Password</string>
     <string name="enter_password">Enter password</string>
-    <string name="new_user">"New user? Click "</string>
-    <string name="here"><u>here</u></string>
+    <string name="new_user">"No account?"</string>
+    <string name="sign_up"><u>Sign up</u></string>
     <string name="social_media_login">Log in with</string>
     <string name="login">Log in</string>
+    <string name="or_use">or use: </string>
+    <string name="logo">logo</string>
+    <!-- -->
 </resources>
