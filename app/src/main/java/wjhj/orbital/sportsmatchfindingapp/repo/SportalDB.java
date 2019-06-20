@@ -13,8 +13,6 @@ import com.google.firebase.firestore.SetOptions;
 
 import java.util.List;
 
-import wjhj.orbital.sportsmatchfindingapp.auth.UserState;
-
 public class SportalDB implements ISportalDB {
     private static final String DATA_DEBUG = "SportalDB";
 
@@ -62,7 +60,7 @@ public class SportalDB implements ISportalDB {
                     Log.d(DATA_DEBUG, "Add game complete.");
 
                     //If game added successfully, also add game to this user;
-                    addGameToUser(UserState.getUsername(), docRef.getId());
+                    addGameToUser(currUserUid, docRef.getId());
 
                     //Also add to the remaining participating users
                     for (String user : game.getUsernames()) {
@@ -95,14 +93,14 @@ public class SportalDB implements ISportalDB {
     }
 
     //Helper methods
-    private void addGameToUser(String username, String gameID) {
+    private void addGameToUser(String userUid, String gameID) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("Users")
-                .document(username)
+                .document(userUid)
                 .update("pendingGames", FieldValue.arrayUnion(gameID))
-                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, "Added game to " + username))
-                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game to " + username + " failed", e));
+                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, "Added game to " + userUid))
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game to " + userUid + " failed", e));
     }
 
     private void update(String docId, String collectionPath, Object obj) {
