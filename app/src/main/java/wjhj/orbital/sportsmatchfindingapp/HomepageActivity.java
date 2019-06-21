@@ -2,6 +2,7 @@ package wjhj.orbital.sportsmatchfindingapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -26,4 +27,12 @@ public class HomepageActivity extends AppCompatActivity {
             Log.d(HOMEPAGE_DEBUG, "works!");
         }
     }
+//
+//    @Override
+//    public void onBackPressed() {
+//        Intent intent = new Intent(Intent.ACTION_MAIN);
+//        intent.addCategory(Intent.CATEGORY_HOME);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(intent);
+//    }
 }
