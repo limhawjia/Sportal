@@ -11,5 +11,6 @@
     <string name="login">Log in</string>
     <string name="or_use">or use: </string>
     <string name="logo">logo</string>
+    <string name="login_or">OR</string>
     <!-- -->
 </resources>

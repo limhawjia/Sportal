@@ -15,4 +15,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="FacebookTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#FF3b5998</item>
+        <item name="colorPrimaryDark">#FF3b5998</item>
+        <item name="colorAccent">#FF3b5998</item>
+        <item name="android:drawableLeft">@drawable/ic_facebook</item>
+    </style>
+
 </resources>
