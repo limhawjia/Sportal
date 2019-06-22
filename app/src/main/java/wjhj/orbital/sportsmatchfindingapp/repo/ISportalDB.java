@@ -4,15 +4,18 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
+import wjhj.orbital.sportsmatchfindingapp.game.Game;
+import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
+
 public interface ISportalDB {
 
-    void addUser(String userUid, User user);
+    void addUser(String userUid, UserProfile userProfile);
 
-    void updateUser(String userUid, User user);
+    void updateUser(String userUid, UserProfile userProfile);
 
-    Task<User> getUser(String userUid);
+    Task<UserProfile> getUser(String userUid);
 
-    Task<List<User>> selectUsers(String field, String queryText);
+    Task<List<UserProfile>> selectUsers(String field, String queryText);
 
     void deleteUser(String userUid);
 

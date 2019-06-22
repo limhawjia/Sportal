@@ -12,5 +12,10 @@
     <string name="or_use">or use: </string>
     <string name="logo">logo</string>
     <string name="login_or">OR</string>
+    <string name="navbar_home">Home</string>
+    <string name="navbar_games">Games</string>
+    <string name="navbar_search">Search</string>
+    <string name="navbar_explore">Explore</string>
+    <string name="navbar_social">Social</string>
     <!-- -->
 </resources>

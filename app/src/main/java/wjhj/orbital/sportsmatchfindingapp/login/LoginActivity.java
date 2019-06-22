@@ -2,6 +2,7 @@ package wjhj.orbital.sportsmatchfindingapp.login;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
@@ -15,11 +16,13 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 
+import wjhj.orbital.sportsmatchfindingapp.homepage.HomepageActivity;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.LoginActivityBinding;
 
 public class LoginActivity extends AppCompatActivity {
     public static final String LOGIN_DEBUG = "login";
+    public static final String CURR_USER_TAG = "current_user";
     public static final int GOOGLE_SIGN_IN_RC = 1;
 
     private LoginViewModel loginViewModel;
@@ -29,8 +32,8 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(LOGIN_DEBUG, "Login activity created");
         super.onCreate(savedInstanceState);
+        Log.d(LOGIN_DEBUG, "Login activity created");
 
         auths = new Authentications(this);
 
@@ -46,16 +49,14 @@ public class LoginActivity extends AppCompatActivity {
                 binding.passwordField.setError("Password must be at least 8 characters!");
             } else {
                 auths.trySignIn(loginUser)
-                        .addOnCompleteListener(this, task -> {
-                            if (task.isSuccessful()) {
-                                Log.d(LOGIN_DEBUG, "sign in w email/password success");
-                                updateOnLoggedIn(auths.getCurrentFirebaseUser());
-                            } else {
-                                Log.d(LOGIN_DEBUG, "sign in w email/password failure", task.getException());
-                                Toast.makeText(this,
-                                        "Authentication failed.", Toast.LENGTH_SHORT)
-                                        .show();
-                            }
+                        .addOnSuccessListener(this, task -> {
+                            Log.d(LOGIN_DEBUG, "sign in w email/password success");
+                            updateOnLoggedIn(auths.getCurrentFirebaseUser());
+                        })
+                        .addOnFailureListener(this, e -> {
+                            Log.d(LOGIN_DEBUG, "sign in w email/password failure", e);
+                            Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT)
+                                    .show();
                         });
             }
         });
@@ -125,6 +126,14 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void updateOnLoggedIn(FirebaseUser currUser) {
-        //navigate to homepage
+        if (currUser == null) {
+            Log.d(LOGIN_DEBUG, "No current user");
+            return;
+        }
+
+        Intent intent = new Intent(this, HomepageActivity.class);
+        intent.putExtra(CURR_USER_TAG, currUser);
+        startActivity(intent);
+        finish();
     }
 }

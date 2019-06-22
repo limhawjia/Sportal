@@ -13,34 +13,37 @@ import com.google.firebase.firestore.SetOptions;
 
 import java.util.List;
 
+import wjhj.orbital.sportsmatchfindingapp.game.Game;
+import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
+
 public class SportalDB implements ISportalDB {
     private static final String DATA_DEBUG = "SportalDB";
 
     @Override
-    public void addUser(String userUid, User user) {
+    public void addUser(String userUid, UserProfile userProfile) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("Users")
                 .document(userUid)
-                .set(user)
-                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, "Add user success"))
-                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "User add failed", e));
+                .set(userProfile)
+                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, "Add userProfile success"))
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "UserProfile add failed", e));
     }
 
     @Override
-    public void updateUser(String userUid, User user) {
-        update(userUid, "Users", user);
+    public void updateUser(String userUid, UserProfile userProfile) {
+        update(userUid, "Users", userProfile);
     }
 
     @Override
-    public Task<User> getUser(String userUid) {
-        return convertToObject(getDocumentFromCollection(userUid, "Users"), User.class);
+    public Task<UserProfile> getUser(String userUid) {
+        return convertToObject(getDocumentFromCollection(userUid, "Users"), UserProfile.class);
     }
 
     @Override
-    public Task<List<User>> selectUsers(String field, String queryText) {
+    public Task<List<UserProfile>> selectUsers(String field, String queryText) {
         return queryCollection("Users", field, queryText)
-                .continueWith(task -> task.getResult().toObjects(User.class));
+                .continueWith(task -> task.getResult().toObjects(UserProfile.class));
     }
 
     @Override
