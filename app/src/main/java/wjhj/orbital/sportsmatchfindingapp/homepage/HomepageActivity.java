@@ -48,9 +48,6 @@ public class HomepageActivity extends AppCompatActivity {
             case R.id.nav_search:
                 //todo
                 break;
-            case R.id.nav_explore:
-                //todo
-                break;
             case R.id.nav_social:
                 //todo
                 break;
