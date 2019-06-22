@@ -1,15 +1,16 @@
-package wjhj.orbital.sportsmatchfindingapp.login;
+package wjhj.orbital.sportsmatchfindingapp.auth;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
-class UserLogin {
+class LoginAuth {
 
     private String email;
     private String password;
 
-    UserLogin(String email, String password) {
+    LoginAuth(String email, String password) {
         this.email = email;
         this.password = password;
+
     }
 
     String getEmail() {
@@ -27,5 +28,4 @@ class UserLogin {
     boolean isPasswordValid() {
         return password != null && password.length() >= 8;
     }
-
 }

@@ -1,4 +1,4 @@
-package wjhj.orbital.sportsmatchfindingapp.login;
+package wjhj.orbital.sportsmatchfindingapp.auth;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -8,10 +8,10 @@ public class LoginViewModel extends ViewModel {
 
     public MutableLiveData<String> email = new MutableLiveData<>();
     public MutableLiveData<String> password =  new MutableLiveData<>();
-    private MutableLiveData<UserLogin> userLoginLiveData;
+    private MutableLiveData<LoginAuth> userLoginLiveData;
 
 
-    LiveData<UserLogin> getUserLogin() {
+    LiveData<LoginAuth> getUserLogin() {
         if (userLoginLiveData == null) {
             userLoginLiveData = new MutableLiveData<>();
         }
@@ -19,7 +19,7 @@ public class LoginViewModel extends ViewModel {
     }
 
     public void onEmailAndPasswordLogin() {
-        UserLogin user = new UserLogin(email.getValue(), password.getValue());
+        LoginAuth user = new LoginAuth(email.getValue(), password.getValue());
         userLoginLiveData.setValue(user);
     }
 

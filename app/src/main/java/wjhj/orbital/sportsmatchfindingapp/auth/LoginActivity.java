@@ -1,4 +1,4 @@
-package wjhj.orbital.sportsmatchfindingapp.login;
+package wjhj.orbital.sportsmatchfindingapp.auth;
 
 import android.content.Intent;
 import android.os.Bundle;

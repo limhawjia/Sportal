@@ -1,4 +1,4 @@
-package wjhj.orbital.sportsmatchfindingapp.login;
+package wjhj.orbital.sportsmatchfindingapp.auth;
 
 import android.content.Context;
 
@@ -12,6 +12,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 
@@ -38,8 +39,20 @@ class Authentications {
     }
 
 
-    Task<AuthResult> trySignIn(UserLogin userLogin) {
-        return firebaseAuth.signInWithEmailAndPassword(userLogin.getEmail(), userLogin.getPassword());
+    Task<AuthResult> trySignIn(LoginAuth loginAuth) {
+        return firebaseAuth.signInWithEmailAndPassword(loginAuth.getEmail(), loginAuth.getPassword());
+    }
+
+    Task<AuthResult> tryCreateUser(SignUpAuth signUpAuth) {
+        return firebaseAuth.createUserWithEmailAndPassword(signUpAuth.getEmail(), signUpAuth.getPassword());
+    }
+
+    Task<Void> updateProfile(SignUpAuth signUpAuth, AuthResult authResult) {
+        UserProfileChangeRequest additionalInfo = new UserProfileChangeRequest.Builder()
+                .setDisplayName(signUpAuth.getDisplayName())
+                .setPhotoUri(signUpAuth.getDisplayPic())
+                .build();
+        return authResult.getUser().updateProfile(additionalInfo);
     }
 
     Task<AuthResult> firebaseAuthWithGoogle(GoogleSignInAccount account) {
