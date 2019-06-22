@@ -63,6 +63,6 @@ public class HomepageActivity extends AppCompatActivity {
                 .commit();
 
         return true;
-    }
+    };
 
 }
