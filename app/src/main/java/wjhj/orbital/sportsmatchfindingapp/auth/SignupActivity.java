@@ -1,5 +1,6 @@
 package wjhj.orbital.sportsmatchfindingapp.auth;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,7 @@ import wjhj.orbital.sportsmatchfindingapp.databinding.SignupActivityBinding;
 public class SignupActivity extends AppCompatActivity {
 
     public static final String SIGNUP_DEBUG = "signup";
+    public static final int PICK_DISPLAY_IMAGE_RC = 1;
 
     private Authentications auths;
     private SignupActivityBinding binding;
@@ -35,6 +37,23 @@ public class SignupActivity extends AppCompatActivity {
                     displayPicUri);
             signUp(signUpAuth);
         });
+
+        binding.addDisplayPicButton.setOnClickListener(view -> {
+            Intent pickImageIntent = new Intent();
+            pickImageIntent.setAction(Intent.ACTION_GET_CONTENT).setType("image/*");
+            startActivityForResult(pickImageIntent, PICK_DISPLAY_IMAGE_RC);
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_DISPLAY_IMAGE_RC && resultCode == RESULT_OK) {
+            if (data != null) {
+                this.displayPicUri = data.getData();
+                binding.signupProfilePic.setImageURI(this.displayPicUri);
+            }
+        }
     }
 
     private void signUp(SignUpAuth signUpAuth) {

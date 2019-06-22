@@ -74,17 +74,13 @@ class Authentications {
         return authResult.getUser().updateProfile(additionalInfo.build());
     }
 
-    private Task<Uri> uploadDisplayImageAndGetUri(Bitmap displayImage, String uid) {
-        ByteArrayOutputStream imageByteStream = new ByteArrayOutputStream();
-        displayImage.compress(Bitmap.CompressFormat.PNG, 100, imageByteStream);
-        byte[] imageBytes = imageByteStream.toByteArray();
-
+    private Task<Uri> uploadDisplayImageAndGetUri(Uri displayImage, String uid) {
         StorageReference imageReference = FirebaseStorage.getInstance()
                 .getReference()
                 .child("display-images")
                 .child(uid + ".png");
 
-        UploadTask upload = imageReference.putBytes(imageBytes);
+        UploadTask upload = imageReference.putFile(displayImage);
         return upload.continueWithTask(snapshot -> imageReference.getDownloadUrl());
     }
 
