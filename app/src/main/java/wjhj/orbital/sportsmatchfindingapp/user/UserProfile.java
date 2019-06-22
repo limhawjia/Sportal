@@ -14,7 +14,7 @@ import java.util.Map;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 
 public class UserProfile {
-    public static final String USER_DEBUG = "user";
+    private static final String USER_DEBUG = "user";
 
     private String uid;
     private Gender gender;

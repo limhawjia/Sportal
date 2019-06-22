@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="game"
+            type="wjhj.orbital.sportsmatchfindingapp.game.Game" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/games_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="4dp"
+        app:cardCornerRadius="4dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/games_card_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{game.name}"
+                android:textSize="20sp"
+                android:layout_alignParentTop="true"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{game.details}"
+                android:layout_below="@id/games_card_name"/>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

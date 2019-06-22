@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="userProfile"
+            type="wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".homepage.GamesFragment">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/test_filter_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="Remove first game"
+            android:layout_alignParentTop="true"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/confirmed_games_recycler_view"
+            android:scrollbars="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/test_filter_button"/>
+
+    </RelativeLayout>
+</layout>

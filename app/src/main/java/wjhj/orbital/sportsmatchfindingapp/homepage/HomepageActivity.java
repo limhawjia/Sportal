@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -19,7 +20,7 @@ import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.HomepageActivityBinding;
 
-public class HomepageActivity extends AppCompatActivity {
+public class HomepageActivity extends AppCompatActivity implements GamesFragment.OnFragmentInteractionListener {
 
     public static final String CURR_USER_TAG = "current_user";
     public static final String HOMEPAGE_DEBUG = "homepage";
@@ -50,7 +51,7 @@ public class HomepageActivity extends AppCompatActivity {
                 //todo
                 break;
             case R.id.nav_games:
-                //todo
+                fragment = GamesFragment.newInstance();
                 break;
             case R.id.nav_search:
                 //todo
@@ -90,4 +91,13 @@ public class HomepageActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        //TODO: implement/check if necessary
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+        //TODO: implement/check if necessary
+    }
 }

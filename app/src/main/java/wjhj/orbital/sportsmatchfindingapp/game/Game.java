@@ -13,7 +13,7 @@ public class Game {
 
     private String details;
     private Location location;
-    private String gameName;
+    private String name;
     private int minPlayers;
     private int maxPlayers;
     private List<String> participating;
@@ -29,7 +29,7 @@ public class Game {
     private Game(Game.Builder builder) {
         details = builder.details;
         location = builder.location;
-        gameName = builder.gameName;
+        name = builder.gameName;
         minPlayers = builder.minPlayers;
         maxPlayers = builder.maxPlayers;
         participating = builder.participating;
@@ -61,11 +61,11 @@ public class Game {
     }
 
     public String getName() {
-        return gameName;
+        return name;
     }
 
     public void setName(String name) {
-        this.gameName = name;
+        this.name = name;
     }
 
     public Difficulty getSkill() {
