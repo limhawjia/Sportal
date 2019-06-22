@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(LOGIN_DEBUG, "Login activity created");
 
-        auths = new Authentications(this);
+        auths = new Authentications();
 
         loginViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.login_activity);
@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
         binding.googleLoginButton.setOnClickListener(view -> {
-            Intent googleSignInIntent = auths.googleSignInClient.getSignInIntent();
+            Intent googleSignInIntent = auths.getGoogleSignInClient(this).getSignInIntent();
             startActivityForResult(googleSignInIntent, GOOGLE_SIGN_IN_RC);
         });
 

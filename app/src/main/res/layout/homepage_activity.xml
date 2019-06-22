@@ -12,10 +12,15 @@
         android:layout_height="match_parent"
         tools:context=".homepage.HomepageActivity">
 
+        <include
+            android:id="@+id/top_toolbar"
+            layout="@layout/top_toolbar"/>
+
         <FrameLayout
             android:id="@+id/homepage_fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@id/top_toolbar"
             android:layout_above="@id/bottom_nav" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -23,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:elevation="10dp"
+            android:elevation="8dp"
             android:background="?android:attr/windowBackground"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_nav" />

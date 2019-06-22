@@ -1,17 +1,22 @@
 package wjhj.orbital.sportsmatchfindingapp.homepage;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
+import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.HomepageActivityBinding;
 
 public class HomepageActivity extends AppCompatActivity {
@@ -30,9 +35,11 @@ public class HomepageActivity extends AppCompatActivity {
 
         currUser = getIntent().getParcelableExtra(CURR_USER_TAG);
         binding = DataBindingUtil.setContentView(this, R.layout.homepage_activity);
+        setSupportActionBar((Toolbar) binding.topToolbar);
 
-        binding.bottomNav
-                .setOnNavigationItemSelectedListener(navListener);
+        binding.bottomNav.setOnNavigationItemSelectedListener(navListener);
+
+        ((Toolbar) binding.topToolbar).setOnMenuItemClickListener(menuListener);
 
     }
 
@@ -61,5 +68,26 @@ public class HomepageActivity extends AppCompatActivity {
 
         return true;
     };
+
+    private Toolbar.OnMenuItemClickListener menuListener = item -> {
+        switch(item.getItemId()) {
+            case R.id.options_profile:
+                //todo
+                break;
+            case R.id.options_logout :
+                FirebaseAuth.getInstance().signOut();
+                Intent logoutIntent = new Intent(this, LoginActivity.class);
+                startActivity(logoutIntent);
+                break;
+            }
+
+        return true;
+    };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.top_options_menu, menu);
+        return true;
+    }
 
 }

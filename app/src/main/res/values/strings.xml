@@ -21,5 +21,7 @@
     <string name="accept_terms">By checking this, you are agreeing to our</string>
     <string name="terms_conditions"><u>terms and conditions</u></string>
     <string name="create">Create</string>
+    <string name="options_profile">My profile</string>
+    <string name="options_logout">Logout</string>
     <!-- -->
 </resources>
