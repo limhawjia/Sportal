@@ -16,7 +16,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 
-import wjhj.orbital.sportsmatchfindingapp.HomepageActivity;
+import wjhj.orbital.sportsmatchfindingapp.homepage.HomepageActivity;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.LoginActivityBinding;
 
@@ -49,16 +49,14 @@ public class LoginActivity extends AppCompatActivity {
                 binding.passwordField.setError("Password must be at least 8 characters!");
             } else {
                 auths.trySignIn(loginUser)
-                        .addOnCompleteListener(this, task -> {
-                            if (task.isSuccessful()) {
-                                Log.d(LOGIN_DEBUG, "sign in w email/password success");
-                                updateOnLoggedIn(auths.getCurrentFirebaseUser());
-                            } else {
-                                Log.d(LOGIN_DEBUG, "sign in w email/password failure", task.getException());
-                                Toast.makeText(this,
-                                        "Authentication failed.", Toast.LENGTH_SHORT)
-                                        .show();
-                            }
+                        .addOnSuccessListener(this, task -> {
+                            Log.d(LOGIN_DEBUG, "sign in w email/password success");
+                            updateOnLoggedIn(auths.getCurrentFirebaseUser());
+                        })
+                        .addOnFailureListener(this, e -> {
+                            Log.d(LOGIN_DEBUG, "sign in w email/password failure", e);
+                            Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT)
+                                    .show();
                         });
             }
         });

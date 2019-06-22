@@ -1,25 +1,22 @@
-package wjhj.orbital.sportsmatchfindingapp.repo;
+package wjhj.orbital.sportsmatchfindingapp.game;
 
-import android.util.Log;
-
-import com.google.firebase.firestore.FirebaseFirestore;
+import android.location.Location;
 
 import org.threeten.bp.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class Game {
     public static final String GAME_DEBUG = "game";
 
     private String details;
-    private String location;
-    private String name;
+    private Location location;
+    private String gameName;
     private int minPlayers;
     private int maxPlayers;
-    private List<String> usernames;
+    private List<String> participating;
     private Difficulty skillLevel;
     private String sport;
     private LocalDateTime startTime;
@@ -27,6 +24,19 @@ public class Game {
 
     //Compulsory public no-argument constructor
     public Game() {
+    }
+
+    private Game(Game.Builder builder) {
+        details = builder.details;
+        location = builder.location;
+        gameName = builder.gameName;
+        minPlayers = builder.minPlayers;
+        maxPlayers = builder.maxPlayers;
+        participating = builder.participating;
+        skillLevel = builder.skillLevel;
+        sport = builder.sport;
+        startTime = builder.startTime;
+        endTime = builder.endTime;
     }
 
     public static Game.Builder builder() {
@@ -42,20 +52,20 @@ public class Game {
         this.details = details;
     }
 
-    public String getLocation() {
+    public Location getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
 
     public String getName() {
-        return name;
+        return gameName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.gameName = name;
     }
 
     public Difficulty getSkill() {
@@ -90,12 +100,12 @@ public class Game {
         this.maxPlayers = maxPlayers;
     }
 
-    public List<String> getUsernames() {
-        return usernames;
+    public List<String> getParticipating() {
+        return participating;
     }
 
     public void setUsernames(List<String> usernames) {
-        this.usernames = usernames;
+        this.participating = usernames;
     }
 
     public LocalDateTime getStartTime() {
@@ -117,18 +127,18 @@ public class Game {
     //Builder pattern for creating new game instances ourselves
     public static class Builder {
         private String details;
-        private String location;
-        private String name;
+        private Location location;
+        private String gameName;
         private int minPlayers;
         private int maxPlayers;
-        private List<String> usernames;
+        private List<String> participating;
         private Difficulty skillLevel;
         private String sport;
         private LocalDateTime startTime;
         private LocalDateTime endTime;
 
         private Builder() {
-            usernames = new ArrayList<>();
+            participating = new ArrayList<>();
             skillLevel = Difficulty.INTERMEDIATE;
         }
 
@@ -136,12 +146,12 @@ public class Game {
             this.details = details;
             return this;
         }
-        public Builder addLocation(String location) {
+        public Builder addLocation(Location location) {
             this.location = location;
             return this;
         }
         public Builder addName(String name) {
-            this.name = name;
+            this.gameName = name;
             return this;
         }
         public Builder setMinPlayers(Integer minPlayers) {
@@ -152,28 +162,8 @@ public class Game {
             this.maxPlayers = maxPlayers;
             return this;
         }
-        public Builder addUserName(String... usernames) {
-            List<String> existingUsers;
-            final String[] input = usernames;
-
-            // REFACTOR THIS!!!!! GAME CLASS SHOULD NOT HAVE A REFERENCE TO DATABASE
-            FirebaseFirestore.getInstance()
-                    .collection("Admin")
-                    .document("Usernames")
-                    .get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        Log.d(GAME_DEBUG, "Verified users");
-                        Map<String, Object> registeredUsers = documentSnapshot.getData();
-                        for (String user : input) {
-                            if (!registeredUsers.containsKey(user)) {
-                                throw new IllegalArgumentException("User not registered: " + user);
-                            }
-                        }
-                    }).addOnFailureListener(e -> {
-                        Log.d(GAME_DEBUG, "Failed to verify users");
-                        throw new RuntimeException("Failed to verify users");
-                    });
-            this.usernames.addAll(Arrays.asList(usernames));
+        public Builder addParticipating(String... participating) {
+            this.participating.addAll(Arrays.asList(participating));
             return this;
         }
 
@@ -198,41 +188,8 @@ public class Game {
         }
 
         public Game build() {
-            Game game = new Game();
-            game.setDetails(this.details);
-            game.setLocation(this.location);
-            game.setName(this.name);
-            game.setSkill(this.skillLevel);
-            game.setSport(this.sport);
-            game.setMinPlayers(this.minPlayers);
-            game.setMaxPlayers(this.maxPlayers);
-            game.setUsernames(this.usernames);
-            game.setStartTime(this.startTime);
-            game.setEndTime(this.endTime);
-            // Weird.. refactor
-            if (game.location == null || game.name == null || game.sport == null || game.minPlayers == 0) {
-                Log.d(GAME_DEBUG, "Unable to create game due to missing fields.");
-                throw new RuntimeException("Unable to create game due to missing fields");
-            }
-
-            return game;
+            return new Game(this);
         }
     }
 
-    public enum Difficulty {
-        BEGINNER("Beginner"),
-        INTERMEDIATE("Intermediate"),
-        ADVANCED("Advanced");
-
-        private String str;
-
-        private Difficulty(String str) {
-            this.str = str;
-        }
-
-        @Override
-        public String toString() {
-            return str;
-        }
-    }
 }

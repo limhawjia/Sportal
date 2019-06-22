@@ -1,12 +1,13 @@
-package wjhj.orbital.sportsmatchfindingapp;
+package wjhj.orbital.sportsmatchfindingapp.homepage;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseUser;
+
+import wjhj.orbital.sportsmatchfindingapp.R;
 
 public class HomepageActivity extends AppCompatActivity {
 
@@ -26,13 +27,6 @@ public class HomepageActivity extends AppCompatActivity {
         if (currUser != null) {
             Log.d(HOMEPAGE_DEBUG, "works!");
         }
+
     }
-//
-//    @Override
-//    public void onBackPressed() {
-//        Intent intent = new Intent(Intent.ACTION_MAIN);
-//        intent.addCategory(Intent.CATEGORY_HOME);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(intent);
-//    }
 }
