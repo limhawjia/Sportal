@@ -11,4 +11,5 @@
     <color name="transparent">#00000000</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#FF000000</color>
+    <color name="url_blue">#0000EE</color>
 </resources>

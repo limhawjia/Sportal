@@ -17,5 +17,9 @@
     <string name="navbar_search">Search</string>
     <string name="navbar_explore">Explore</string>
     <string name="navbar_social">Social</string>
+    <string name="full_name">Full name</string>
+    <string name="accept_terms">By checking this, you are agreeing to our</string>
+    <string name="terms_conditions"><u>terms and conditions</u></string>
+    <string name="create">Create</string>
     <!-- -->
 </resources>

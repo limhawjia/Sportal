@@ -22,14 +22,17 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:text="@string/sign_up"
         android:textColor="@color/black"
         android:textSize="32sp"
-        tools:layout_editor_absoluteX="152dp"
-        tools:layout_editor_absoluteY="16dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frameLayout"
         android:layout_width="144dp"
         android:layout_height="144dp"
@@ -39,6 +42,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2">
+
 
         <ImageView
             android:id="@+id/signup_profile_pic"
@@ -51,7 +55,19 @@
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:src="@drawable/circular_crop" />
-    </FrameLayout>
+
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/transparent"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_add_circle_black_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/name_input"
@@ -146,7 +162,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/terms_conditions"
-                android:textColor="@color/link_blue" />
+                android:textColor="@color/url_blue" />
         </LinearLayout>
     </LinearLayout>
 
@@ -154,10 +170,10 @@
         android:id="@+id/signup_submit"
         android:layout_width="match_parent"
         android:layout_height="64dp"
-        android:text="@string/create"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
+        android:text="@string/create"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />

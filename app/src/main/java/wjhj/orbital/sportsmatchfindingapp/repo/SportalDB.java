@@ -66,7 +66,7 @@ public class SportalDB implements ISportalDB {
                     addGameToUser(currUserUid, docRef.getId());
 
                     //Also add to the remaining participating users
-                    for (String user : game.getUsernames()) {
+                    for (String user : game.getParticipating()) {
                         addGameToUser(user, docRef.getId());
                     }
                 })
