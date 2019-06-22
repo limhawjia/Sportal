@@ -84,5 +84,6 @@ public class SignupActivity extends AppCompatActivity {
         Intent preferencesIntent = new Intent(this, PreferencesActivity.class);
         preferencesIntent.putExtra(LoginActivity.CURR_USER_TAG, currUser);
         startActivity(preferencesIntent);
+        finish();
     }
 }
