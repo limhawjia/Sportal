@@ -12,4 +12,5 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#FF000000</color>
     <color name="url_blue">#0000EE</color>
+    <color name="gray">#8e95a0</color>
 </resources>
