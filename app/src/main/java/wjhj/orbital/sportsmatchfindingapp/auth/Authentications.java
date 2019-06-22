@@ -1,7 +1,6 @@
 package wjhj.orbital.sportsmatchfindingapp.auth;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 
@@ -21,24 +20,17 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.util.concurrent.ExecutionException;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 
-class Authentications {
+public class Authentications {
     private static String AUTHENTICATION_DEBUG = "authentications";
 
     final FirebaseAuth firebaseAuth;
-    final GoogleSignInClient googleSignInClient;
 
-    Authentications(Context activityContext) {
+    public Authentications() {
         firebaseAuth = FirebaseAuth.getInstance();
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(activityContext.getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        googleSignInClient = GoogleSignIn.getClient(activityContext, gso);
     }
 
     FirebaseUser getCurrentFirebaseUser() {
@@ -49,6 +41,13 @@ class Authentications {
         return GoogleSignIn.getLastSignedInAccount(context);
     }
 
+    GoogleSignInClient getGoogleSignInClient(Context context) {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(context.getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        return GoogleSignIn.getClient(context, gso);
+    }
 
     Task<AuthResult> trySignIn(LoginAuth loginAuth) {
         return firebaseAuth.signInWithEmailAndPassword(loginAuth.getEmail(), loginAuth.getPassword());
@@ -59,7 +58,6 @@ class Authentications {
     }
 
     Task<Void> updateProfile(SignUpAuth signUpAuth, AuthResult authResult) {
-
         UserProfileChangeRequest.Builder additionalInfo = new UserProfileChangeRequest.Builder()
                 .setDisplayName(signUpAuth.getDisplayName());
 
@@ -87,7 +85,6 @@ class Authentications {
     Task<AuthResult> firebaseAuthWithGoogle(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         return firebaseAuth.signInWithCredential(credential);
-
     }
 
 }

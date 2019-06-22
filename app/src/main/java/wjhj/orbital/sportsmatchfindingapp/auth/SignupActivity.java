@@ -28,7 +28,7 @@ public class SignupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        auths = new Authentications(this);
+        auths = new Authentications();
         binding = DataBindingUtil.setContentView(this, R.layout.signup_activity);
 
         binding.signupSubmit.setOnClickListener(view -> {

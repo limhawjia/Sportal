@@ -22,6 +22,8 @@
     <string name="accept_terms">By checking this, you are agreeing to our</string>
     <string name="terms_conditions"><u>terms and conditions</u></string>
     <string name="create">Create</string>
+    <string name="options_profile">My profile</string>
+    <string name="options_logout">Logout</string>
     <string name="welcome">Welcome to Sportal!</string>
     <string name="follow_steps">Follow these steps to set up your account</string>
     <string name="male">male</string>
