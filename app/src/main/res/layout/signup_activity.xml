@@ -62,6 +62,7 @@
                 android:src="@drawable/circular_crop" />
 
             <ImageButton
+                android:id="@+id/add_display_pic_button"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="8dp"

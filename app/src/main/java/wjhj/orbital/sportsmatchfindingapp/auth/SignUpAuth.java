@@ -1,6 +1,5 @@
 package wjhj.orbital.sportsmatchfindingapp.auth;
 
-
 import android.net.Uri;
 
 public class SignUpAuth extends LoginAuth {

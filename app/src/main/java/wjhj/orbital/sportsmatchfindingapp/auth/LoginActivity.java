@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
                 auths.trySignIn(loginUser)
                         .addOnSuccessListener(this, task -> {
                             Log.d(LOGIN_DEBUG, "sign in w email/password success");
-                            updateOnLoggedIn(auths.getCurrentFirebaseUser());
+                            updateOnLoggedIn(task.getUser());
                         })
                         .addOnFailureListener(this, e -> {
                             Log.d(LOGIN_DEBUG, "sign in w email/password failure", e);
