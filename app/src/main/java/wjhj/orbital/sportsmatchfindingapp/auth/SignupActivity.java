@@ -1,15 +1,25 @@
 package wjhj.orbital.sportsmatchfindingapp.auth;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.SignupActivityBinding;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -34,8 +44,6 @@ public class SignupActivity extends AppCompatActivity {
             signUp(signUpAuth);
         });
     }
-
-
     private void signUp(SignUpAuth signUpAuth) {
         if (!signUpAuth.isEmailValid()) {
             binding.emailInput.setError("Not a valid email address");
@@ -60,6 +68,23 @@ public class SignupActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     });
         }
+    }
+
+
+    private Task<Uri> uploadDisplayImageAndGetUri(Bitmap displayImage, String uid) {
+        ByteArrayOutputStream imageByteStream = new ByteArrayOutputStream();
+        displayImage.compress(Bitmap.CompressFormat.PNG, 100, imageByteStream);
+        byte[] imageBytes = imageByteStream.toByteArray();
+
+        StorageReference imageReference = FirebaseStorage.getInstance()
+                .getReference()
+                .child("display-images")
+                .child(uid + ".png");
+
+        UploadTask upload = imageReference.putBytes(imageBytes);
+        Task<Uri> imageUri = upload.continueWithTask(
+                (snapshot) -> imageReference.getDownloadUrl());
+        return imageUri;
     }
 
 }
