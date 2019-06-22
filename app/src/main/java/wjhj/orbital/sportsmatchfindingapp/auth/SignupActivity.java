@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.SignupActivityBinding;
+import wjhj.orbital.sportsmatchfindingapp.user.PreferencesActivity;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -80,6 +81,9 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void updateOnSignedUp(FirebaseUser currUser) {
-        //TODO
+        Intent preferencesIntent = new Intent(this, PreferencesActivity.class);
+        preferencesIntent.putExtra(LoginActivity.CURR_USER_TAG, currUser);
+        startActivity(preferencesIntent);
+        finish();
     }
 }

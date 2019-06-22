@@ -20,12 +20,15 @@
         </activity>
 
         <activity
-            android:name=".auth.SignupActivity">
+            android:name=".auth.SignupActivity"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity
             android:name=".homepage.HomepageActivity">
         </activity>
+
+        <activity android:name=".user.PreferencesActivity"></activity>
     </application>
 
 </manifest>

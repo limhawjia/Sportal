@@ -6,7 +6,8 @@
     <string name="password">Password</string>
     <string name="enter_password">Enter password</string>
     <string name="new_user">"No account?"</string>
-    <string name="sign_up"><u>Sign up</u></string>
+    <string name="sign_up">Sign up</string>
+    <string name="register">Register</string>
     <string name="social_media_login">Log in with</string>
     <string name="login">Log in</string>
     <string name="or_use">or use: </string>
@@ -23,5 +24,14 @@
     <string name="create">Create</string>
     <string name="options_profile">My profile</string>
     <string name="options_logout">Logout</string>
+    <string name="welcome">Welcome to Sportal!</string>
+    <string name="follow_steps">Follow these steps to set up your account</string>
+    <string name="male">male</string>
+    <string name="female">female</string>
+    <string name="gender">Gender</string>
+    <string name="birthday">Birthday - dd/mm/yy</string>
+    <string name="location">Location</string>
+    <string name="sports">Sports I play</string>
+    <string name="done">Done</string>
     <!-- -->
 </resources>
