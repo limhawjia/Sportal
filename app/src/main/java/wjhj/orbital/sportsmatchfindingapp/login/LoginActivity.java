@@ -124,7 +124,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-
     private void updateOnLoggedIn(FirebaseUser currUser) {
         if (currUser == null) {
             Log.d(LOGIN_DEBUG, "No current user");

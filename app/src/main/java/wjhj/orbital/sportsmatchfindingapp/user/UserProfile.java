@@ -17,8 +17,6 @@ public class UserProfile {
     public static final String USER_DEBUG = "user";
 
     private String uid;
-    private String firstName;
-    private String lastName;
     private Gender gender;
     private LocalDate birthday;
     private Locale residingCountry;
@@ -32,14 +30,11 @@ public class UserProfile {
 
     private UserProfile(UserProfile.Builder builder) {
         uid = builder.uid;
-        firstName = builder.firstName;
-        lastName = builder.lastName;
         gender = builder.gender;
         birthday = builder.birthday;
         residingCountry = builder.residingCountry;
         preferences = builder.preferences;
         games = builder.games;
-
     }
 
     public static InitialBuilder builder() {
@@ -49,14 +44,6 @@ public class UserProfile {
     //Compulsory public getters for each field
     public String getUid() {
         return uid;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
     }
 
     public Gender getGender() {
@@ -81,11 +68,8 @@ public class UserProfile {
 
     //Builder pattern for creating new user instances ourselves
     public static class Builder implements
-            InitialBuilder, WithFirstNameBuilder, WithLastNameBuilder, WithGenderBuilder,
-            BirthdayOnBuilder, AddOptionalsBuilder {
+            InitialBuilder, WithGenderBuilder, BirthdayOnBuilder, AddOptionalsBuilder {
         private String uid;
-        private String firstName;
-        private String lastName ;
         private Gender gender;
         private LocalDate birthday;
         private List<String> preferences;
@@ -101,26 +85,8 @@ public class UserProfile {
         }
 
         @Override
-        public WithFirstNameBuilder ofUid(String uid) {
+        public WithGenderBuilder ofUid(String uid) {
             this.uid = uid;
-            return this;
-        }
-
-        @Override
-        public WithLastNameBuilder withFirstName(String firstName) {
-            if (firstName == null || firstName.isEmpty()) {
-                throw new IllegalArgumentException("Please fill in first name!");
-            }
-            this.firstName = firstName;
-            return this;
-        }
-
-        @Override
-        public WithGenderBuilder withLastName(String lastName) {
-            if (lastName == null || lastName.isEmpty()) {
-                throw new IllegalArgumentException("Please fill in last name!");
-            }
-            this.lastName = lastName;
             return this;
         }
 
@@ -167,15 +133,7 @@ public class UserProfile {
     }
 
     public interface InitialBuilder {
-        WithFirstNameBuilder ofUid(String uid);
-    }
-
-    public interface WithFirstNameBuilder {
-        WithLastNameBuilder withFirstName(String firstName);
-    }
-
-    public interface WithLastNameBuilder {
-        WithGenderBuilder withLastName(String lastName);
+        WithGenderBuilder ofUid(String uid);
     }
 
     public interface WithGenderBuilder {
