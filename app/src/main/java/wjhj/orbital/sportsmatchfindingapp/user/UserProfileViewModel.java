@@ -3,12 +3,21 @@ package wjhj.orbital.sportsmatchfindingapp.user;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import org.threeten.bp.LocalDate;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 
 public class UserProfileViewModel extends ViewModel {
+
+    UserProfile userProfile = UserProfile.builder()
+            .withUid("help")
+            .withGender(Gender.FEMALE)
+            .withBirthday(LocalDate.now())
+            .addPreferences("sports", "frisbee")
+            .build();
 
     private MutableLiveData<List<Game>> confirmedGames;
 

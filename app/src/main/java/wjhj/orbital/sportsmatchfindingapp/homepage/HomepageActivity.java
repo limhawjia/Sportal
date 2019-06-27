@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.HomepageActivityBinding;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 
 public class HomepageActivity extends AppCompatActivity implements GamesFragment.OnFragmentInteractionListener {
 
@@ -33,6 +34,9 @@ public class HomepageActivity extends AppCompatActivity implements GamesFragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(HOMEPAGE_DEBUG, "homepage activity created");
+
+        SportalRepo repo = new SportalRepo();
+        repo.testAdd();
 
         currUser = getIntent().getParcelableExtra(CURR_USER_TAG);
         binding = DataBindingUtil.setContentView(this, R.layout.homepage_activity);

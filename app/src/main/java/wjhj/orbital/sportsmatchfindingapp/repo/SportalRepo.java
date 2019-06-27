@@ -9,35 +9,50 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import org.threeten.bp.LocalDate;
 
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
+import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
-public class SportalDB implements ISportalDB {
-    private static final String DATA_DEBUG = "SportalDB";
+public class SportalRepo implements ISportalRepo {
+    private static final String DATA_DEBUG = "SportalRepo";
+
+    public void testAdd() {
+       final FirebaseFirestore db = FirebaseFirestore.getInstance();
+       getUser("1234").addOnSuccessListener(task -> Log.d("TESTS", task.toString()))
+            .addOnFailureListener(e -> Log.d("TESTS", "failed" + e));
+
+    }
 
     @Override
-    public void addUser(String userUid, UserProfile userProfile) {
+    public void addUser(UserProfile userProfile) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        UserProfileDataModel dataModel = toUserProfileDataModel(userProfile);
 
         db.collection("Users")
-                .document(userUid)
-                .set(userProfile)
+                .document(dataModel.getUid())
+                .set(dataModel)
                 .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, "Add userProfile success"))
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "UserProfile add failed", e));
     }
 
     @Override
-    public void updateUser(String userUid, UserProfile userProfile) {
-        update(userUid, "Users", userProfile);
+    public void updateUser(UserProfile userProfile) {
+        UserProfileDataModel dataModel = new UserProfileDataModel(userProfile);
+        update(dataModel.getUid(), "Users", dataModel);
     }
 
     @Override
     public Task<UserProfile> getUser(String userUid) {
-        return convertToObject(getDocumentFromCollection(userUid, "Users"), UserProfile.class);
+        Task<UserProfileDataModel> dataModelTask = convertToObject(
+                getDocumentFromCollection(userUid, "Tests"), UserProfileDataModel.class);
+
+        return dataModelTask.continueWith(task -> toUserProfile(task.getResult()));
     }
 
     @Override
@@ -106,12 +121,12 @@ public class SportalDB implements ISportalDB {
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game to " + userUid + " failed", e));
     }
 
-    private void update(String docId, String collectionPath, Object obj) {
+    private void update(String docId, String collectionPath, Object dataModel) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection(collectionPath)
                 .document(docId)
-                .set(obj, SetOptions.merge())
+                .set(dataModel, SetOptions.merge())
                 .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, docId + " update success"))
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, docId + "update failure", e));
     }
@@ -156,5 +171,29 @@ public class SportalDB implements ISportalDB {
                 .delete()
                 .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, docID + " successfully deleted!"))
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Error deleting document", e));
+    }
+
+    private UserProfileDataModel toUserProfileDataModel(UserProfile userProfile) {
+        return new UserProfileDataModel(userProfile);
+    }
+
+    private UserProfile toUserProfile(UserProfileDataModel dataModel) {
+        Map<GameStatus, List<String>> newMap = new HashMap<>();
+        Map<String, List<String>> oldMap = dataModel.getGames();
+        for (String s : oldMap.keySet()) {
+            List<String> games = oldMap.get(s);
+            if (games != null)
+            newMap.put(GameStatus.fromId(s), games);
+        }
+
+        return UserProfile.builder()
+                .withUid(dataModel.getUid())
+                .withGender(dataModel.getGender())
+                .withBirthday(LocalDate.parse(dataModel.getBirthday()))
+                .withResidingCountry()
+                .addAllPreferences(dataModel.getPreferences())
+                .putAllGames(newMap)
+                .build();
+        //TODO: SETTLE TYPE FOR LOCATION :(
     }
 }

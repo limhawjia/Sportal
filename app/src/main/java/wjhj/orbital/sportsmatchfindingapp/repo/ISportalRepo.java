@@ -7,11 +7,11 @@ import java.util.List;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
-public interface ISportalDB {
+public interface ISportalRepo {
 
-    void addUser(String userUid, UserProfile userProfile);
+    void addUser(UserProfile userProfile);
 
-    void updateUser(String userUid, UserProfile userProfile);
+    void updateUser(UserProfile userProfile);
 
     Task<UserProfile> getUser(String userUid);
 
