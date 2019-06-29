@@ -1,8 +1,8 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
 public enum Gender {
-    MALE("Male"),
-    FEMALE("Female");
+    MALE("male"),
+    FEMALE("female");
 
     private String str;
 

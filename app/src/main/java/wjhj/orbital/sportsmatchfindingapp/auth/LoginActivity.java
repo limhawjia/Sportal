@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import wjhj.orbital.sportsmatchfindingapp.homepage.HomepageActivity;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.LoginActivityBinding;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 
 public class LoginActivity extends AppCompatActivity {
     public static final String LOGIN_DEBUG = "login";
@@ -105,23 +106,27 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == GOOGLE_SIGN_IN_RC) {
-            //Task returned here is always completed, no need to attach a listener.
-            Task<GoogleSignInAccount> signInTask = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                GoogleSignInAccount account = signInTask.getResult(ApiException.class);
+            if (resultCode == RESULT_OK) {
+                //Task returned here is always completed, no need to attach a listener.
+                Task<GoogleSignInAccount> signInTask = GoogleSignIn.getSignedInAccountFromIntent(data);
+                try {
+                    GoogleSignInAccount account = signInTask.getResult(ApiException.class);
 
-                auths.firebaseAuthWithGoogle(account)
-                        .addOnSuccessListener(this, result -> {
-                            Log.d(LOGIN_DEBUG, "Sign in with Google credentials success");
-                            updateOnLoggedIn(result.getUser());
-                        })
-                        .addOnFailureListener(this, e -> {
-                            Log.d(LOGIN_DEBUG, "Sign in with Google credentials failure", e);
-                            Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT)
-                                    .show();
-                        });
-            } catch (ApiException e) {
-                Log.d(LOGIN_DEBUG, "Google sign in fail", e);
+                    auths.firebaseAuthWithGoogle(account)
+                            .addOnSuccessListener(this, result -> {
+                                Log.d(LOGIN_DEBUG, "Sign in with Google credentials success");
+                                updateOnLoggedIn(result.getUser());
+                            })
+                            .addOnFailureListener(this, e -> {
+                                Log.d(LOGIN_DEBUG, "Sign in with Google credentials failure", e);
+                                Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT)
+                                        .show();
+                            });
+                } catch (ApiException e) {
+                    Log.d(LOGIN_DEBUG, "Google sign in fail", e);
+                }
+            } else {
+                Log.d(LOGIN_DEBUG, "Google login cancelled");
             }
         }
     }

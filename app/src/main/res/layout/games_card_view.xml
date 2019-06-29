@@ -3,10 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="game"
-            type="wjhj.orbital.sportsmatchfindingapp.game.Game" />
+            type="wjhj.orbital.sportsmatchfindingapp.game.AbstractGame" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -27,14 +26,14 @@
                 android:id="@+id/games_card_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{game.name}"
+                android:text="@{game.gameName}"
                 android:textSize="20sp"
                 android:layout_alignParentTop="true"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{game.details}"
+                android:text="@{game.description}"
                 android:layout_below="@id/games_card_name"/>
 
         </RelativeLayout>
