@@ -22,14 +22,17 @@ import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 )
 @Value.Immutable
 public abstract class AbstractUserProfile {
-    //TODO: FIND OUT WHAT ENUM CONSTANT WARNING IS: unknown enum constant Modifier.FINAL
+    //FIND OUT WHAT ENUM CONSTANT WARNING IS: unknown enum constant Modifier.FINAL
     public abstract String getUid();
+
+    public abstract String getDisplayName();
 
     public abstract Gender getGender();
 
     public abstract LocalDate getBirthday();
 
-    public abstract Optional<Location> getResidingCountry();
+    // Decide how to implement location stuffs
+    // public abstract Optional<Location> getResidingCountry();
 
     public abstract List<String> getPreferences();
 

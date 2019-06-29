@@ -15,7 +15,9 @@ public interface ISportalRepo {
 
     Task<UserProfile> getUser(String userUid);
 
-    Task<List<UserProfile>> selectUsers(String field, String queryText);
+    Task<List<UserProfile>> selectUsersStartingWith(String field, String queryText);
+
+    Task<List<UserProfile>> selectUsersArrayContains(String field, String queryText);
 
     void deleteUser(String userUid);
 
@@ -25,7 +27,9 @@ public interface ISportalRepo {
 
     Task<Game> getGame(String gameId);
 
-    Task<List<Game>> selectGames(String field, String queryText);
+    Task<List<Game>> selectGamesStartingWith(String field, String queryText);
+
+    Task<List<Game>> selectGamesArrayContains(String field, String queryText);
 
     void deleteGame(String gameId);
 }

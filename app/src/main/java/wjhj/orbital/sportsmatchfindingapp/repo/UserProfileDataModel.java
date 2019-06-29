@@ -1,9 +1,5 @@
 package wjhj.orbital.sportsmatchfindingapp.repo;
 
-import android.location.Location;
-
-import com.google.firebase.firestore.GeoPoint;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +10,9 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
 class UserProfileDataModel {
     private String uid;
+    private String displayName;
     private Gender gender;
     private String birthday;
-    private GeoPoint residingCountry;
     private List<String> preferences;
     private Map<String, List<String>> games;
 
@@ -26,11 +22,9 @@ class UserProfileDataModel {
 
     UserProfileDataModel(UserProfile userProfile) {
         uid = userProfile.getUid();
+        displayName = userProfile.getDisplayName();
         gender = userProfile.getGender();
         birthday = userProfile.getBirthday().toString();
-        residingCountry = userProfile.getResidingCountry()
-                .transform(loc -> new GeoPoint(loc.getLatitude(), loc.getLongitude()))
-                .orNull();
         preferences = userProfile.getPreferences();
         games = convertGames(userProfile.getGames());
 
@@ -40,16 +34,16 @@ class UserProfileDataModel {
         return uid;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
     public Gender getGender() {
         return gender;
     }
 
     public String getBirthday() {
         return birthday;
-    }
-
-    public GeoPoint getResidingCountry() {
-        return residingCountry;
     }
 
     public List<String> getPreferences() {

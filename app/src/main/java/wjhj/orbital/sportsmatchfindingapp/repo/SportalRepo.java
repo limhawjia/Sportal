@@ -9,8 +9,10 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+
 import org.threeten.bp.LocalDate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,11 +24,8 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 public class SportalRepo implements ISportalRepo {
     private static final String DATA_DEBUG = "SportalRepo";
 
-    public void testAdd() {
-       final FirebaseFirestore db = FirebaseFirestore.getInstance();
-       getUser("1234").addOnSuccessListener(task -> Log.d("TESTS", task.toString()))
-            .addOnFailureListener(e -> Log.d("TESTS", "failed" + e));
-
+    public void test() {
+        //:)
     }
 
     @Override
@@ -37,28 +36,36 @@ public class SportalRepo implements ISportalRepo {
         db.collection("Users")
                 .document(dataModel.getUid())
                 .set(dataModel)
-                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, "Add userProfile success"))
-                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "UserProfile add failed", e));
+                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, dataModel.getUid() + " added"))
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, dataModel.getUid() + " add failed", e));
     }
 
     @Override
     public void updateUser(UserProfile userProfile) {
-        UserProfileDataModel dataModel = new UserProfileDataModel(userProfile);
+        UserProfileDataModel dataModel = toUserProfileDataModel(userProfile);
         update(dataModel.getUid(), "Users", dataModel);
     }
 
     @Override
     public Task<UserProfile> getUser(String userUid) {
         Task<UserProfileDataModel> dataModelTask = convertToObject(
-                getDocumentFromCollection(userUid, "Tests"), UserProfileDataModel.class);
+                getDocumentFromCollection(userUid, "Users"), UserProfileDataModel.class);
 
         return dataModelTask.continueWith(task -> toUserProfile(task.getResult()));
     }
 
     @Override
-    public Task<List<UserProfile>> selectUsers(String field, String queryText) {
-        return queryCollection("Users", field, queryText)
-                .continueWith(task -> task.getResult().toObjects(UserProfile.class));
+    public Task<List<UserProfile>> selectUsersStartingWith(String field, String queryText) {
+        return queryStartingWith("Users", field, queryText)
+                .continueWith(task ->
+                        toUserProfiles(task.getResult().toObjects(UserProfileDataModel.class)));
+    }
+
+    @Override
+    public Task<List<UserProfile>> selectUsersArrayContains(String field, String queryText) {
+        return queryArrayContains("Users", field, queryText)
+                .continueWith(task ->
+                        toUserProfiles(task.getResult().toObjects(UserProfileDataModel.class)));
     }
 
     @Override
@@ -100,8 +107,14 @@ public class SportalRepo implements ISportalRepo {
     }
 
     @Override
-    public Task<List<Game>> selectGames(String field, String queryText) {
-        return queryCollection("Games", field, queryText)
+    public Task<List<Game>> selectGamesStartingWith(String field, String queryText) {
+        return queryStartingWith("Games", field, queryText)
+                .continueWith(task -> task.getResult().toObjects(Game.class));
+    }
+
+    @Override
+    public Task<List<Game>> selectGamesArrayContains(String field, String queryText) {
+        return queryArrayContains("Games", field, queryText)
                 .continueWith(task -> task.getResult().toObjects(Game.class));
     }
 
@@ -153,14 +166,26 @@ public class SportalRepo implements ISportalRepo {
         });
     }
 
-    private Task<QuerySnapshot> queryCollection(String collection, String field, String queryText) {
+    private Task<QuerySnapshot> queryStartingWith(String collection, String field, String queryText) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         return db.collection(collection)
                 .orderBy(field)
                 .startAt(queryText)
                 .endAt(queryText + "\uf8ff") // StackOverflow hacks...
-                .get();
+                .get()
+                .addOnSuccessListener(snapshot -> Log.d(DATA_DEBUG, snapshot + " retrieved"))
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "query collection failure", e));
+    }
+    
+    private Task<QuerySnapshot> queryArrayContains(String collection, String field, String queryText) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        return db.collection(collection)
+                .whereArrayContains(field, queryText)
+                .get()
+                .addOnSuccessListener(snapshot -> Log.d(DATA_DEBUG, snapshot + " retrieved"))
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "query collection failure", e));
     }
 
     private void delete(String docID, String collectionPath) {
@@ -182,18 +207,27 @@ public class SportalRepo implements ISportalRepo {
         Map<String, List<String>> oldMap = dataModel.getGames();
         for (String s : oldMap.keySet()) {
             List<String> games = oldMap.get(s);
-            if (games != null)
-            newMap.put(GameStatus.fromId(s), games);
+            if (games != null) {
+                newMap.put(GameStatus.fromId(s), games);
+            }
         }
 
         return UserProfile.builder()
                 .withUid(dataModel.getUid())
+                .withDisplayName(dataModel.getDisplayName())
                 .withGender(dataModel.getGender())
                 .withBirthday(LocalDate.parse(dataModel.getBirthday()))
-                .withResidingCountry()
                 .addAllPreferences(dataModel.getPreferences())
                 .putAllGames(newMap)
                 .build();
-        //TODO: SETTLE TYPE FOR LOCATION :(
+    }
+
+
+    private List<UserProfile> toUserProfiles(List<UserProfileDataModel> dataModels) {
+        List<UserProfile> newList = new ArrayList<>();
+        for (UserProfileDataModel dataModel : dataModels) {
+            newList.add(toUserProfile(dataModel));
+        }
+        return newList;
     }
 }

@@ -36,7 +36,8 @@ public class HomepageActivity extends AppCompatActivity implements GamesFragment
         Log.d(HOMEPAGE_DEBUG, "homepage activity created");
 
         SportalRepo repo = new SportalRepo();
-        repo.testAdd();
+        repo.test();
+        Log.d(HOMEPAGE_DEBUG, "did test");
 
         currUser = getIntent().getParcelableExtra(CURR_USER_TAG);
         binding = DataBindingUtil.setContentView(this, R.layout.homepage_activity);

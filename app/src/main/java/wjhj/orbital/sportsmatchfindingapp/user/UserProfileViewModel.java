@@ -12,13 +12,6 @@ import wjhj.orbital.sportsmatchfindingapp.game.Game;
 
 public class UserProfileViewModel extends ViewModel {
 
-    UserProfile userProfile = UserProfile.builder()
-            .withUid("help")
-            .withGender(Gender.FEMALE)
-            .withBirthday(LocalDate.now())
-            .addPreferences("sports", "frisbee")
-            .build();
-
     private MutableLiveData<List<Game>> confirmedGames;
 
     public MutableLiveData<List<Game>> getConfirmedGames() {
