@@ -19,9 +19,8 @@ import com.google.firebase.auth.FirebaseUser;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.HomepageActivityBinding;
-import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 
-public class HomepageActivity extends AppCompatActivity implements GamesFragment.OnFragmentInteractionListener {
+public class HomepageActivity extends AppCompatActivity {
 
     public static final String CURR_USER_TAG = "current_user";
     public static final String HOMEPAGE_DEBUG = "homepage";
@@ -34,10 +33,6 @@ public class HomepageActivity extends AppCompatActivity implements GamesFragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(HOMEPAGE_DEBUG, "homepage activity created");
-
-        SportalRepo repo = new SportalRepo();
-        repo.test();
-        Log.d(HOMEPAGE_DEBUG, "did test");
 
         currUser = getIntent().getParcelableExtra(CURR_USER_TAG);
         binding = DataBindingUtil.setContentView(this, R.layout.homepage_activity);
@@ -56,7 +51,7 @@ public class HomepageActivity extends AppCompatActivity implements GamesFragment
                 //todo
                 break;
             case R.id.nav_games:
-                fragment = GamesFragment.newInstance();
+                fragment = GamesTabFragment.newInstance();
                 break;
             case R.id.nav_search:
                 //todo
@@ -84,6 +79,7 @@ public class HomepageActivity extends AppCompatActivity implements GamesFragment
                 FirebaseAuth.getInstance().signOut();
                 Intent logoutIntent = new Intent(this, LoginActivity.class);
                 startActivity(logoutIntent);
+                finish();
                 break;
             }
 
@@ -94,15 +90,5 @@ public class HomepageActivity extends AppCompatActivity implements GamesFragment
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.top_options_menu, menu);
         return true;
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        //TODO: implement/check if necessary
-    }
-
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-        //TODO: implement/check if necessary
     }
 }

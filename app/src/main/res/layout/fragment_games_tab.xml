@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".homepage.GamesFragment">
+        tools:context=".homepage.GamesTabFragment">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/test_filter_button"

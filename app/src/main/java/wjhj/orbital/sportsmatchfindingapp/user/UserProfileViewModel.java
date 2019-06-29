@@ -5,6 +5,8 @@ import android.location.Location;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.firebase.firestore.auth.User;
+
 import org.threeten.bp.LocalDateTime;
 
 import java.util.ArrayList;
@@ -16,10 +18,10 @@ import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 
 public class UserProfileViewModel extends ViewModel {
 
+    private UserProfile currUser;
     private MutableLiveData<List<Game>> confirmedGames;
 
     public MutableLiveData<List<Game>> getConfirmedGames() {
-
         //TESTS
         List<Game> games = new ArrayList<>();
         Game game1 = Game.builder()
