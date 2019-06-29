@@ -9,9 +9,9 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
 public interface ISportalRepo {
 
-    void addUser(UserProfile userProfile);
+    void addUser(String uid, UserProfile userProfile);
 
-    void updateUser(UserProfile userProfile);
+    void updateUser(String uid, UserProfile userProfile);
 
     Task<UserProfile> getUser(String userUid);
 
@@ -21,7 +21,7 @@ public interface ISportalRepo {
 
     void deleteUser(String userUid);
 
-    void addGame(String currUserUid, Game game);
+    void addGame(Game game);
 
     void updateGame(String gameId, Game game);
 

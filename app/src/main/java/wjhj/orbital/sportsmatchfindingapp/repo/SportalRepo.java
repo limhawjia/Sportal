@@ -1,5 +1,6 @@
 package wjhj.orbital.sportsmatchfindingapp.repo;
 
+import android.location.Location;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
@@ -11,39 +12,55 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
+import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
 public class SportalRepo implements ISportalRepo {
     private static final String DATA_DEBUG = "SportalRepo";
 
     public void test() {
-        //:)
+        Game game1 = Game.builder()
+                .withGameName("SOCCER :D")
+                .withDescription("TMR 6pm OR DIE")
+                .withSport(Sport.BADMINTON)
+                .withLocation(new Location(""))
+                .withMinPlayers(4)
+                .withMaxPlayers(6)
+                .withSkillLevel(Difficulty.INTERMEDIATE)
+                .withStartTime(LocalDateTime.now())
+                .withEndTime(LocalDateTime.of(2019, 7, 1, 12, 12))
+                .addParticipatingUids("123123", "1231", "531")
+                .build();
+
+        addGame(game1);
     }
 
     @Override
-    public void addUser(UserProfile userProfile) {
+    public void addUser(String uid, UserProfile userProfile) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         UserProfileDataModel dataModel = toUserProfileDataModel(userProfile);
 
         db.collection("Users")
-                .document(dataModel.getUid())
+                .document(uid)
                 .set(dataModel)
-                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, dataModel.getUid() + " added"))
-                .addOnFailureListener(e -> Log.d(DATA_DEBUG, dataModel.getUid() + " add failed", e));
+                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, uid + " added"))
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, uid + " add failed", e));
     }
 
     @Override
-    public void updateUser(UserProfile userProfile) {
+    public void updateUser(String uid, UserProfile userProfile) {
         UserProfileDataModel dataModel = toUserProfileDataModel(userProfile);
-        update(dataModel.getUid(), "Users", dataModel);
+        update(uid, "Users", dataModel);
     }
 
     @Override
@@ -74,21 +91,16 @@ public class SportalRepo implements ISportalRepo {
     }
 
     @Override
-    public void addGame(String currUserUid, Game game) {
+    public void addGame(Game game) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         DocumentReference docRef = db.collection("Games")
                 .document();
 
         docRef.set(game)
                 .addOnSuccessListener(documentReference -> {
                     Log.d(DATA_DEBUG, "Add game complete.");
-
-                    //If game added successfully, also add game to this user;
-                    addGameToUser(currUserUid, docRef.getId());
-
-                    //Also add to the remaining participating users
-                    for (String user : game.getParticipating()) {
+                    // If game added successfully, also add game to all users participating
+                    for (String user : game.getParticipatingUids()) {
                         addGameToUser(user, docRef.getId());
                     }
                 })
@@ -123,13 +135,13 @@ public class SportalRepo implements ISportalRepo {
         delete(gameId, "Games");
     }
 
-    //Helper methods
+    // Helper methods
     private void addGameToUser(String userUid, String gameID) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("Users")
                 .document(userUid)
-                .update("pendingGames", FieldValue.arrayUnion(gameID))
+                .update("games.pending", FieldValue.arrayUnion(gameID))
                 .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, "Added game to " + userUid))
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game to " + userUid + " failed", e));
     }
@@ -213,7 +225,6 @@ public class SportalRepo implements ISportalRepo {
         }
 
         return UserProfile.builder()
-                .withUid(dataModel.getUid())
                 .withDisplayName(dataModel.getDisplayName())
                 .withGender(dataModel.getGender())
                 .withBirthday(LocalDate.parse(dataModel.getBirthday()))
@@ -229,5 +240,28 @@ public class SportalRepo implements ISportalRepo {
             newList.add(toUserProfile(dataModel));
         }
         return newList;
+    }
+
+    private GameDataModel toGameDataModel(Game game) {
+        return new GameDataModel(game);
+    }
+
+    private Game toGame(GameDataModel dataModel) {
+        Location location = new Location("");
+        location.setLatitude(dataModel.getLocation().getLatitude());
+        location.setLongitude(dataModel.getLocation().getLongitude());
+
+        return Game.builder()
+                .withGameName(dataModel.getGameName())
+                .withDescription(dataModel.getDescription())
+                .withSport(dataModel.getSport())
+                .withLocation(location)
+                .withMinPlayers(dataModel.getMinPlayers())
+                .withMaxPlayers(dataModel.getMaxPlayers())
+                .withSkillLevel(dataModel.getSkillLevel())
+                .withStartTime(LocalDateTime.parse(dataModel.getStartTime()))
+                .withEndTime(LocalDateTime.parse(dataModel.getStartTime()))
+                .addAllParticipatingUids(dataModel.getParticipatingUids())
+                .build();
     }
 }

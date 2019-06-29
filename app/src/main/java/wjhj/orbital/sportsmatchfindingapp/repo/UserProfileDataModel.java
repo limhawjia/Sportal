@@ -9,7 +9,6 @@ import wjhj.orbital.sportsmatchfindingapp.user.Gender;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
 class UserProfileDataModel {
-    private String uid;
     private String displayName;
     private Gender gender;
     private String birthday;
@@ -21,17 +20,12 @@ class UserProfileDataModel {
     }
 
     UserProfileDataModel(UserProfile userProfile) {
-        uid = userProfile.getUid();
         displayName = userProfile.getDisplayName();
         gender = userProfile.getGender();
         birthday = userProfile.getBirthday().toString();
         preferences = userProfile.getPreferences();
         games = convertGames(userProfile.getGames());
 
-    }
-
-    public String getUid() {
-        return uid;
     }
 
     public String getDisplayName() {

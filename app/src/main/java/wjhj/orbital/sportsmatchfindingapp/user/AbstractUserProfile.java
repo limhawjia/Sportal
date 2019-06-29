@@ -1,10 +1,5 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
-
-import android.location.Location;
-
-import com.google.common.base.Optional;
-
 import org.immutables.value.Value;
 import org.threeten.bp.LocalDate;
 
@@ -23,16 +18,11 @@ import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 @Value.Immutable
 public abstract class AbstractUserProfile {
     //FIND OUT WHAT ENUM CONSTANT WARNING IS: unknown enum constant Modifier.FINAL
-    public abstract String getUid();
-
     public abstract String getDisplayName();
 
     public abstract Gender getGender();
 
     public abstract LocalDate getBirthday();
-
-    // Decide how to implement location stuffs
-    // public abstract Optional<Location> getResidingCountry();
 
     public abstract List<String> getPreferences();
 
