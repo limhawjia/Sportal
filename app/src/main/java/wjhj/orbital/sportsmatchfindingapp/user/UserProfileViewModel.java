@@ -32,6 +32,7 @@ public class UserProfileViewModel extends ViewModel {
                 .withSkillLevel(Difficulty.INTERMEDIATE)
                 .withStartTime(LocalDateTime.now())
                 .withEndTime(LocalDateTime.of(2019, 7, 1, 12, 12))
+                .withUid("iamgame")
                 .addParticipatingUids("123123", "1231", "531")
                 .build();
 

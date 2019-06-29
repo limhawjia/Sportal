@@ -21,7 +21,9 @@ public interface ISportalRepo {
 
     void deleteUser(String userUid);
 
-    void addGame(Game game);
+    String generateGameUid();
+
+    void addGame(String gameId, Game game);
 
     void updateGame(String gameId, Game game);
 

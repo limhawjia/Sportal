@@ -18,7 +18,12 @@ class GameDataModel {
     private Difficulty skillLevel;
     private String startTime;
     private String endTime;
+    private String uid;
     private List<String> participatingUids;
+
+    // Mandatory no args constructor
+    public GameDataModel() {
+    }
 
     GameDataModel(Game game) {
         gameName = game.getGameName();
@@ -30,6 +35,7 @@ class GameDataModel {
         skillLevel = game.getSkillLevel();
         startTime = game.getStartTime().toString();
         endTime = game.getEndTime().toString();
+        uid = game.getUid();
         participatingUids = game.getParticipatingUids();
     }
 
@@ -67,6 +73,10 @@ class GameDataModel {
 
     public String getEndTime() {
         return endTime;
+    }
+
+    public String getUid() {
+        return uid;
     }
 
     public List<String> getParticipatingUids() {

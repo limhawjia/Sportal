@@ -4,7 +4,6 @@ import android.location.Location;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -19,31 +18,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
-import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
 public class SportalRepo implements ISportalRepo {
     private static final String DATA_DEBUG = "SportalRepo";
-
-    public void test() {
-        Game game1 = Game.builder()
-                .withGameName("SOCCER :D")
-                .withDescription("TMR 6pm OR DIE")
-                .withSport(Sport.BADMINTON)
-                .withLocation(new Location(""))
-                .withMinPlayers(4)
-                .withMaxPlayers(6)
-                .withSkillLevel(Difficulty.INTERMEDIATE)
-                .withStartTime(LocalDateTime.now())
-                .withEndTime(LocalDateTime.of(2019, 7, 1, 12, 12))
-                .addParticipatingUids("123123", "1231", "531")
-                .build();
-
-        addGame(game1);
-    }
 
     @Override
     public void addUser(String uid, UserProfile userProfile) {
@@ -60,7 +40,7 @@ public class SportalRepo implements ISportalRepo {
     @Override
     public void updateUser(String uid, UserProfile userProfile) {
         UserProfileDataModel dataModel = toUserProfileDataModel(userProfile);
-        update(uid, "Users", dataModel);
+        updateDocument(uid, "Users", dataModel);
     }
 
     @Override
@@ -87,21 +67,31 @@ public class SportalRepo implements ISportalRepo {
 
     @Override
     public void deleteUser(String userUid) {
-        delete(userUid, "Users");
+        deleteDocument(userUid, "Users");
+    }
+
+    // Should be called when building a game to get the uid for the game.
+    @Override
+    public String generateGameUid() {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        return db.collection("Games")
+                .document()
+                .getId();
     }
 
     @Override
-    public void addGame(Game game) {
+    public void addGame(String gameUid, Game game) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference docRef = db.collection("Games")
-                .document();
+        GameDataModel dataModel = toGameDataModel(game);
 
-        docRef.set(game)
+        db.collection("Games")
+                .document(gameUid)
+                .set(dataModel)
                 .addOnSuccessListener(documentReference -> {
                     Log.d(DATA_DEBUG, "Add game complete.");
                     // If game added successfully, also add game to all users participating
                     for (String user : game.getParticipatingUids()) {
-                        addGameToUser(user, docRef.getId());
+                        addGameToUser(user, gameUid);
                     }
                 })
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game failed.", e));
@@ -110,32 +100,35 @@ public class SportalRepo implements ISportalRepo {
 
     @Override
     public void updateGame(String gameId, Game game) {
-        update(gameId, "Games", game);
+        GameDataModel dataModel = toGameDataModel(game);
+        updateDocument(gameId, "Games", dataModel);
     }
 
     @Override
     public Task<Game> getGame(String gameID) {
-        return convertToObject(getDocumentFromCollection(gameID, "Games"), Game.class);
+        Task<GameDataModel> dataModelTask =
+                convertToObject(getDocumentFromCollection(gameID, "Games"), GameDataModel.class);
+        return dataModelTask.continueWith(task -> toGame(task.getResult()));
     }
 
     @Override
     public Task<List<Game>> selectGamesStartingWith(String field, String queryText) {
         return queryStartingWith("Games", field, queryText)
-                .continueWith(task -> task.getResult().toObjects(Game.class));
+                .continueWith(task -> toGames(task.getResult().toObjects(GameDataModel.class)));
     }
 
     @Override
     public Task<List<Game>> selectGamesArrayContains(String field, String queryText) {
         return queryArrayContains("Games", field, queryText)
-                .continueWith(task -> task.getResult().toObjects(Game.class));
+                .continueWith(task -> toGames(task.getResult().toObjects(GameDataModel.class)));
     }
 
     @Override
     public void deleteGame(String gameId) {
-        delete(gameId, "Games");
+        deleteDocument(gameId, "Games");
     }
 
-    // Helper methods
+    // HELPER METHODS
     private void addGameToUser(String userUid, String gameID) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -146,14 +139,14 @@ public class SportalRepo implements ISportalRepo {
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game to " + userUid + " failed", e));
     }
 
-    private void update(String docId, String collectionPath, Object dataModel) {
+    private void updateDocument(String docId, String collectionPath, Object dataModel) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection(collectionPath)
                 .document(docId)
                 .set(dataModel, SetOptions.merge())
-                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, docId + " update success"))
-                .addOnFailureListener(e -> Log.d(DATA_DEBUG, docId + "update failure", e));
+                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, docId + " updateDocument success"))
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, docId + "updateDocument failure", e));
     }
 
     private Task<DocumentSnapshot> getDocumentFromCollection(String docID, String collectionPath) {
@@ -200,7 +193,7 @@ public class SportalRepo implements ISportalRepo {
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "query collection failure", e));
     }
 
-    private void delete(String docID, String collectionPath) {
+    private void deleteDocument(String docID, String collectionPath) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection(collectionPath)
@@ -210,6 +203,7 @@ public class SportalRepo implements ISportalRepo {
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Error deleting document", e));
     }
 
+    // METHODS TO CONVERT BETWEEN DOMAIN MODEL AND DATA MODEL
     private UserProfileDataModel toUserProfileDataModel(UserProfile userProfile) {
         return new UserProfileDataModel(userProfile);
     }
@@ -228,11 +222,11 @@ public class SportalRepo implements ISportalRepo {
                 .withDisplayName(dataModel.getDisplayName())
                 .withGender(dataModel.getGender())
                 .withBirthday(LocalDate.parse(dataModel.getBirthday()))
+                .withUid(dataModel.getUid())
                 .addAllPreferences(dataModel.getPreferences())
                 .putAllGames(newMap)
                 .build();
     }
-
 
     private List<UserProfile> toUserProfiles(List<UserProfileDataModel> dataModels) {
         List<UserProfile> newList = new ArrayList<>();
@@ -261,7 +255,16 @@ public class SportalRepo implements ISportalRepo {
                 .withSkillLevel(dataModel.getSkillLevel())
                 .withStartTime(LocalDateTime.parse(dataModel.getStartTime()))
                 .withEndTime(LocalDateTime.parse(dataModel.getStartTime()))
+                .withUid(dataModel.getUid())
                 .addAllParticipatingUids(dataModel.getParticipatingUids())
                 .build();
+    }
+
+    private List<Game> toGames(List<GameDataModel> dataModels) {
+        List<Game> newList = new ArrayList<>();
+        for (GameDataModel dataModel : dataModels) {
+            newList.add(toGame(dataModel));
+        }
+        return newList;
     }
 }

@@ -24,6 +24,8 @@ public abstract class AbstractUserProfile {
 
     public abstract LocalDate getBirthday();
 
+    public abstract String getUid();
+
     public abstract List<String> getPreferences();
 
     public abstract Map<GameStatus, List<String>> getGames();

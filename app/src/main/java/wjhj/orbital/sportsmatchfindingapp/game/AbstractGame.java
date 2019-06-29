@@ -36,5 +36,7 @@ public abstract class AbstractGame {
 
     public abstract LocalDateTime getEndTime();
 
+    public abstract String getUid();
+
     public abstract List<String> getParticipatingUids();
 }

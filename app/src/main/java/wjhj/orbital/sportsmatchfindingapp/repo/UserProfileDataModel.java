@@ -12,6 +12,7 @@ class UserProfileDataModel {
     private String displayName;
     private Gender gender;
     private String birthday;
+    private String uid;
     private List<String> preferences;
     private Map<String, List<String>> games;
 
@@ -23,6 +24,7 @@ class UserProfileDataModel {
         displayName = userProfile.getDisplayName();
         gender = userProfile.getGender();
         birthday = userProfile.getBirthday().toString();
+        uid = userProfile.getUid();
         preferences = userProfile.getPreferences();
         games = convertGames(userProfile.getGames());
 
@@ -38,6 +40,10 @@ class UserProfileDataModel {
 
     public String getBirthday() {
         return birthday;
+    }
+
+    public String getUid() {
+        return uid;
     }
 
     public List<String> getPreferences() {
