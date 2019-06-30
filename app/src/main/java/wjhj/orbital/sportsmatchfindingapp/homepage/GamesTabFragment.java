@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGamesTabBinding;
 
 /**
@@ -69,9 +70,9 @@ public class GamesTabFragment extends Fragment {
         binding.setGamesTab(gamesTabViewModel);
         binding.setLifecycleOwner(this);
 
-        setUpRecyclerView(binding.confirmedGamesRecyclerView);
+        setUpRecyclerView(binding.gamesTabRecyclerView);
 
-        binding.testFilterButton.setOnClickListener(view -> mGamesCardAdapter.updateGames(new ArrayList<>()));
+        binding.gamesTabSearch.setOnClickListener(view -> mGamesCardAdapter.updateGames(new ArrayList<>()));
 
         return binding.getRoot();
     }

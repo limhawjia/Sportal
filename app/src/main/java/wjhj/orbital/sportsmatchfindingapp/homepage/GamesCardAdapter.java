@@ -22,7 +22,6 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
     }
 
     public void updateGames(List<Game> newGames) {
-        //todo: proof of concept test. refactor
         games = newGames;
         notifyDataSetChanged();
     }
