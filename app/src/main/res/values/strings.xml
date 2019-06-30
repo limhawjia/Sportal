@@ -31,8 +31,11 @@
     <string name="gender">Gender</string>
     <string name="birthday">Birthday - dd/mm/yy</string>
     <string name="location">Location</string>
-    <string name="sports">Sports I play</string>
+    <string name="sports">Sports I play:</string>
     <string name="done">Done</string>
+    <string name="click_to_add">Add</string>
+    <string name="birthday_dialog">Birthday</string>
+    <string name="sport_dialog">Sports</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

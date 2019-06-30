@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.HomepageActivityBinding;
+import wjhj.orbital.sportsmatchfindingapp.user.PreferencesActivity;
 
 public class HomepageActivity extends AppCompatActivity {
 
@@ -54,7 +55,7 @@ public class HomepageActivity extends AppCompatActivity {
                 fragment = GamesTabFragment.newInstance();
                 break;
             case R.id.nav_search:
-                //todo
+                startActivity(new Intent(this, PreferencesActivity.class));
                 break;
             case R.id.nav_social:
                 //todo
