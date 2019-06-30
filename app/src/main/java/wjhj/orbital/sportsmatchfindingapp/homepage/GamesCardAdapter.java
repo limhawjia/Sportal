@@ -16,22 +16,6 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
 
     private List<Game> games;
 
-    public static class CardViewHolder extends RecyclerView.ViewHolder {
-
-        public CardView cardView;
-        private GamesCardViewBinding cardBinding;
-
-        public CardViewHolder(@NonNull CardView itemView, GamesCardViewBinding binding) {
-            super(itemView);
-            cardView = itemView;
-            cardBinding = binding;
-        }
-
-        private void setGame(Game game) {
-            cardBinding.setGame(game);
-        }
-    }
-
     public GamesCardAdapter(List<Game> games) {
         this.games = games;
     }
@@ -60,5 +44,22 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
     @Override
     public int getItemCount() {
         return games.size();
+    }
+
+
+    public static class CardViewHolder extends RecyclerView.ViewHolder {
+
+        public CardView cardView;
+        private GamesCardViewBinding cardBinding;
+
+        public CardViewHolder(@NonNull CardView itemView, GamesCardViewBinding binding) {
+            super(itemView);
+            cardView = itemView;
+            cardBinding = binding;
+        }
+
+        private void setGame(Game game) {
+            cardBinding.setGame(game);
+        }
     }
 }

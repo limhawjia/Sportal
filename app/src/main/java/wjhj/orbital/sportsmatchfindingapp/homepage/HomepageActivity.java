@@ -16,13 +16,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.HomepageActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
 

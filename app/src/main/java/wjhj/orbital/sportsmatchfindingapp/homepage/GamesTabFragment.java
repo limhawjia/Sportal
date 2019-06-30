@@ -13,12 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
 
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGamesTabBinding;
-import wjhj.orbital.sportsmatchfindingapp.game.Game;
-import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 
 /**
@@ -33,6 +30,7 @@ public class GamesTabFragment extends Fragment {
 
     private UserProfileViewModel userProfileViewModel;
     private FragmentGamesTabBinding binding;
+    private GamesCardAdapter mGamesCardAdapter;
     private String mTabName;
 
     public GamesTabFragment() {
@@ -60,7 +58,8 @@ public class GamesTabFragment extends Fragment {
         if (getArguments() != null) {
             mTabName = getArguments().getString(GAME_STATUS_TAG);
         }
-        userProfileViewModel = ViewModelProviders.of(getActivity()).get(UserProfileViewModel.class);
+        userProfileViewModel = ViewModelProviders.of(getParentFragment().getActivity())
+                .get(UserProfileViewModel.class);
     }
 
     @Override
@@ -70,17 +69,21 @@ public class GamesTabFragment extends Fragment {
         binding.setUserProfile(userProfileViewModel);
         binding.setLifecycleOwner(getActivity());
 
-        RecyclerView recyclerView = binding.confirmedGamesRecyclerView;
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        Map<GameStatus, List<String>> blah = userProfileViewModel.getAllGames().getValue();
-        Log.d("gamesSwipeView", "blah is null: " + (blah == null));
-        GamesCardAdapter adapter = null;
-        //        new GamesCardAdapter(blah.get(GameStatus.fromString(mTabName)));
-        recyclerView.setAdapter(adapter);
+        setUpRecyclerView(binding.confirmedGamesRecyclerView);
 
-        binding.testFilterButton.setOnClickListener(view -> adapter.remove());
+        binding.testFilterButton.setOnClickListener(view -> mGamesCardAdapter.remove());
 
         return binding.getRoot();
+    }
+
+    private void setUpRecyclerView(RecyclerView recyclerView) {
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mGamesCardAdapter = new GamesCardAdapter(new ArrayList<>());
+        recyclerView.setAdapter(mGamesCardAdapter);
+
+        userProfileViewModel.getGames().observe(getParentFragment(), newGames -> {
+            Log.d("gamesSwipeView", "games: " + newGames.toString());
+        });
     }
 }

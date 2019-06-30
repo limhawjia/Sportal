@@ -10,6 +10,7 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -25,6 +26,7 @@ public class UserProfileViewModel extends ViewModel {
     private SportalRepo repo;
     private MutableLiveData<UserProfile> currUser;
     private MutableLiveData<Map<GameStatus, List<String>>> gameIds;
+    private LiveData<Map<GameStatus, List<Game>>> games;
 
     public UserProfileViewModel(String userUid) {
         repo = new SportalRepo();
@@ -41,9 +43,15 @@ public class UserProfileViewModel extends ViewModel {
         return currUser;
     }
 
+    public LiveData<Map<GameStatus, List<Game>>> getGames() {
+        if (games == null) {
+            games = setUpGamesMapping();
+        }
+        return games;
+    }
+
     @NonNull
-    public LiveData<Map<GameStatus, List<Game>>> getAllGames() {
-        Log.d("gamesSwipeView", "gameids is null: " + (gameIds.getValue() == null));
+    private LiveData<Map<GameStatus, List<Game>>> setUpGamesMapping() {
         return Transformations.switchMap(gameIds, input -> {
             MutableLiveData<Map<GameStatus, List<Game>>> liveData = new MutableLiveData<>();
             Map<GameStatus, List<Game>> backingMap = new EnumMap<>(GameStatus.class);
@@ -51,14 +59,21 @@ public class UserProfileViewModel extends ViewModel {
             for (GameStatus gameStatus : GameStatus.values()) {
                 backingMap.put(gameStatus, new ArrayList<>());
             }
-            liveData.postValue(backingMap);
+            liveData.setValue(backingMap);
 
             for (Map.Entry<GameStatus, List<String>> entry : input.entrySet()) {
                 List<String> ids = entry.getValue();
+                List<Task<Game>> gameTaskList = new ArrayList<>();
                 for (String id : ids) {
-                    repo.getGame(id)
-                            .addOnSuccessListener(game -> backingMap.get(entry.getKey()).add(game));
+                    Task<Game> gameTask = repo.getGame(id)
+                            .addOnSuccessListener(game -> backingMap.get(entry.getKey()).add(game))
+                            .addOnFailureListener(e -> Log.d("gamesSwipeView", "fail", e));
+                    gameTaskList.add(gameTask);
                 }
+                Tasks.whenAllComplete(gameTaskList)
+                        .addOnSuccessListener(tasks -> {
+                            liveData.postValue(backingMap);
+                        });
             }
 
             return liveData;
