@@ -5,22 +5,23 @@ public enum GameStatus {
     CONFIRMED("confirmed"),
     COMPLETED("completed");
 
-    private String id;
+    private String str;
 
-    GameStatus(String id) {
-        this.id = id;
+    GameStatus(String str) {
+        this.str = str;
     }
 
-    public String getId() {
-        return this.id;
-    }
-
-    public static GameStatus fromId(String id) {
+    public static GameStatus fromString(String str) {
         for (GameStatus s : GameStatus.values()) {
-            if (s.id.equals(id)) {
+            if (s.str.equals(str)) {
                 return s;
             }
         }
-        throw new IllegalArgumentException("Unknown game status id: " + id);
+        throw new IllegalArgumentException("Invalid game status : " + str);
+    }
+
+    @Override
+    public String toString() {
+        return str;
     }
 }

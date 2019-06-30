@@ -165,7 +165,7 @@ public class SportalRepo implements ISportalRepo {
             if (snapshot.exists()) {
                 return snapshot.toObject(valueType);
             } else {
-                Log.d(DATA_DEBUG,  valueType.getSimpleName() + " does not exist.");
+                Log.d(DATA_DEBUG,  snapshot.toString() + " does not exist.");
                 return null;
             }
         });
@@ -214,7 +214,7 @@ public class SportalRepo implements ISportalRepo {
         for (String s : oldMap.keySet()) {
             List<String> games = oldMap.get(s);
             if (games != null) {
-                newMap.put(GameStatus.fromId(s), games);
+                newMap.put(GameStatus.fromString(s), games);
             }
         }
 

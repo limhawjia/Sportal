@@ -2,6 +2,8 @@ package wjhj.orbital.sportsmatchfindingapp.game;
 
 import android.location.Location;
 
+import androidx.core.util.Preconditions;
+
 import org.immutables.value.Value;
 import org.threeten.bp.LocalDateTime;
 
@@ -39,4 +41,7 @@ public abstract class AbstractGame {
     public abstract String getUid();
 
     public abstract List<String> getParticipatingUids();
+
+    // TODO: Maybe implement a precondition check for minimum number of participating.
+    // Alternatively, refactor to have a game creator attribute.
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
+import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 
 @Value.Style(
         stagedBuilder = true,
@@ -26,7 +27,7 @@ public abstract class AbstractUserProfile {
 
     public abstract String getUid();
 
-    public abstract List<String> getPreferences();
+    public abstract List<Sport> getPreferences();
 
     public abstract Map<GameStatus, List<String>> getGames();
 }

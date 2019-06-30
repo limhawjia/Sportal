@@ -1,11 +1,10 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
 import android.location.Location;
+import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
-import com.google.firebase.firestore.auth.User;
 
 import org.threeten.bp.LocalDateTime;
 
@@ -15,11 +14,24 @@ import java.util.List;
 import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 
 public class UserProfileViewModel extends ViewModel {
 
+    private SportalRepo repo;
     private UserProfile currUser;
-    private MutableLiveData<List<Game>> confirmedGames;
+
+    public UserProfileViewModel(String userUid) {
+        repo = new SportalRepo();
+
+        repo.getUser(userUid)
+            .addOnSuccessListener(userProfile -> currUser = userProfile);
+    }
+
+    public UserProfile getCurrUser() {
+        return currUser;
+    }
+
 
     public MutableLiveData<List<Game>> getConfirmedGames() {
         //TESTS
@@ -56,7 +68,7 @@ public class UserProfileViewModel extends ViewModel {
 
         MutableLiveData<List<Game>> liveData = new MutableLiveData<>();
         liveData.setValue(games);
-        confirmedGames = liveData;
+        MutableLiveData<List<Game>> confirmedGames = liveData;
 
         return confirmedGames;
     }
