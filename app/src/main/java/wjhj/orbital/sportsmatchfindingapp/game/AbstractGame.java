@@ -50,12 +50,12 @@ public abstract class AbstractGame {
 
         if (startDay.equals(endDay)) {
             return "Date: " + startDay.format(DateTimeFormatter.ISO_LOCAL_DATE)
-                    + "    From: " + getStartTime().format(DateTimeFormatter.ISO_LOCAL_TIME)
+                    + "\nFrom: " + getStartTime().format(DateTimeFormatter.ISO_LOCAL_TIME)
                     + "    To: " + getEndTime().format(DateTimeFormatter.ISO_LOCAL_TIME);
         } else {
             return "Date: " + startDay.format(DateTimeFormatter.ISO_LOCAL_DATE) + " - "
                     + endDay.format(DateTimeFormatter.ISO_LOCAL_DATE)
-                    + "    From: " + getStartTime().format(DateTimeFormatter.ISO_LOCAL_TIME)
+                    + "\nFrom: " + getStartTime().format(DateTimeFormatter.ISO_LOCAL_TIME)
                     + "    To: " + getEndTime().format(DateTimeFormatter.ISO_LOCAL_TIME);
         }
     }

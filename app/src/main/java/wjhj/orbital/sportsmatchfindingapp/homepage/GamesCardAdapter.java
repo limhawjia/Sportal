@@ -2,9 +2,11 @@ package wjhj.orbital.sportsmatchfindingapp.homepage;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.databinding.BindingAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -61,5 +63,10 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
         private void setGame(Game game) {
             cardBinding.setGame(game);
         }
+    }
+
+    @BindingAdapter("android:bindingSrc")
+    public static void setImageResource(ImageView view, int resource) {
+        view.setImageResource(resource);
     }
 }
