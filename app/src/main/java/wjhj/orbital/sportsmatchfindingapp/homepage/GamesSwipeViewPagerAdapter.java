@@ -26,7 +26,7 @@ public class GamesSwipeViewPagerAdapter extends FragmentPagerAdapter {
     }
 
     public void updateGameIds(Map<GameStatus, List<String>> newAllGameIds) {
-        if (newAllGameIds != null) {
+        if (newAllGameIds != null && !newAllGameIds.isEmpty()) {
             allGameIds = new EnumMap<>(newAllGameIds);
         }
 

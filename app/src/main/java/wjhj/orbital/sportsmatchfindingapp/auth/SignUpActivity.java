@@ -15,7 +15,7 @@ import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.SignupActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.user.PreferencesActivity;
 
-public class SignupActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
     public static final String SIGNUP_DEBUG = "signup";
     public static final int PICK_DISPLAY_IMAGE_RC = 1;

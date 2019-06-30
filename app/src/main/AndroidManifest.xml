@@ -20,7 +20,7 @@
         </activity>
 
         <activity
-            android:name=".auth.SignupActivity"
+            android:name=".auth.SignUpActivity"
             android:screenOrientation="portrait">
         </activity>
 
