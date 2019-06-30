@@ -36,6 +36,8 @@
     <string name="click_to_add">Add</string>
     <string name="birthday_dialog">Birthday</string>
     <string name="sport_dialog">Sports</string>
+    <string name="display_name">Display name</string>
+    <string name="gender_reminder">Please select a gender</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -27,6 +27,7 @@ public class SportalRepo implements ISportalRepo {
 
     @Override
     public void addUser(String uid, UserProfile userProfile) {
+        Log.d(DATA_DEBUG, "hi");
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         UserProfileDataModel dataModel = toUserProfileDataModel(userProfile);
 

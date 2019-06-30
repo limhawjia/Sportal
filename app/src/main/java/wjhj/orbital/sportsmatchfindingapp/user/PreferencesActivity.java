@@ -2,6 +2,7 @@ package wjhj.orbital.sportsmatchfindingapp.user;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -18,37 +20,50 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.PreferencesActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
+import wjhj.orbital.sportsmatchfindingapp.homepage.HomepageActivity;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 
 public class PreferencesActivity extends AppCompatActivity {
     public static String PREFERENCES_DEBUG = "preferences";
+    private FirebaseUser currUser;
     private PreferencesActivityBinding binding;
     private UserPreferencesViewModel userPreferencesViewModel;
     private RecyclerView sportsPreferenceRecyclerView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        currUser = (FirebaseUser) getIntent().getExtras().get(HomepageActivity.CURR_USER_TAG);
         Log.d(PREFERENCES_DEBUG, "Preferences created");
         userPreferencesViewModel = ViewModelProviders.of(this).get(UserPreferencesViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.preferences_activity);
         binding.setUserPreferences(userPreferencesViewModel);
         binding.setActivity(this);
-        userPreferencesViewModel.getBirthday().observe(this, new Observer<String>() {
+        userPreferencesViewModel.getBirthdayLiveData().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String s) {
                 binding.birthdayField.setText(s);
                 Log.d(PreferencesActivity.PREFERENCES_DEBUG, "Birthday changed");
             }
-         });
+        });
         sportsPreferenceRecyclerView = binding.sportsPreferenceRecyclerView;
         sportsPreferenceRecyclerView.setHasFixedSize(true);
         sportsPreferenceRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         sportsPreferenceRecyclerView.setAdapter(new SportPreferencesAdapter());
+        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updatePreferences(v);
+            }
+        });
     }
 
     public void selectDate(View v) {
@@ -69,7 +84,6 @@ public class PreferencesActivity extends AppCompatActivity {
 
                         String date = day + "/" + month + "/" + year;
                         userPreferencesViewModel.setBirthday(date);
-                        Log.d(PreferencesActivity.PREFERENCES_DEBUG, userPreferencesViewModel.getBirthday().getValue());
                     }
                 })
                 .setTitle(R.string.birthday_dialog)
@@ -109,6 +123,33 @@ public class PreferencesActivity extends AppCompatActivity {
                 .show();
     }
 
+    public void updatePreferences(View v) {
+        Toast.makeText(this, "blah", Toast.LENGTH_SHORT).show();
+        UserProfile user;
+        try {
+            user = UserProfile.builder().withDisplayName(userPreferencesViewModel.getDisplayName())
+                    .withGender(userPreferencesViewModel.getGender())
+                    .withBirthday(userPreferencesViewModel.getBirthday())
+                    .withUid(currUser.getUid())
+                    .addAllPreferences(userPreferencesViewModel.getSportPreferencesToUpdate())
+                    .build();
+            SportalRepo repo = new SportalRepo();
+            repo.addUser(currUser.getUid(), user);
+            Intent intent = new Intent(this, HomepageActivity.class);
+            intent.putExtra(HomepageActivity.CURR_USER_TAG, currUser);
+            startActivity(intent);
+        } catch (NullPointerException e) {
+            if (userPreferencesViewModel.displayName.getValue() == null) {
+                binding.displayName.setError("Please enter a display name");
+            }
+            if (userPreferencesViewModel.gender.getValue() == null) {
+                Toast.makeText(this, R.string.gender_reminder, Toast.LENGTH_SHORT).show();
+            }
+            if (userPreferencesViewModel.birthday.getValue() == null) {
+                binding.birthday.setError("Please enter a valid birthday");
+            }
+        }
+    }
 
     private class SportsPreferenceHolder extends RecyclerView.ViewHolder {
         wjhj.orbital.sportsmatchfindingapp.game.Sport sport;
@@ -126,6 +167,7 @@ public class PreferencesActivity extends AppCompatActivity {
             this.sportIcon.setImageResource(sport.getIconResourceId());
             this.sportName.setText(this.sport.toString());
         }
+
         void bindAddButton() {
             this.sport = null;
             this.sportIcon.setImageResource(R.drawable.ic_add_box_black_24dp);
@@ -136,6 +178,7 @@ public class PreferencesActivity extends AppCompatActivity {
 
     private class SportPreferencesAdapter extends RecyclerView.Adapter<SportsPreferenceHolder> {
         private List<Sport> sportPreferences;
+
         SportPreferencesAdapter() {
             sportPreferences = userPreferencesViewModel.getSportPreferences();
             sportPreferences.add(0, null);
@@ -160,6 +203,4 @@ public class PreferencesActivity extends AppCompatActivity {
             return sportPreferences.size();
         }
     }
-
-
 }

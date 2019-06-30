@@ -1,7 +1,9 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
 import android.util.Log;
+import android.view.View;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.databinding.BaseObservable;
 import androidx.lifecycle.LiveData;
@@ -10,7 +12,11 @@ import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.firestore.auth.User;
 
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.format.DateTimeFormatter;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
@@ -20,10 +26,15 @@ public class UserPreferencesViewModel extends ViewModel {
     List<Sport> sports = new ArrayList<>();
     MutableLiveData<Gender> gender = new MutableLiveData<>();
     MutableLiveData<String> birthday = new MutableLiveData<>();
-    MutableLiveData<String> location = new MutableLiveData<>();
+    public MutableLiveData<String> displayName = new MutableLiveData<>();
 
 
     public List<Sport> getSportPreferences() {
+        return sports;
+    }
+
+    public List<Sport> getSportPreferencesToUpdate() {
+        sports.remove(0);
         return sports;
     }
 
@@ -43,7 +54,24 @@ public class UserPreferencesViewModel extends ViewModel {
         this.birthday.setValue(date);
     }
 
-    public MutableLiveData<String> getBirthday() {
+    public LocalDate getBirthday() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
+        return LocalDate.parse(birthday.getValue(), formatter);
+    }
+
+    public LiveData<String> getBirthdayLiveData() {
         return this.birthday;
+    }
+
+    public String getDisplayName() {
+        return this.displayName.getValue();
+    }
+
+    public void setDisplayName(String s) {
+        this.displayName.setValue(s);
+    }
+
+    public Gender getGender() {
+        return this.gender.getValue();
     }
 }
