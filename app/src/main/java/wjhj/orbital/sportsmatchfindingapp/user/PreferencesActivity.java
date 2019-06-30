@@ -96,7 +96,13 @@ public class PreferencesActivity extends AppCompatActivity {
         ArrayList<Sport> selectedItems = new ArrayList<>();
         String[] string = Sport.getAllSportsString();
         Sport[] sports = Sport.getAllSports();
-        builder.setMultiChoiceItems(Sport.getAllSportsString(), null, new DialogInterface.OnMultiChoiceClickListener() {
+        boolean[] checked = new boolean[string.length];
+        for (int i = 0; i < sports.length; i++) {
+            if (userPreferencesViewModel.getSportPreferences().contains(sports[i])) {
+                checked[i] = true;
+            }
+        }
+        builder.setMultiChoiceItems(string, checked, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                 if (isChecked) {
