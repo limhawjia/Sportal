@@ -4,6 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <variable
+            name="userPreferences"
+            type="wjhj.orbital.sportsmatchfindingapp.user.UserPreferencesViewModel" />
+        <variable
+            name="activity"
+            type="wjhj.orbital.sportsmatchfindingapp.user.PreferencesActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,11 +22,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="8dp"
             android:text="@string/welcome"
-            android:textSize="24sp"
-            android:gravity="center_horizontal"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -42,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
@@ -60,6 +66,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:checkedButton="@+id/gender"
+                android:onCheckedChanged="@{userPreferences::onGenderChanged}"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/setup_account_message">
@@ -78,23 +85,12 @@
             </RadioGroup>
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/view"
-            style="@style/Divider"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gender_select_layout" />
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/birthday"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:hint="@string/birthday"
             android:inputType="date"
@@ -103,22 +99,24 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view">
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/birthday_field"
+                android:focusableInTouchMode="false"
+                android:onClick="@{activity::selectDate}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/location"
+            android:id="@+id/display_name"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:hint="@string/location"
+            android:hint="@string/display_name"
             android:inputType="date"
             app:boxStrokeColor="@color/colorPrimaryDark"
             app:errorEnabled="true"
@@ -128,7 +126,8 @@
             app:layout_constraintTop_toBottomOf="@+id/birthday">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/location_field"
+                android:id="@+id/name_field"
+                android:text="@={userPreferences.displayName}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -138,7 +137,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="@string/sports"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view2" />
@@ -147,40 +146,38 @@
             android:id="@+id/view2"
             style="@style/Divider"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/location" />
+            app:layout_constraintTop_toBottomOf="@+id/display_name" />
 
-        <FrameLayout
-            android:layout_width="400dp"
-            android:layout_height="640dp"
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/sportsPreferenceRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="20dp"
-            app:layout_constraintBottom_toTopOf="@+id/done"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/button2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </FrameLayout>
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
         <Button
-            android:id="@+id/done"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
+            android:id="@+id/button2"
+            android:layout_width="0dp"
+            android:layout_height="72dp"
             android:text="@string/done"
+            android:textSize="18sp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/colorPrimaryDark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

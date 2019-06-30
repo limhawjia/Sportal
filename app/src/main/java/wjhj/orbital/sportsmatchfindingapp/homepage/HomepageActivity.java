@@ -21,6 +21,8 @@ import com.google.firebase.auth.FirebaseUser;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.HomepageActivityBinding;
+import wjhj.orbital.sportsmatchfindingapp.user.PreferencesActivity;
+import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
 
@@ -65,7 +67,9 @@ public class HomepageActivity extends AppCompatActivity {
                 fragment = GamesSwipeViewFragment.newInstance();
                 break;
             case R.id.nav_search:
-                //todo
+                Intent intent = new Intent(this, GameSearchActivity.class);
+                intent.putExtra(HomepageActivity.CURR_USER_TAG, currUser);
+                startActivity(intent);
                 break;
             case R.id.nav_social:
                 //todo

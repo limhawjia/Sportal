@@ -35,7 +35,20 @@
     <string name="gender">Gender:</string>
     <string name="birthday">Birthday - dd/mm/yy</string>
     <string name="location">Location</string>
-    <string name="sports">Sports I play</string>
+    <string name="sports">Sports I play:</string>
     <string name="done">Done</string>
+    <string name="click_to_add">Add</string>
+    <string name="birthday_dialog">Birthday</string>
+    <string name="sport_dialog">Sports</string>
+    <string name="display_name">Display name</string>
+    <string name="gender_reminder">Please select a gender</string>
+    <string name="search">Search</string>
+    <string name="sport">Sport</string>
+    <string name="time">Time</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
+    <string name="skill_level">Skill level</string>
+    <string name="to">to</string>
+    <string name="date">Date</string>
 
 </resources>
