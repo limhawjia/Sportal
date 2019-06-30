@@ -38,6 +38,14 @@
     <string name="sport_dialog">Sports</string>
     <string name="display_name">Display name</string>
     <string name="gender_reminder">Please select a gender</string>
+    <string name="search">Search</string>
+    <string name="sport">Sport</string>
+    <string name="time">Time</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
+    <string name="skill_level">Skill level</string>
+    <string name="to">to</string>
+    <string name="date">Date</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

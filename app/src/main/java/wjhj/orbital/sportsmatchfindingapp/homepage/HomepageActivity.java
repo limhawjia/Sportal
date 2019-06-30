@@ -71,6 +71,9 @@ public class HomepageActivity extends AppCompatActivity {
                 fragment = GamesSwipeViewFragment.newInstance(gameStatuses);
                 break;
             case R.id.nav_search:
+                Intent intent = new Intent(this, GameSearchActivity.class);
+                intent.putExtra(HomepageActivity.CURR_USER_TAG, currUser);
+                startActivity(intent);
                 break;
             case R.id.nav_social:
                 //todo
