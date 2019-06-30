@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,7 +17,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.ArrayList;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
@@ -39,6 +39,7 @@ public class HomepageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(HOMEPAGE_DEBUG, "homepage activity created");
+        currUser = getIntent().getParcelableExtra(CURR_USER_TAG);
 
         initViewModel();
 
@@ -51,7 +52,6 @@ public class HomepageActivity extends AppCompatActivity {
     }
 
     private void initViewModel() {
-        currUser = getIntent().getParcelableExtra(CURR_USER_TAG);
         UserProfileViewModelFactory factory = new UserProfileViewModelFactory(currUser.getUid());
         userProfileViewModel = ViewModelProviders.of(this, factory)
                 .get(UserProfileViewModel.class);
@@ -64,11 +64,7 @@ public class HomepageActivity extends AppCompatActivity {
                 //todo
                 break;
             case R.id.nav_games:
-                ArrayList<String> gameStatuses = new ArrayList<>();
-                for (GameStatus gameStatus : userProfileViewModel.getCurrUser().getGames().keySet()) {
-                    gameStatuses.add(gameStatus.toString());
-                }
-                fragment = GamesSwipeViewFragment.newInstance(gameStatuses);
+                fragment = GamesSwipeViewFragment.newInstance();
                 break;
             case R.id.nav_search:
                 Intent intent = new Intent(this, GameSearchActivity.class);

@@ -31,19 +31,20 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/setup_account_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:text="@string/follow_steps"
+            android:gravity="center_horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
         <LinearLayout
-            android:id="@+id/linearLayout2"
+            android:id="@+id/gender_select_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -52,7 +53,7 @@
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView5">
+            app:layout_constraintTop_toBottomOf="@+id/setup_account_message">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -68,7 +69,7 @@
                 android:onCheckedChanged="@{userPreferences::onGenderChanged}"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView5">
+                app:layout_constraintTop_toBottomOf="@+id/setup_account_message">
 
                 <RadioButton
                     android:id="@+id/male"

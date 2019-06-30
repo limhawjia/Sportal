@@ -25,7 +25,13 @@
         </activity>
 
         <activity
-            android:name=".homepage.HomepageActivity">
+            android:name=".user.PreferencesActivity"
+            android:windowSoftInputMode="adjustPan">
+        </activity>
+
+        <activity
+            android:name=".homepage.HomepageActivity"
+            android:windowSoftInputMode="adjustPan">
         </activity>
 
         <activity android:name=".user.PreferencesActivity"></activity>

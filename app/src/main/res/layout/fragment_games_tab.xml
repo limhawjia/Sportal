@@ -4,8 +4,8 @@
 
     <data>
         <variable
-            name="userProfile"
-            type="wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel" />
+            name="gamesTab"
+            type="wjhj.orbital.sportsmatchfindingapp.homepage.GamesTabViewModel" />
     </data>
 
     <RelativeLayout
@@ -13,8 +13,8 @@
         android:layout_height="match_parent"
         tools:context=".homepage.GamesTabFragment">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/test_filter_button"
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/games_tab_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -23,11 +23,11 @@
             android:layout_alignParentTop="true"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/confirmed_games_recycler_view"
+            android:id="@+id/games_tab_recycler_view"
             android:scrollbars="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/test_filter_button"/>
+            android:layout_below="@id/games_tab_search"/>
 
     </RelativeLayout>
 </layout>

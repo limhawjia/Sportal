@@ -13,11 +13,15 @@
     <string name="or_use">or use: </string>
     <string name="logo">logo</string>
     <string name="login_or">OR</string>
+
+    <!-- navbar -->
     <string name="navbar_home">Home</string>
     <string name="navbar_games">Games</string>
     <string name="navbar_search">Search</string>
     <string name="navbar_explore">Explore</string>
     <string name="navbar_social">Social</string>
+
+
     <string name="full_name">Full name</string>
     <string name="accept_terms">By checking this, you are agreeing to our</string>
     <string name="terms_conditions"><u>terms and conditions</u></string>
@@ -26,9 +30,9 @@
     <string name="options_logout">Logout</string>
     <string name="welcome">Welcome to Sportal!</string>
     <string name="follow_steps">Follow these steps to set up your account</string>
-    <string name="male">male</string>
-    <string name="female">female</string>
-    <string name="gender">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="gender">Gender:</string>
     <string name="birthday">Birthday - dd/mm/yy</string>
     <string name="location">Location</string>
     <string name="sports">Sports I play:</string>
@@ -47,7 +51,4 @@
     <string name="to">to</string>
     <string name="date">Date</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <!-- -->
 </resources>

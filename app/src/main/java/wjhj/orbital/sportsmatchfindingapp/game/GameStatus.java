@@ -1,14 +1,16 @@
 package wjhj.orbital.sportsmatchfindingapp.game;
 
 public enum GameStatus {
-    PENDING("pending"),
-    CONFIRMED("confirmed"),
-    COMPLETED("completed");
+    PENDING("pending", 0),
+    CONFIRMED("confirmed", 1),
+    COMPLETED("completed", 2);
 
     private String str;
+    private int id;
 
-    GameStatus(String str) {
+    GameStatus(String str, int id) {
         this.str = str;
+        this.id = id;
     }
 
     public static GameStatus fromString(String str) {
@@ -18,6 +20,15 @@ public enum GameStatus {
             }
         }
         throw new IllegalArgumentException("Invalid game status : " + str);
+    }
+
+    public static GameStatus fromId(int id) {
+        for (GameStatus s : GameStatus.values()) {
+            if (s.id == id) {
+                return s;
+            }
+        }
+        throw new IllegalArgumentException("Invalid game id : " + id);
     }
 
     @Override

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import wjhj.orbital.sportsmatchfindingapp.databinding.GamesCardViewBinding;
@@ -16,30 +17,13 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
 
     private List<Game> games;
 
-    public static class CardViewHolder extends RecyclerView.ViewHolder {
-
-        public CardView cardView;
-        private GamesCardViewBinding cardBinding;
-
-        public CardViewHolder(@NonNull CardView itemView, GamesCardViewBinding binding) {
-            super(itemView);
-            cardView = itemView;
-            cardBinding = binding;
-        }
-
-        private void setGame(Game game) {
-            cardBinding.setGame(game);
-        }
+    public GamesCardAdapter() {
+        this.games = new ArrayList<>();
     }
 
-    public GamesCardAdapter(List<Game> games) {
-        this.games = games;
-    }
-
-    public void remove() {
-        //todo: proof of concept test. refactor
-        games.remove(0);
-        notifyItemRemoved(0);
+    public void updateGames(List<Game> newGames) {
+        games = newGames;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -60,5 +44,22 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
     @Override
     public int getItemCount() {
         return games.size();
+    }
+
+
+    public static class CardViewHolder extends RecyclerView.ViewHolder {
+
+        public CardView cardView;
+        private GamesCardViewBinding cardBinding;
+
+        public CardViewHolder(@NonNull CardView itemView, GamesCardViewBinding binding) {
+            super(itemView);
+            cardView = itemView;
+            cardBinding = binding;
+        }
+
+        private void setGame(Game game) {
+            cardBinding.setGame(game);
+        }
     }
 }

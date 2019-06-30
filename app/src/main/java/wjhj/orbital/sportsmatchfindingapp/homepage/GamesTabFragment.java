@@ -13,8 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGamesTabBinding;
-import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,12 +26,13 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
  */
 public class GamesTabFragment extends Fragment {
 
-    private static String GAMES_PAGE_DEBUG = "games_page";
-    private static String GAME_STATUS_TAG = "game_status";
+    private static String GAMES_PAGE_DEBUG = "games_tab_page";
+    private static String GAME_IDS_TAG = "game_ids";
 
-    private UserProfileViewModel userProfileViewModel;
+    private GamesTabViewModel gamesTabViewModel;
     private FragmentGamesTabBinding binding;
-    private String mTabName;
+    private GamesCardAdapter mGamesCardAdapter;
+    private List<String> mGameIds;
 
     public GamesTabFragment() {
         // Required empty public constructor
@@ -37,13 +41,14 @@ public class GamesTabFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
+     * @param gameIds ArrayList of the ids of the games to be displayed in this fragment.
      * @return A new instance of fragment GamesTabFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static GamesTabFragment newInstance(String tabName) {
+    public static GamesTabFragment newInstance(ArrayList<String> gameIds) {
         GamesTabFragment gamesTabFragment = new GamesTabFragment();
         Bundle args = new Bundle();
-        args.putString(GAME_STATUS_TAG, tabName);
+        args.putStringArrayList(GAME_IDS_TAG, gameIds);
+        gamesTabFragment.setArguments(args);
         return gamesTabFragment;
     }
 
@@ -52,26 +57,35 @@ public class GamesTabFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d(GAMES_PAGE_DEBUG, "Created tab");
         if (getArguments() != null) {
-            mTabName = getArguments().getString(GAME_STATUS_TAG);
+           mGameIds = getArguments().getStringArrayList(GAME_IDS_TAG);
         }
-        userProfileViewModel = ViewModelProviders.of(getActivity()).get(UserProfileViewModel.class);
+        gamesTabViewModel= ViewModelProviders.of(this).get(GamesTabViewModel.class);
+        gamesTabViewModel.loadGames(mGameIds);
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentGamesTabBinding.inflate(inflater, container, false);
-        binding.setUserProfile(userProfileViewModel);
-        binding.setLifecycleOwner(getActivity());
+        binding.setGamesTab(gamesTabViewModel);
+        binding.setLifecycleOwner(this);
 
-        RecyclerView recyclerView = binding.confirmedGamesRecyclerView;
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        GamesCardAdapter adapter = new GamesCardAdapter(userProfileViewModel.getConfirmedGames().getValue());
-        recyclerView.setAdapter(adapter);
+        setUpRecyclerView(binding.gamesTabRecyclerView);
 
-        binding.testFilterButton.setOnClickListener(view -> adapter.remove());
+        binding.gamesTabSearch.setOnClickListener(view -> mGamesCardAdapter.updateGames(new ArrayList<>()));
 
         return binding.getRoot();
+    }
+
+    private void setUpRecyclerView(RecyclerView recyclerView) {
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mGamesCardAdapter = new GamesCardAdapter();
+        recyclerView.setAdapter(mGamesCardAdapter);
+
+        gamesTabViewModel.getGames().observe(getViewLifecycleOwner(), newGames -> {
+            mGamesCardAdapter.updateGames(newGames);
+            Log.d("games_swipe_view", "games: " + newGames.toString());
+        });
     }
 }
