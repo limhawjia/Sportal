@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
+import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.user.Gender;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
@@ -13,7 +14,7 @@ class UserProfileDataModel {
     private Gender gender;
     private String birthday;
     private String uid;
-    private List<String> preferences;
+    private List<Sport> preferences;
     private Map<String, List<String>> games;
 
     // Mandatory no args constructor
@@ -46,7 +47,7 @@ class UserProfileDataModel {
         return uid;
     }
 
-    public List<String> getPreferences() {
+    public List<Sport> getPreferences() {
         return preferences;
     }
 
