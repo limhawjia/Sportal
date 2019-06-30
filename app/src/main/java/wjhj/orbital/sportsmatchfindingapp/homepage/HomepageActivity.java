@@ -62,12 +62,7 @@ public class HomepageActivity extends AppCompatActivity {
                 //todo
                 break;
             case R.id.nav_games:
-                GameStatus[] gameStatuses = GameStatus.values();
-                String[] tabNames = new String[gameStatuses.length];
-                for (int i = 0; i < gameStatuses.length; i++) {
-                    tabNames[i] = gameStatuses[i].toString();
-                }
-                fragment = GamesSwipeViewFragment.newInstance(tabNames);
+                fragment = GamesSwipeViewFragment.newInstance();
                 break;
             case R.id.nav_search:
                 //todo

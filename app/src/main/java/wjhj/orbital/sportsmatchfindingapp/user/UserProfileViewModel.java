@@ -43,6 +43,10 @@ public class UserProfileViewModel extends ViewModel {
         return currUser;
     }
 
+    public LiveData<Map<GameStatus, List<String>>> getGameIds() {
+        return gameIds;
+    }
+
     public LiveData<Map<GameStatus, List<Game>>> getGames() {
         if (games == null) {
             games = setUpGamesMapping();

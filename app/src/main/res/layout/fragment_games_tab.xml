@@ -4,8 +4,8 @@
 
     <data>
         <variable
-            name="userProfile"
-            type="wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel" />
+            name="gamesTab"
+            type="wjhj.orbital.sportsmatchfindingapp.homepage.GamesTabViewModel" />
     </data>
 
     <RelativeLayout

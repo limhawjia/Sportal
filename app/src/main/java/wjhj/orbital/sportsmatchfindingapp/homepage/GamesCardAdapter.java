@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import wjhj.orbital.sportsmatchfindingapp.databinding.GamesCardViewBinding;
@@ -16,14 +17,14 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
 
     private List<Game> games;
 
-    public GamesCardAdapter(List<Game> games) {
-        this.games = games;
+    public GamesCardAdapter() {
+        this.games = new ArrayList<>();
     }
 
-    public void remove() {
+    public void updateGames(List<Game> newGames) {
         //todo: proof of concept test. refactor
-        games.remove(0);
-        notifyItemRemoved(0);
+        games = newGames;
+        notifyDataSetChanged();
     }
 
     @NonNull
