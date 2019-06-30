@@ -34,8 +34,9 @@
             android:windowSoftInputMode="adjustPan">
         </activity>
 
-        <activity android:name=".user.PreferencesActivity"></activity>
-        <activity android:name=".homepage.GameSearchActivity"></activity>
+        <activity
+            android:name=".homepage.GameSearchActivity">
+        </activity>
     </application>
 
 </manifest>

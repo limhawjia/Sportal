@@ -3,56 +3,41 @@ package wjhj.orbital.sportsmatchfindingapp.game;
 import wjhj.orbital.sportsmatchfindingapp.R;
 
 public enum Sport {
-    FOOTBALL("Football"),
-    BASKETBALL("Basketball"),
-    CRICKET("Cricket"),
-    BADMINTON("Badminton"),
-    TENNIS("Tennis"),
-    SQUASH("Squash"),
-    FRISBEE("Frisbee");
+    FOOTBALL("Football", R.drawable.soccer_icon),
+    BASKETBALL("Basketball", R.drawable.basketball_icon),
+    CRICKET("Cricket", R.drawable.cricket_icon),
+    BADMINTON("Badminton",  R.drawable.badminton_icon),
+    TENNIS("Tennis", R.drawable.squash_icon),
+    SQUASH("Squash", R.drawable.squash_icon),
+    FRISBEE("Frisbee", R.drawable.frisbee_icon);
 
     private String str;
+    private int iconResourceId;
 
-    Sport(String str) {
+    Sport(String str, int iconResourceId) {
         this.str = str;
+        this.iconResourceId = iconResourceId;
     }
+
+    public int getIconResourceId() {
+        return iconResourceId;
+    }
+
+    public static String[] getAllSportsString() {
+        String[] string = new String[values().length];
+        for (int i = 0; i < values().length; i++) {
+            string[i] = values()[i].toString();
+        }
+        return string;
+    }
+//    TODO: method alrd exists sir just use Sport.values()
+//    public static Sport[] getAllSports() {
+//        Sport[] sports = Sport.class.getEnumConstants();
+//        return sports;
+//    }
 
     @Override
     public String toString() {
         return str;
-    }
-
-    public int getIconResourceId() {
-        switch (str) {
-            case "Football":
-                return R.drawable.soccer_icon;
-            case "Basketball":
-                return R.drawable.basketball_icon;
-            case "Cricket":
-                return R.drawable.cricket_icon;
-            case "Badminton":
-                return R.drawable.badminton_icon;
-            case "Tennis":
-                return R.drawable.squash_icon;
-            case "Squash":
-                return R.drawable.squash_icon;
-            case "Frisbee":
-                return R.drawable.frisbee_icon;
-        }
-        return R.drawable.close_button;
-    }
-
-    public static String[] getAllSportsString() {
-        Sport[] sports = Sport.class.getEnumConstants();
-        String[] string = new String[sports.length];
-        for (int i = 0; i < sports.length; i++) {
-            string[i] = sports[i].toString();
-        }
-        return string;
-    }
-
-    public static Sport[] getAllSports() {
-        Sport[] sports = Sport.class.getEnumConstants();
-        return sports;
     }
 }

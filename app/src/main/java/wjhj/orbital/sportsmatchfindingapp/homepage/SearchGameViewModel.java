@@ -1,5 +1,6 @@
 package wjhj.orbital.sportsmatchfindingapp.homepage;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -7,18 +8,10 @@ import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalTime;
 
 public class SearchGameViewModel extends ViewModel {
-    MutableLiveData<LocalTime> startTime = new MutableLiveData<>();
-    MutableLiveData<LocalTime> endTime = new MutableLiveData<>();
-    MutableLiveData<LocalDate> startDate = new MutableLiveData<>();
-    MutableLiveData<LocalDate> endDate = new MutableLiveData<>();
-
-    public void setStartTime(LocalTime startTime) {
-        this.startTime.setValue(startTime);
-    }
-
-    public void setEndTime(LocalTime endTime) {
-        this.endTime.setValue(endTime);
-    }
+    private MutableLiveData<LocalTime> startTime = new MutableLiveData<>();
+    private MutableLiveData<LocalTime> endTime = new MutableLiveData<>();
+    private MutableLiveData<LocalDate> startDate = new MutableLiveData<>();
+    private MutableLiveData<LocalDate> endDate = new MutableLiveData<>();
 
     public MutableLiveData<LocalTime> getStartTime() {
         return this.startTime;
@@ -34,6 +27,14 @@ public class SearchGameViewModel extends ViewModel {
 
     public MutableLiveData<LocalDate> getEndDate() {
         return this.endDate;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime.setValue(startTime);
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime.setValue(endTime);
     }
 
     public void setStartDate(LocalDate startDate) {

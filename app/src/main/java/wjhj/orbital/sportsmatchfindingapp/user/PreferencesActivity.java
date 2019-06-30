@@ -95,7 +95,7 @@ public class PreferencesActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         ArrayList<Sport> selectedItems = new ArrayList<>();
         String[] string = Sport.getAllSportsString();
-        Sport[] sports = Sport.getAllSports();
+        Sport[] sports = Sport.values();
         boolean[] checked = new boolean[string.length];
         for (int i = 0; i < sports.length; i++) {
             if (userPreferencesViewModel.getSportPreferences().contains(sports[i])) {
@@ -158,7 +158,7 @@ public class PreferencesActivity extends AppCompatActivity {
     }
 
     private class SportsPreferenceHolder extends RecyclerView.ViewHolder {
-        wjhj.orbital.sportsmatchfindingapp.game.Sport sport;
+        Sport sport;
         ImageView sportIcon;
         TextView sportName;
 
@@ -168,7 +168,7 @@ public class PreferencesActivity extends AppCompatActivity {
             sportName = itemView.findViewById(R.id.sport_name);
         }
 
-        void bind(wjhj.orbital.sportsmatchfindingapp.game.Sport sport) {
+        void bind(Sport sport) {
             this.sport = sport;
             this.sportIcon.setImageResource(sport.getIconResourceId());
             this.sportName.setText(this.sport.toString());
