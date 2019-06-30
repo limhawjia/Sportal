@@ -13,7 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+import java.util.Map;
+
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGamesTabBinding;
+import wjhj.orbital.sportsmatchfindingapp.game.Game;
+import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 
 /**
@@ -44,6 +49,7 @@ public class GamesTabFragment extends Fragment {
         GamesTabFragment gamesTabFragment = new GamesTabFragment();
         Bundle args = new Bundle();
         args.putString(GAME_STATUS_TAG, tabName);
+        gamesTabFragment.setArguments(args);
         return gamesTabFragment;
     }
 
@@ -67,7 +73,10 @@ public class GamesTabFragment extends Fragment {
         RecyclerView recyclerView = binding.confirmedGamesRecyclerView;
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        GamesCardAdapter adapter = new GamesCardAdapter(userProfileViewModel.getConfirmedGames().getValue());
+        Map<GameStatus, List<String>> blah = userProfileViewModel.getAllGames().getValue();
+        Log.d("gamesSwipeView", "blah is null: " + (blah == null));
+        GamesCardAdapter adapter = null;
+        //        new GamesCardAdapter(blah.get(GameStatus.fromString(mTabName)));
         recyclerView.setAdapter(adapter);
 
         binding.testFilterButton.setOnClickListener(view -> adapter.remove());

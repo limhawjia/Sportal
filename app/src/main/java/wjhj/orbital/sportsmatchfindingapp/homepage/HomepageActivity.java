@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
@@ -63,11 +64,12 @@ public class HomepageActivity extends AppCompatActivity {
                 //todo
                 break;
             case R.id.nav_games:
-                ArrayList<String> gameStatuses = new ArrayList<>();
-                for (GameStatus gameStatus : userProfileViewModel.getCurrUser().getGames().keySet()) {
-                    gameStatuses.add(gameStatus.toString());
+                GameStatus[] gameStatuses = GameStatus.values();
+                String[] tabNames = new String[gameStatuses.length];
+                for (int i = 0; i < gameStatuses.length; i++) {
+                    tabNames[i] = gameStatuses[i].toString();
                 }
-                fragment = GamesSwipeViewFragment.newInstance(gameStatuses);
+                fragment = GamesSwipeViewFragment.newInstance(tabNames);
                 break;
             case R.id.nav_search:
                 //todo
