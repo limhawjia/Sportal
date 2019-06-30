@@ -5,21 +5,52 @@ import android.location.Location;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.firebase.firestore.auth.User;
-
+import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
+import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 
 public class UserProfileViewModel extends ViewModel {
 
+    private SportalRepo repo;
     private UserProfile currUser;
-    private MutableLiveData<List<Game>> confirmedGames;
+
+    public UserProfileViewModel(String userUid) {
+        repo = new SportalRepo();
+        String id =repo.generateGameUid();
+        Game game = Game.builder()
+                .withGameName("Frisbee at UTOWN")
+                .withDescription("6pm 6/7/2019 be there or be square")
+                .withSport(Sport.FRISBEE)
+                .withLocation(new Location(""))
+                .withMinPlayers(10)
+                .withMaxPlayers(18)
+                .withSkillLevel(Difficulty.BEGINNER)
+                .withStartTime(LocalDateTime.now())
+                .withEndTime(LocalDateTime.of(2019, 7, 6, 18, 0))
+                .withUid(id)
+                .build();
+
+
+        repo.updateGame(id, game.withParticipatingUids(userUid));
+
+        repo.getUser(userUid)
+            .addOnSuccessListener(userProfile -> currUser = userProfile);
+    }
+
+    public UserProfile getCurrUser() {
+        return currUser;
+    }
+
 
     public MutableLiveData<List<Game>> getConfirmedGames() {
         //TESTS
@@ -56,7 +87,7 @@ public class UserProfileViewModel extends ViewModel {
 
         MutableLiveData<List<Game>> liveData = new MutableLiveData<>();
         liveData.setValue(games);
-        confirmedGames = liveData;
+        MutableLiveData<List<Game>> confirmedGames = liveData;
 
         return confirmedGames;
     }

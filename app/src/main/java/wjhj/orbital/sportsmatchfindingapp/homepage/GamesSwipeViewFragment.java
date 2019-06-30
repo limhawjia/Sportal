@@ -3,16 +3,16 @@ package wjhj.orbital.sportsmatchfindingapp.homepage;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import wjhj.orbital.sportsmatchfindingapp.R;
+import java.util.ArrayList;
+
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGamesSwipeViewBinding;
 
 /**
@@ -21,10 +21,11 @@ import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGamesSwipeViewBind
  * create an instance of this fragment.
  */
 public class GamesSwipeViewFragment extends Fragment {
-
     private static String GAMES_PAGE_DEBUG = "games page";
+    private static String GAME_STATUSES_TAG = "game statuses";
 
     private FragmentGamesSwipeViewBinding binding;
+    private ArrayList<String> mTabNames;
 
     public GamesSwipeViewFragment() {
         // Required empty public constructor
@@ -35,7 +36,10 @@ public class GamesSwipeViewFragment extends Fragment {
      * this fragment using the provided parameters.
      * @return A new instance of fragment GamesSwipeViewFragment.
      */
-    public static GamesSwipeViewFragment newInstance() {
+    public static GamesSwipeViewFragment newInstance(ArrayList<String> tabNames) {
+        GamesSwipeViewFragment gamesSwipeViewFragment = new GamesSwipeViewFragment();
+        Bundle args = new Bundle();
+        args.putStringArrayList(GAME_STATUSES_TAG, tabNames);
         return new GamesSwipeViewFragment();
     }
 
@@ -43,20 +47,22 @@ public class GamesSwipeViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(GAMES_PAGE_DEBUG, "Created fragment");
+        if (getArguments() != null) {
+            mTabNames = getArguments().getStringArrayList(GAME_STATUSES_TAG);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         Log.d(GAMES_PAGE_DEBUG, "Created view");
         binding = FragmentGamesSwipeViewBinding.inflate(inflater, container, false);
 
-        return inflater.inflate(R.layout.fragment_games_swipe_view, container, false);
-    }
+        GamesSwipeViewPagerAdapter adapter = new GamesSwipeViewPagerAdapter(getChildFragmentManager(),
+                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
+                mTabNames);
+        binding.gamesSwipeView.setAdapter(adapter);
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        return binding.getRoot();
     }
 }

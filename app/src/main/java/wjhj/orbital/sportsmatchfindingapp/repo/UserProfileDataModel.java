@@ -59,7 +59,7 @@ class UserProfileDataModel {
         for (GameStatus gs : oldGames.keySet()) {
             List<String> games = oldGames.get(gs);
             if (games != null) {
-                newGames.put(gs.getId(), games);
+                newGames.put(gs.toString(), games);
             }
         }
         return newGames;

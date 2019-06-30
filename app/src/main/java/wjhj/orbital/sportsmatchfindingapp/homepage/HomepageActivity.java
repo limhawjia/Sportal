@@ -5,9 +5,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,9 +16,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
+
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.HomepageActivityBinding;
+import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
+import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
+import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
 
 public class HomepageActivity extends AppCompatActivity {
 
@@ -26,22 +31,29 @@ public class HomepageActivity extends AppCompatActivity {
     public static final String HOMEPAGE_DEBUG = "homepage";
 
     private FirebaseUser currUser;
+    private UserProfileViewModel userProfileViewModel;
     private HomepageActivityBinding binding;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(HOMEPAGE_DEBUG, "homepage activity created");
 
-        currUser = getIntent().getParcelableExtra(CURR_USER_TAG);
+        initViewModel();
+
         binding = DataBindingUtil.setContentView(this, R.layout.homepage_activity);
         setSupportActionBar((Toolbar) binding.topToolbar);
 
         binding.bottomNav.setOnNavigationItemSelectedListener(navListener);
-
         ((Toolbar) binding.topToolbar).setOnMenuItemClickListener(menuListener);
 
+    }
+
+    private void initViewModel() {
+        currUser = getIntent().getParcelableExtra(CURR_USER_TAG);
+        UserProfileViewModelFactory factory = new UserProfileViewModelFactory(currUser.getUid());
+        userProfileViewModel = ViewModelProviders.of(this, factory)
+                .get(UserProfileViewModel.class);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
@@ -51,7 +63,11 @@ public class HomepageActivity extends AppCompatActivity {
                 //todo
                 break;
             case R.id.nav_games:
-                fragment = GamesTabFragment.newInstance();
+                ArrayList<String> gameStatuses = new ArrayList<>();
+                for (GameStatus gameStatus : userProfileViewModel.getCurrUser().getGames().keySet()) {
+                    gameStatuses.add(gameStatus.toString());
+                }
+                fragment = GamesSwipeViewFragment.newInstance(gameStatuses);
                 break;
             case R.id.nav_search:
                 //todo
@@ -71,17 +87,17 @@ public class HomepageActivity extends AppCompatActivity {
     };
 
     private Toolbar.OnMenuItemClickListener menuListener = item -> {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.options_profile:
                 //todo
                 break;
-            case R.id.options_logout :
+            case R.id.options_logout:
                 FirebaseAuth.getInstance().signOut();
                 Intent logoutIntent = new Intent(this, LoginActivity.class);
                 startActivity(logoutIntent);
                 finish();
                 break;
-            }
+        }
 
         return true;
     };

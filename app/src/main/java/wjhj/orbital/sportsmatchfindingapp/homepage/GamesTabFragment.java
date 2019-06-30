@@ -1,7 +1,5 @@
 package wjhj.orbital.sportsmatchfindingapp.homepage;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -25,10 +23,12 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
  */
 public class GamesTabFragment extends Fragment {
 
-    private static String GAMES_PAGE_DEBUG = "games page";
+    private static String GAMES_PAGE_DEBUG = "games_page";
+    private static String GAME_STATUS_TAG = "game_status";
 
     private UserProfileViewModel userProfileViewModel;
     private FragmentGamesTabBinding binding;
+    private String mTabName;
 
     public GamesTabFragment() {
         // Required empty public constructor
@@ -40,14 +40,20 @@ public class GamesTabFragment extends Fragment {
      * @return A new instance of fragment GamesTabFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GamesTabFragment newInstance() {
-        return new GamesTabFragment();
+    public static GamesTabFragment newInstance(String tabName) {
+        GamesTabFragment gamesTabFragment = new GamesTabFragment();
+        Bundle args = new Bundle();
+        args.putString(GAME_STATUS_TAG, tabName);
+        return gamesTabFragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(GAMES_PAGE_DEBUG, "Created tab");
+        if (getArguments() != null) {
+            mTabName = getArguments().getString(GAME_STATUS_TAG);
+        }
         userProfileViewModel = ViewModelProviders.of(getActivity()).get(UserProfileViewModel.class);
     }
 
