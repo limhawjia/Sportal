@@ -22,7 +22,19 @@
             android:layout_height="match_parent"
             android:layout_below="@id/top_toolbar"
             android:layout_above="@id/bottom_nav"
-            android:background="@color/offWhite"/>
+            android:background="@color/offWhite">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/homepage_add_game_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_gravity="bottom|end"
+                app:fabSize="mini"
+                android:src="@drawable/ic_plus_white_24dp"/>
+        </FrameLayout>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_nav"

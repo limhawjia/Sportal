@@ -3,9 +3,9 @@ package wjhj.orbital.sportsmatchfindingapp.game;
 import android.location.Location;
 
 import org.immutables.value.Value;
+import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.temporal.ChronoUnit;
 
 import java.util.List;
 
@@ -45,13 +45,13 @@ public abstract class AbstractGame {
     // TODO: Maybe implement a precondition check for minimum number of participating.
     // Alternatively, refactor to have a game creator attribute.
     public String dateString() {
-        LocalDateTime startDay = getStartTime().truncatedTo(ChronoUnit.DAYS);
-        LocalDateTime endDay = getStartTime().truncatedTo(ChronoUnit.DAYS);
+        LocalDate startDay = getStartTime().toLocalDate();
+        LocalDate endDay = getStartTime().toLocalDate();
 
         if (startDay.equals(endDay)) {
             return "Date: " + startDay.format(DateTimeFormatter.ISO_LOCAL_DATE)
-                    + "\nFrom: " + getStartTime().format(DateTimeFormatter.ISO_LOCAL_TIME)
-                    + "    To: " + getEndTime().format(DateTimeFormatter.ISO_LOCAL_TIME);
+                    + "\nFrom: " + getStartTime().toLocalTime().toString()
+                    + "    To: " + getEndTime().toLocalTime().toString();
         } else {
             return "Date: " + startDay.format(DateTimeFormatter.ISO_LOCAL_DATE) + " - "
                     + endDay.format(DateTimeFormatter.ISO_LOCAL_DATE)

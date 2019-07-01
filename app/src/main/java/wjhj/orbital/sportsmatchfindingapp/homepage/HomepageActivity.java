@@ -47,6 +47,9 @@ public class HomepageActivity extends AppCompatActivity {
 
         binding.bottomNav.setOnNavigationItemSelectedListener(navListener);
         ((Toolbar) binding.topToolbar).setOnMenuItemClickListener(menuListener);
+        binding.homepageAddGameButton.setOnClickListener(view -> {
+
+        });
 
     }
 
