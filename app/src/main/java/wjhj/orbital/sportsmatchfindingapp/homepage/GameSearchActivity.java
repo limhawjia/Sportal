@@ -1,4 +1,4 @@
-package wjhj.orbital.sportsmatchfindingapp.homepage.gamespage;
+package wjhj.orbital.sportsmatchfindingapp.homepage;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -63,20 +63,14 @@ public class GameSearchActivity extends AppCompatActivity {
     }
 
     private void getTime(MutableLiveData<LocalTime> liveData) {
-        new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                liveData.setValue(LocalTime.of(hourOfDay, minute));
-            }
-        }, 0, 0, false).show();
+        new TimePickerDialog(this, (view, hourOfDay, minute)
+                -> liveData.setValue(LocalTime.of(hourOfDay, minute)),
+                0, 0, false).show();
     }
 
     private void getDate(MutableLiveData<LocalDate> liveData) {
-        new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                liveData.setValue(LocalDate.of(year, month, dayOfMonth));
-            }
-        }, 2000, 1, 1).show();
+        new DatePickerDialog(this, (view, year, month, dayOfMonth)
+                -> liveData.setValue(LocalDate.of(year, month, dayOfMonth)),
+                2000, 1, 1).show();
     }
 }

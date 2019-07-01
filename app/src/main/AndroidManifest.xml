@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MaterialTheme">
+        <activity android:name=".game.AddGameActivity"></activity>
         <activity
             android:name=".auth.LoginActivity"
             android:screenOrientation="portrait">
@@ -18,25 +19,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".auth.SignUpActivity"
-            android:screenOrientation="portrait">
-        </activity>
-
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".user.PreferencesActivity"
-            android:windowSoftInputMode="adjustPan">
-        </activity>
-
+            android:windowSoftInputMode="adjustPan"></activity>
         <activity
             android:name=".homepage.HomepageActivity"
-            android:windowSoftInputMode="adjustPan">
-        </activity>
-
-        <activity
-            android:name=".homepage.gamespage.GameSearchActivity">
-        </activity>
+            android:windowSoftInputMode="adjustPan"></activity>
+        <activity android:name=".homepage.GameSearchActivity"></activity>
     </application>
 
 </manifest>

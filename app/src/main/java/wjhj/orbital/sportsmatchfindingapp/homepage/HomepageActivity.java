@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.HomepageActivityBinding;
-import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GameSearchActivity;
+import wjhj.orbital.sportsmatchfindingapp.game.AddGameActivity;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesSwipeViewFragment;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
@@ -29,6 +29,7 @@ public class HomepageActivity extends AppCompatActivity {
 
     public static final String CURR_USER_TAG = "current_user";
     public static final String HOMEPAGE_DEBUG = "homepage";
+    private static final int ADD_GAME_RC = 1;
 
     private FirebaseUser currUser;
     private UserProfileViewModel userProfileViewModel;
@@ -40,23 +41,22 @@ public class HomepageActivity extends AppCompatActivity {
         Log.d(HOMEPAGE_DEBUG, "homepage activity created");
         currUser = getIntent().getParcelableExtra(CURR_USER_TAG);
 
-        initViewModel();
+        UserProfileViewModelFactory factory = new UserProfileViewModelFactory(currUser.getUid());
+        userProfileViewModel = ViewModelProviders.of(this, factory)
+                .get(UserProfileViewModel.class);
+
 
         binding = DataBindingUtil.setContentView(this, R.layout.homepage_activity);
         setSupportActionBar((Toolbar) binding.topToolbar);
 
+
         binding.bottomNav.setOnNavigationItemSelectedListener(navListener);
         ((Toolbar) binding.topToolbar).setOnMenuItemClickListener(menuListener);
         binding.homepageAddGameButton.setOnClickListener(view -> {
-
+            Intent addGameIntent = new Intent(this, AddGameActivity.class);
+            startActivityForResult(addGameIntent, ADD_GAME_RC);
         });
 
-    }
-
-    private void initViewModel() {
-        UserProfileViewModelFactory factory = new UserProfileViewModelFactory(currUser.getUid());
-        userProfileViewModel = ViewModelProviders.of(this, factory)
-                .get(UserProfileViewModel.class);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
