@@ -50,5 +50,6 @@
     <string name="skill_level">Skill level</string>
     <string name="to">to</string>
     <string name="date">Date</string>
+    <string name="games_tab_sort_by">Sort by:</string>
 
 </resources>

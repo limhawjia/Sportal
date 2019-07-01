@@ -1,4 +1,4 @@
-package wjhj.orbital.sportsmatchfindingapp.homepage;
+package wjhj.orbital.sportsmatchfindingapp.homepage.gamespage;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -35,13 +35,26 @@ public class GamesSwipeViewPagerAdapter extends FragmentPagerAdapter {
                 allGameIds.put(gameStatus, new ArrayList<>());
             }
         }
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
         GameStatus gameStatus = GameStatus.fromId(position);
-        return GamesTabFragment.newInstance(new ArrayList<>(allGameIds.get(gameStatus)));
+        return GamesTabFragment
+                .newInstance(gameStatus.toString(), new ArrayList<>(allGameIds.get(gameStatus)));
+    }
+
+    @Override
+    public int getItemPosition(@NonNull Object item) {
+        if (item instanceof GamesTabFragment) {
+            GamesTabFragment gamesTabFragment = (GamesTabFragment) item;
+            GameStatus gameStatus = GameStatus.fromString(gamesTabFragment.getTabName());
+            gamesTabFragment.updateIds(allGameIds.get(gameStatus));
+        }
+
+        return super.getItemPosition(item);
     }
 
     @Override
@@ -52,10 +65,5 @@ public class GamesSwipeViewPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         return GameStatus.fromId(position).toString();
-    }
-
-    @Override
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
     }
 }

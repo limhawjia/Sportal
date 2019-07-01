@@ -3,30 +3,54 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="gamesTab"
-            type="wjhj.orbital.sportsmatchfindingapp.homepage.GamesTabViewModel" />
+            type="wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesTabViewModel" />
     </data>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".homepage.GamesTabFragment">
+        tools:context=".homepage.gamespage.GamesTabFragment">
 
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/games_tab_search"
+        <RelativeLayout
+            android:id="@+id/games_tab_searchbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            android:layout_alignParentTop="true"/>
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp">
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/games_tab_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_toEndOf="@id/games_tab_sort_by"
+                android:layout_alignTop="@id/games_tab_sort_by"
+                android:layout_alignBottom="@id/games_tab_sort_by"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/games_tab_sort_by"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/games_tab_sort_by"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="4dp"
+                android:layout_alignParentStart="true" />
+
+
+        </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/games_tab_recycler_view"
-            android:scrollbars="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/games_tab_search"/>
+            android:layout_below="@id/games_tab_searchbar"
+            android:scrollbars="vertical" />
 
     </RelativeLayout>
 </layout>

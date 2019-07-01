@@ -1,4 +1,4 @@
-package wjhj.orbital.sportsmatchfindingapp.homepage;
+package wjhj.orbital.sportsmatchfindingapp.homepage.gamespage;
 
 
 import android.os.Bundle;
@@ -55,14 +55,15 @@ public class GamesSwipeViewFragment extends Fragment {
 
         GamesSwipeViewPagerAdapter adapter = new GamesSwipeViewPagerAdapter(getChildFragmentManager(),
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        binding.gamesSwipeView.setAdapter(adapter);
-        binding.gamesTabLayout.setupWithViewPager(binding.gamesSwipeView);
+        setUpSwipeView(adapter);
 
-        userProfileViewModel.getGameIds().observe(getActivity(), gameIds -> {
-            adapter.updateGameIds(gameIds);
-            adapter.notifyDataSetChanged();
-        });
+        userProfileViewModel.getGameIds().observe(getActivity(), adapter::updateGameIds);
 
         return binding.getRoot();
+    }
+
+    private void setUpSwipeView(GamesSwipeViewPagerAdapter adapter) {
+        binding.gamesSwipeView.setAdapter(adapter);
+        binding.gamesTabLayout.setupWithViewPager(binding.gamesSwipeView);
     }
 }

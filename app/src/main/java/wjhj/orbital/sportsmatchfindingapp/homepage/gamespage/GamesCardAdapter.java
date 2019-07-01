@@ -1,4 +1,4 @@
-package wjhj.orbital.sportsmatchfindingapp.homepage;
+package wjhj.orbital.sportsmatchfindingapp.homepage.gamespage;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -26,6 +26,10 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
     public void updateGames(List<Game> newGames) {
         games = newGames;
         notifyDataSetChanged();
+    }
+
+    public List<Game> getGames() {
+        return games;
     }
 
     @NonNull

@@ -1,4 +1,4 @@
-package wjhj.orbital.sportsmatchfindingapp.homepage;
+package wjhj.orbital.sportsmatchfindingapp.homepage.gamespage;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -26,6 +26,8 @@ import java.util.function.Consumer;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.GameSearchActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
+import wjhj.orbital.sportsmatchfindingapp.homepage.HomepageActivity;
+import wjhj.orbital.sportsmatchfindingapp.homepage.SearchGameViewModel;
 
 public class GameSearchActivity extends AppCompatActivity {
     private SearchGameViewModel viewModel;

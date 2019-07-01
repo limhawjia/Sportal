@@ -1,10 +1,11 @@
-package wjhj.orbital.sportsmatchfindingapp.homepage;
-
-import android.util.Log;
+package wjhj.orbital.sportsmatchfindingapp.homepage.gamespage;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +19,15 @@ public class GamesTabViewModel extends ViewModel {
     private MutableLiveData<List<Game>> games = new MutableLiveData<>();
 
     public void loadGames(List<String> ids) {
-        List<Game> gamesList = new ArrayList<>();
+        List<Task<Game>> gamesTasks = new ArrayList<>();
+        List<Game> loadedGames = new ArrayList<>();
+
         for (String id : ids) {
-            repo.getGame(id).addOnSuccessListener(game -> {
-                gamesList.add(game);
-                games.postValue(gamesList);
-            });
+            gamesTasks.add(repo.getGame(id).addOnSuccessListener(loadedGames::add));
         }
+
+        Tasks.whenAllComplete(gamesTasks)
+                .addOnSuccessListener(tasks -> games.postValue(loadedGames));
     }
 
     public LiveData<List<Game>> getGames() {

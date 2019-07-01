@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="games_search_options">
+        <item>Sport</item>
+        <item>Date</item>
+        <item>Location</item>
+    </string-array>
+</resources>
