@@ -21,7 +21,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/top_toolbar"
-            android:layout_above="@id/bottom_nav" />
+            android:layout_above="@id/bottom_nav"
+            android:background="@color/offWhite"/>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_nav"

@@ -92,6 +92,7 @@ public class GamesTabFragment extends Fragment implements AdapterView.OnItemSele
         recyclerView.setAdapter(mGamesCardAdapter);
 
         gamesTabViewModel.getGames().observe(getViewLifecycleOwner(), mGamesCardAdapter::updateGames);
+        gamesTabViewModel.getFilteredGames().observe(getViewLifecycleOwner(), mGamesCardAdapter::updateGames);
     }
 
     private void setUpMainSpinner(AppCompatSpinner spinner) {
@@ -155,10 +156,12 @@ public class GamesTabFragment extends Fragment implements AdapterView.OnItemSele
 
     private void sportSpinnerOnItemSelected(int position) {
         Sport sportSelected = Sport.values()[position];
+        gamesTabViewModel.filterSports(sportSelected);
     }
 
     private void difficultySpinnerOnItemSelected(int position) {
         Difficulty difficultySelected = Difficulty.values()[position];
+        gamesTabViewModel.filterDifficulty(difficultySelected);
     }
 
     public String getTabName() {

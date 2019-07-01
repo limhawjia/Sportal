@@ -18,7 +18,7 @@ import java.util.List;
 import wjhj.orbital.sportsmatchfindingapp.databinding.GamesCardViewBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 
-public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.CardViewHolder> implements Filterable {
+public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.CardViewHolder> {
 
     private List<Game> games;
 
@@ -51,11 +51,6 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
     @Override
     public int getItemCount() {
         return games.size();
-    }
-
-    @Override
-    public Filter getFilter() {
-        return null;
     }
 
     @BindingAdapter("android:bindingSrc")
