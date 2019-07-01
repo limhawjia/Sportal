@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="games_tab_sport_spinner" type="id"/>
+    <item name ="games_tab_difficulty_spinner" type="id"/>
+</resources>

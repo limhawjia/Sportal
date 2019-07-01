@@ -21,16 +21,6 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp">
 
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/games_tab_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_toEndOf="@id/games_tab_sort_by"
-                android:layout_alignTop="@id/games_tab_sort_by"
-                android:layout_alignBottom="@id/games_tab_sort_by"/>
-
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/games_tab_sort_by"
                 android:layout_width="wrap_content"
@@ -41,6 +31,27 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="4dp"
                 android:layout_alignParentStart="true" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/games_tab_spinner_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_toEndOf="@id/games_tab_sort_by"
+                android:layout_alignTop="@id/games_tab_sort_by"
+                android:layout_alignBottom="@id/games_tab_sort_by"/>
+
+            <LinearLayout
+                android:id="@+id/games_tab_spinner_secondary_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_toEndOf="@id/games_tab_spinner_main"
+                android:layout_alignTop="@id/games_tab_sort_by"
+                android:layout_alignBottom="@id/games_tab_sort_by"
+                android:orientation="horizontal" />
 
 
         </RelativeLayout>

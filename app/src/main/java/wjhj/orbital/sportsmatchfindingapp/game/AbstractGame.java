@@ -76,7 +76,7 @@ public abstract class AbstractGame {
         return numExtraPlayersNeeded() <= 0;
     }
 
-    private int numExtraPlayersNeeded() {
+    public int numExtraPlayersNeeded() {
         int playersNeeded = getMinPlayers() - getParticipatingUids().size();
         return playersNeeded < 0 ? 0 : playersNeeded;
     }

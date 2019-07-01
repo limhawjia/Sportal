@@ -1,9 +1,9 @@
 package wjhj.orbital.sportsmatchfindingapp.game;
 
 public enum Difficulty {
-    BEGINNER("beginner"),
-    INTERMEDIATE("intermediate"),
-    ADVANCED("advanced");
+    BEGINNER("Beginner"),
+    INTERMEDIATE("Intermediate"),
+    ADVANCED("Advanced");
 
     private String str;
 

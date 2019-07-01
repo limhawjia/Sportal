@@ -2,11 +2,14 @@ package wjhj.orbital.sportsmatchfindingapp.homepage.gamespage;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.databinding.BindingAdapter;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -15,7 +18,7 @@ import java.util.List;
 import wjhj.orbital.sportsmatchfindingapp.databinding.GamesCardViewBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 
-public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.CardViewHolder> {
+public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.CardViewHolder> implements Filterable {
 
     private List<Game> games;
 
@@ -24,12 +27,10 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
     }
 
     public void updateGames(List<Game> newGames) {
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new GamesDiffCallback(games, newGames),
+                true);
         games = newGames;
-        notifyDataSetChanged();
-    }
-
-    public List<Game> getGames() {
-        return games;
+        result.dispatchUpdatesTo(this);
     }
 
     @NonNull
@@ -52,13 +53,24 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
         return games.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        return null;
+    }
 
-    public static class CardViewHolder extends RecyclerView.ViewHolder {
+    @BindingAdapter("android:bindingSrc")
+    public static void setImageResource(ImageView view, int resource) {
+        view.setImageResource(resource);
+    }
 
-        public CardView cardView;
+
+
+    static class CardViewHolder extends RecyclerView.ViewHolder {
+
+        CardView cardView;
         private GamesCardViewBinding cardBinding;
 
-        public CardViewHolder(@NonNull CardView itemView, GamesCardViewBinding binding) {
+        CardViewHolder(@NonNull CardView itemView, GamesCardViewBinding binding) {
             super(itemView);
             cardView = itemView;
             cardBinding = binding;
@@ -69,8 +81,4 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
         }
     }
 
-    @BindingAdapter("android:bindingSrc")
-    public static void setImageResource(ImageView view, int resource) {
-        view.setImageResource(resource);
-    }
 }

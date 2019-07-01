@@ -8,6 +8,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
@@ -28,6 +30,14 @@ public class GamesTabViewModel extends ViewModel {
 
         Tasks.whenAllComplete(gamesTasks)
                 .addOnSuccessListener(tasks -> games.postValue(loadedGames));
+    }
+
+    public void sortGames(Comparator<Game> comparator) {
+        if (games.getValue() != null) {
+            List<Game> currGames = new ArrayList<>(games.getValue());
+            Collections.sort(currGames, comparator);
+            games.setValue(currGames);
+        }
     }
 
     public LiveData<List<Game>> getGames() {
