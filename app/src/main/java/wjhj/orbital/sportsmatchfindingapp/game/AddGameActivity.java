@@ -41,7 +41,7 @@ public class AddGameActivity extends AppCompatActivity implements DatePickerDial
 
         ArrayAdapter<Sport> sportAdapter = new ArrayAdapter<>(this,
                 R.layout.dropdown_menu_popup_item, Sport.values());
-        sportAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sportAdapter.setDropDownViewResource(android.R.layout.simple_expandable_list_item_1);
         binding.addGameSelectSport.setAdapter(sportAdapter);
 
         binding.addGameDatePicker.setOnClickListener(view -> openDatePicker());
