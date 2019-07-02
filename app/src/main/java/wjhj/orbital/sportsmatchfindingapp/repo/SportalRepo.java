@@ -255,7 +255,7 @@ public class SportalRepo implements ISportalRepo {
                 .withMaxPlayers(dataModel.getMaxPlayers())
                 .withSkillLevel(dataModel.getSkillLevel())
                 .withStartTime(LocalDateTime.parse(dataModel.getStartTime()))
-                .withEndTime(LocalDateTime.parse(dataModel.getStartTime()))
+                .withEndTime(LocalDateTime.parse(dataModel.getEndTime()))
                 .withUid(dataModel.getUid())
                 .addAllParticipatingUids(dataModel.getParticipatingUids())
                 .build();

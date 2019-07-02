@@ -32,7 +32,11 @@ public class GamesTabViewModel extends ViewModel {
         }
 
         Tasks.whenAllComplete(gamesTasks)
-                .addOnSuccessListener(tasks -> games.postValue(loadedGames));
+                .addOnSuccessListener(tasks -> {
+                    Collections.sort(loadedGames,
+                            (game1, game2) -> game1.getStartTime().compareTo(game2.getStartTime()));
+                    games.postValue(loadedGames);
+                });
     }
 
     public void sortGames(Comparator<Game> comparator) {

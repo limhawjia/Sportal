@@ -49,7 +49,7 @@ public class GameSearchActivity extends AppCompatActivity {
         binding.sports.setAdapter(sportAdapter);
 
         ArrayAdapter<String> locationAdapter = new ArrayAdapter<>(this, R.layout.dropdown_menu_popup_item, new String[]{"North", "South", "East", "West"});
-        binding.locations.setAdapter(locationAdapter);
+        binding.addGameLocationInput.setAdapter(locationAdapter);
 
         ArrayAdapter<String> skillAdapter = new ArrayAdapter<>(this, R.layout.dropdown_menu_popup_item, new String[]{"Beginner", "Intermediate", "Advanced"});
         binding.skill.setAdapter(skillAdapter);

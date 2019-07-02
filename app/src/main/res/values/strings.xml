@@ -51,5 +51,7 @@
     <string name="to">to</string>
     <string name="date">Date</string>
     <string name="games_tab_sort_by">Sort by:</string>
+    <string name="add_game_setup_text">One step closer to playing a game!</string>
+    <string name="add_game_make_game_text">make game!</string>
 
 </resources>

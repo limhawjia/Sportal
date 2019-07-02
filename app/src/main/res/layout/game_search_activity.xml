@@ -99,7 +99,7 @@
 
 
         <TextView
-            android:id="@+id/textView9"
+            android:id="@+id/add_game_time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -110,7 +110,7 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
 
         <LinearLayout
-            android:id="@+id/linearLayout3"
+            android:id="@+id/add_game_select_time_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -119,7 +119,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView9">
+            app:layout_constraintTop_toBottomOf="@id/add_game_time_text">
 
             <EditText
                 android:id="@+id/start_time"
@@ -149,7 +149,7 @@
 
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/locationInputLayout"
+            android:id="@+id/add_game_location_input_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -159,10 +159,10 @@
             android:hint="@string/location"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+            app:layout_constraintTop_toBottomOf="@+id/add_game_select_time_layout">
 
             <AutoCompleteTextView
-                android:id="@+id/locations"
+                android:id="@+id/add_game_location_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="false"/>
@@ -170,7 +170,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/skillInputLayout"
+            android:id="@+id/add_game_skill_input_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -180,7 +180,7 @@
             android:hint="@string/skill_level"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/locationInputLayout">
+            app:layout_constraintTop_toBottomOf="@+id/add_game_location_input_layout">
 
             <AutoCompleteTextView
                 android:id="@+id/skill"
@@ -202,7 +202,7 @@
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/skillInputLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/add_game_skill_input_layout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
