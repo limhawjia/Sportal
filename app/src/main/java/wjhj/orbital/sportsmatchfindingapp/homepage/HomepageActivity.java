@@ -1,10 +1,12 @@
 package wjhj.orbital.sportsmatchfindingapp.homepage;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
@@ -15,6 +17,9 @@ import android.view.Menu;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.maps.SupportMapFragment;
 
 
 import wjhj.orbital.sportsmatchfindingapp.R;
@@ -34,6 +39,7 @@ public class HomepageActivity extends AppCompatActivity {
     private FirebaseUser currUser;
     private UserProfileViewModel userProfileViewModel;
     private HomepageActivityBinding binding;
+    private SupportMapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +63,25 @@ public class HomepageActivity extends AppCompatActivity {
             startActivityForResult(addGameIntent, ADD_GAME_RC);
         });
 
+        Mapbox.getInstance(this,  getString(R.string.mapbox_access_token));
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        mapFragment = SupportMapFragment.newInstance();
+        transaction.replace(R.id.homepage_fragment_container, mapFragment)
+                .commit();
+        mapFragment.getMapAsync(mapboxMap -> {
+            mapboxMap.setStyle(Style.DARK, style -> {
+                Log.d(HOMEPAGE_DEBUG, "style loaded");
+            });
+        });
+
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
         Fragment fragment = new Fragment();// IMPLEMENT PROPERLY
         switch (item.getItemId()) {
             case R.id.nav_home:
-                //todo
+                fragment = mapFragment;
                 break;
             case R.id.nav_games:
                 fragment = GamesSwipeViewFragment.newInstance();
