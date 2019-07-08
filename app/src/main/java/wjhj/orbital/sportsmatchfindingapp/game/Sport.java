@@ -30,11 +30,6 @@ public enum Sport {
         }
         return string;
     }
-//    TODO: method alrd exists sir just use Sport.values()
-//    public static Sport[] getAllSports() {
-//        Sport[] sports = Sport.class.getEnumConstants();
-//        return sports;
-//    }
 
     @Override
     public String toString() {
