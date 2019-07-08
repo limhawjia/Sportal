@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="wjhj.orbital.sportsmatchfindingapp">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,26 +11,35 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MaterialTheme">
-        <activity android:name=".game.AddGameActivity"></activity>
         <activity
             android:name=".auth.LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".auth.SignUpActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".user.PreferencesActivity"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan"/>
+
         <activity
             android:name=".homepage.HomepageActivity"
-            android:windowSoftInputMode="adjustPan"></activity>
-        <activity android:name=".homepage.GameSearchActivity"></activity>
+            android:windowSoftInputMode="adjustPan"/>
+
+        <activity
+            android:name=".homepage.GameSearchActivity"/>
+
+        <activity
+            android:name=".game.AddGameActivity"
+            android:parentActivityName=".homepage.HomepageActivity"/>
     </application>
 
 </manifest>

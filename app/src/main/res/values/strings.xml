@@ -51,7 +51,20 @@
     <string name="to">to</string>
     <string name="date">Date</string>
     <string name="games_tab_sort_by">Sort by:</string>
-    <string name="add_game_setup_text">One step closer to playing a game!</string>
+
+
+    <!-- MapBox access token -->
+    <string name="mapbox_access_token">pk.eyJ1IjoiZmVpbnN0ZXIiLCJhIjoiY2p4bGo1cHV3MDZzNzN4b2FxYTFjaWdtaCJ9.B5gBlRa8pB0wRhkx-IN2aw</string>
+
+
+    <!-- Add Games Page -->
+    <string name="add_game_select_sport">SELECT SPORT</string>
     <string name="add_game_make_game_text">make game!</string>
+    <string name="add_game_toolbar_text">Create your game</string>
+    <string name="divider">divider</string>
+    <string name="add_game_required_details_text">REQUIRED DETAILS</string>
+    <string name="add_game_enter_game_name">Enter game name</string>
+    <string name="add_game_select_a_date">Select a date</string>
+
 
 </resources>
