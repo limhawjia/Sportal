@@ -65,6 +65,8 @@
     <string name="add_game_required_details_text">REQUIRED DETAILS</string>
     <string name="add_game_enter_game_name">Enter game name</string>
     <string name="add_game_select_a_date">Select a date</string>
+    <string name="add_game_select_a_time">Select a time</string>
+    <string name="add_game_set_a_duration">Set a duration</string>
 
 
 </resources>

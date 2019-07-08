@@ -5,23 +5,26 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
-
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import android.widget.DatePicker;
+import android.widget.TimePicker;
 
 import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalTime;
 
 import java.util.Calendar;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.AddGameActivityBinding;
-import wjhj.orbital.sportsmatchfindingapp.homepage.SearchGameViewModel;
 
-public class AddGameActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
+public class AddGameActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
+        TimePickerDialog.OnTimeSetListener {
 
     private AddGameActivityBinding binding;
-    private SearchGameViewModel viewModel;
+    private AddGameViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,16 +38,20 @@ public class AddGameActivity extends AppCompatActivity implements DatePickerDial
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        viewModel = ViewModelProviders.of(this).get(SearchGameViewModel.class);
-        binding.setSearchGameViewModel(viewModel);
+        viewModel = ViewModelProviders.of(this).get(AddGameViewModel.class);
+        binding.setAddGameViewModel(viewModel);
         binding.setLifecycleOwner(this);
 
         ArrayAdapter<Sport> sportAdapter = new ArrayAdapter<>(this,
                 R.layout.dropdown_menu_popup_item, Sport.values());
-        sportAdapter.setDropDownViewResource(android.R.layout.simple_expandable_list_item_1);
+        sportAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.addGameSelectSport.setAdapter(sportAdapter);
 
         binding.addGameDatePicker.setOnClickListener(view -> openDatePicker());
+
+        binding.addGameTimePicker.setOnClickListener(view -> openTimePicker());
+
+        binding.addGameDurationPicker.setOnClickListener(view -> openDurationPicker());
 
 
 
@@ -63,18 +70,40 @@ public class AddGameActivity extends AppCompatActivity implements DatePickerDial
     }
 
     private void openDatePicker() {
-        DatePickerDialog dialog = DatePickerDialog.newInstance(this,
-                Calendar.getInstance().get(Calendar.YEAR),
-                Calendar.getInstance().get(Calendar.MONTH),
-                Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
-        dialog.setVersion(DatePickerDialog.Version.VERSION_1);
-        dialog.show(getSupportFragmentManager(), "Datepickerdialog");
+        Calendar calendar = Calendar.getInstance();
+        DatePickerDialog dialog = new DatePickerDialog(this,
+                this,
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH));
+        dialog.show();
+    }
+
+    private void openTimePicker() {
+        Calendar calendar = Calendar.getInstance();
+        TimePickerDialog dialog = new TimePickerDialog(this,
+                this,
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true);
+        dialog.show();
+    }
+
+    private void openDurationPicker() {
+
     }
 
     @Override
-    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        LocalDate date = LocalDate.of(year, monthOfYear, dayOfMonth);
-        // todo: update viewmodel and use databinding to set text instead!
-        binding.addGameDatePicker.setText(date.toString());
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        LocalDate date = LocalDate.of(year, month, dayOfMonth);
+        viewModel.setDate(date);
     }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        LocalTime time = LocalTime.of(hourOfDay, minute);
+        viewModel.setTime(time);
+    }
+
+
 }
