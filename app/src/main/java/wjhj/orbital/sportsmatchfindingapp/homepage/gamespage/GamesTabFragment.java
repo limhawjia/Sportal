@@ -16,14 +16,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGamesTabBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
-import wjhj.orbital.sportsmatchfindingapp.game.Game;
+import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
+import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,9 +31,8 @@ import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 public class GamesTabFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     private static String GAMES_PAGE_DEBUG = "games_tab_page";
     private static String TAB_NAME_TAG = "tab_name";
-    private static String GAME_IDS_TAG = "game_ids";
 
-    private String mTabName;
+    private GameStatus mGameStatus;
     private GamesTabViewModel gamesTabViewModel;
     private FragmentGamesTabBinding binding;
 
@@ -47,14 +44,13 @@ public class GamesTabFragment extends Fragment implements AdapterView.OnItemSele
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param gameIds ArrayList of the ids of the games to be displayed in this fragment.
+     * @param gameStatus Status of the games this Fragment will display.
      * @return A new instance of fragment GamesTabFragment.
      */
-    public static GamesTabFragment newInstance(String gameStatus, ArrayList<String> gameIds) {
+    public static GamesTabFragment newInstance(String gameStatus) {
         GamesTabFragment gamesTabFragment = new GamesTabFragment();
         Bundle args = new Bundle();
         args.putString(TAB_NAME_TAG, gameStatus);
-        args.putStringArrayList(GAME_IDS_TAG, gameIds);
         gamesTabFragment.setArguments(args);
         return gamesTabFragment;
     }
@@ -63,14 +59,20 @@ public class GamesTabFragment extends Fragment implements AdapterView.OnItemSele
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(GAMES_PAGE_DEBUG, "Created tab");
-        List<String> gameIds = new ArrayList<>();
 
         if (getArguments() != null) {
-            mTabName = getArguments().getString(TAB_NAME_TAG);
-            gameIds = getArguments().getStringArrayList(GAME_IDS_TAG);
+            mGameStatus = GameStatus.fromString(getArguments().getString(TAB_NAME_TAG));
         }
-        gamesTabViewModel = ViewModelProviders.of(this).get(GamesTabViewModel.class);
-        gamesTabViewModel.loadGames(gameIds);
+
+        initViewModel();
+    }
+
+    private void initViewModel() {
+        UserProfileViewModel userProfileViewModel = ViewModelProviders.of(getParentFragment().getActivity())
+                        .get(UserProfileViewModel.class);
+
+        GamesTabViewModelFactory factory = new GamesTabViewModelFactory(mGameStatus, userProfileViewModel);
+        gamesTabViewModel = ViewModelProviders.of(this, factory).get(GamesTabViewModel.class);
     }
 
     @Override
@@ -166,10 +168,6 @@ public class GamesTabFragment extends Fragment implements AdapterView.OnItemSele
     }
 
     public String getTabName() {
-        return mTabName;
-    }
-
-    public void updateGames(List<Game> newGames) {
-        gamesTabViewModel.loadGames(newGames);
+        return mGameStatus.toString();
     }
 }

@@ -47,16 +47,17 @@ public abstract class AbstractGame {
     public String dateString() {
         LocalDate startDay = getStartTime().toLocalDate();
         LocalDate endDay = getStartTime().toLocalDate();
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         if (startDay.equals(endDay)) {
             return "Date: " + startDay.format(DateTimeFormatter.ISO_LOCAL_DATE)
-                    + "\nFrom: " + getStartTime().toLocalTime().toString()
-                    + "    To: " + getEndTime().toLocalTime().toString();
+                    + "\nFrom: " + getStartTime().format(timeFormatter)
+                    + "    To: " + getEndTime().format(timeFormatter);
         } else {
             return "Date: " + startDay.format(DateTimeFormatter.ISO_LOCAL_DATE) + " - "
                     + endDay.format(DateTimeFormatter.ISO_LOCAL_DATE)
-                    + "\nFrom: " + getStartTime().format(DateTimeFormatter.ISO_LOCAL_TIME)
-                    + "    To: " + getEndTime().format(DateTimeFormatter.ISO_LOCAL_TIME);
+                    + "\nFrom: " + getStartTime().format(timeFormatter)
+                    + "    To: " + getEndTime().format(timeFormatter);
         }
     }
 

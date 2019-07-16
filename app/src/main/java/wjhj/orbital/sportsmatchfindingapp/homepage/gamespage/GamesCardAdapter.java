@@ -2,8 +2,6 @@ package wjhj.orbital.sportsmatchfindingapp.homepage.gamespage;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -57,7 +55,6 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
     public static void setImageResource(ImageView view, int resource) {
         view.setImageResource(resource);
     }
-
 
 
     static class CardViewHolder extends RecyclerView.ViewHolder {

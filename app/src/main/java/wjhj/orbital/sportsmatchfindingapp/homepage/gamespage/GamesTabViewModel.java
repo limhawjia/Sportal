@@ -1,5 +1,7 @@
 package wjhj.orbital.sportsmatchfindingapp.homepage.gamespage;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -10,56 +12,48 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
-import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
-import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 
 public class GamesTabViewModel extends ViewModel {
 
     private MediatorLiveData<List<Game>> gamesLiveData = new MediatorLiveData<>();
     private MutableLiveData<List<Game>> filteredGames = new MutableLiveData<>();
+    private MutableLiveData<Comparator<Game>> currentSort = new MutableLiveData<>();
 
-    public GamesTabViewModel(GameStatus gameStatus, UserProfileViewModel userProfileViewModel) {
-        gamesLiveData.addSource(userProfileViewModel.getGames(), new Observer<Map<GameStatus, List<Game>>>() {
+    public GamesTabViewModel(LiveData<List<Game>> source) {
+        currentSort.setValue((game1, game2) -> game1.getStartTime().compareTo(game2.getStartTime()));
+
+        gamesLiveData.addSource(source, new Observer<List<Game>>() {
             List<Game> prevGames;
             @Override
-            public void onChanged(Map<GameStatus, List<Game>> gamesMap) {
-                List<Game> newGames = gamesMap.get(gameStatus);
+            public void onChanged(List<Game> newGames) {
+                if (newGames == null) {
+                    newGames = new ArrayList<>();
+                }
+                Log.d("games", "list of games changed!");
                 if (prevGames == null || !prevGames.equals(newGames)) {
+                    Collections.sort(newGames, currentSort.getValue());
                     gamesLiveData.setValue(newGames);
                 }
                 prevGames = newGames;
             }
         });
-    }
 
-    public void loadGames(List<Game> games) {
-        this.gamesLiveData.setValue(games);
-//        List<LiveData<Game>> gamesLiveData = new ArrayList<>();
-//        List<Game> loadedGames = new ArrayList<>();
-//
-//        for (String id : ids) {
-//            gamesLiveData.add(repo.getGame(id));
-//        }
-//
-//        Tasks.whenAllComplete(gamesLiveData)
-//                .addOnSuccessListener(tasks -> {
-//                    Collections.sort(loadedGames,
-//                            (game1, game2) -> game1.getStartTime().compareTo(game2.getStartTime()));
-//                    gamesLiveData.postValue(loadedGames);
-//                });
+        gamesLiveData.addSource(currentSort, newComparator -> {
+            Log.d("games", "list of games sorted!");
+            if (gamesLiveData.getValue() != null) {
+                List<Game> currGames = new ArrayList<>(gamesLiveData.getValue());
+                Collections.sort(currGames, newComparator);
+                gamesLiveData.setValue(currGames);
+            }
+        });
     }
 
     public void sortGames(Comparator<Game> comparator) {
-        if (gamesLiveData.getValue() != null) {
-            List<Game> currGames = new ArrayList<>(gamesLiveData.getValue());
-            Collections.sort(currGames, comparator);
-            gamesLiveData.setValue(currGames);
-        }
+        currentSort.setValue(comparator);
     }
 
     public void filterSports(Sport filter) {

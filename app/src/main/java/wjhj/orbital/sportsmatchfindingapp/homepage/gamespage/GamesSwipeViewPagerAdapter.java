@@ -26,37 +26,24 @@ public class GamesSwipeViewPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    public void updateGames(Map<GameStatus, List<Game>> newAllGames) {
-        if (newAllGames != null && !newAllGames.isEmpty()) {
-            allGames = new EnumMap<>(newAllGames);
-        }
-
-        for (GameStatus gameStatus : GameStatus.values()) {
-            if (!allGames.containsKey(gameStatus)) {
-                allGames.put(gameStatus, new ArrayList<>());
-            }
-        }
-        notifyDataSetChanged();
-    }
-
     @NonNull
     @Override
     public Fragment getItem(int position) {
         GameStatus gameStatus = GameStatus.fromId(position);
         return GamesTabFragment
-                .newInstance(gameStatus.toString(), new ArrayList<>(allGames.get(gameStatus)));
+                .newInstance(gameStatus.toString());
     }
 
-    @Override
-    public int getItemPosition(@NonNull Object item) {
-        if (item instanceof GamesTabFragment) {
-            GamesTabFragment gamesTabFragment = (GamesTabFragment) item;
-            GameStatus gameStatus = GameStatus.fromString(gamesTabFragment.getTabName());
-            gamesTabFragment.updateGames(allGames.get(gameStatus));
-        }
-
-        return super.getItemPosition(item);
-    }
+//    @Override
+//    public int getItemPosition(@NonNull Object item) {
+//        if (item instanceof GamesTabFragment) {
+//            GamesTabFragment gamesTabFragment = (GamesTabFragment) item;
+//            GameStatus gameStatus = GameStatus.fromString(gamesTabFragment.getTabName());
+//            gamesTabFragment.updateGames(allGames.get(gameStatus));
+//        }
+//
+//        return super.getItemPosition(item);
+//    }
 
     @Override
     public int getCount() {
