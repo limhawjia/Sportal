@@ -34,17 +34,6 @@ public class GamesSwipeViewPagerAdapter extends FragmentPagerAdapter {
                 .newInstance(gameStatus.toString());
     }
 
-//    @Override
-//    public int getItemPosition(@NonNull Object item) {
-//        if (item instanceof GamesTabFragment) {
-//            GamesTabFragment gamesTabFragment = (GamesTabFragment) item;
-//            GameStatus gameStatus = GameStatus.fromString(gamesTabFragment.getTabName());
-//            gamesTabFragment.updateGames(allGames.get(gameStatus));
-//        }
-//
-//        return super.getItemPosition(item);
-//    }
-
     @Override
     public int getCount() {
         return allGames.size();

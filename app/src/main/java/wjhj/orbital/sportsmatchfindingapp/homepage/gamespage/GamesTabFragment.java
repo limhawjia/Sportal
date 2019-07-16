@@ -167,7 +167,4 @@ public class GamesTabFragment extends Fragment implements AdapterView.OnItemSele
         gamesTabViewModel.filterDifficulty(difficultySelected);
     }
 
-    public String getTabName() {
-        return mGameStatus.toString();
-    }
 }

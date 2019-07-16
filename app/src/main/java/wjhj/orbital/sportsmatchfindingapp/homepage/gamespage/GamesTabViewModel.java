@@ -19,6 +19,7 @@ import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 
 public class GamesTabViewModel extends ViewModel {
 
+    private String GAMES_TAB_DEBUG = "games_tab";
     private MediatorLiveData<List<Game>> gamesLiveData = new MediatorLiveData<>();
     private MutableLiveData<List<Game>> filteredGames = new MutableLiveData<>();
     private MutableLiveData<Comparator<Game>> currentSort = new MutableLiveData<>();
@@ -33,7 +34,7 @@ public class GamesTabViewModel extends ViewModel {
                 if (newGames == null) {
                     newGames = new ArrayList<>();
                 }
-                Log.d("games", "list of games changed!");
+                Log.d(GAMES_TAB_DEBUG, "list of games changed!");
                 if (prevGames == null || !prevGames.equals(newGames)) {
                     Collections.sort(newGames, currentSort.getValue());
                     gamesLiveData.setValue(newGames);
@@ -43,7 +44,7 @@ public class GamesTabViewModel extends ViewModel {
         });
 
         gamesLiveData.addSource(currentSort, newComparator -> {
-            Log.d("games", "list of games sorted!");
+            Log.d(GAMES_TAB_DEBUG, "list of games sorted!");
             if (gamesLiveData.getValue() != null) {
                 List<Game> currGames = new ArrayList<>(gamesLiveData.getValue());
                 Collections.sort(currGames, newComparator);
