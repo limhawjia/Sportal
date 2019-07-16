@@ -10,29 +10,30 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 
 
 public class GamesSwipeViewPagerAdapter extends FragmentPagerAdapter {
 
-    private Map<GameStatus, List<String>> allGameIds;
+    private Map<GameStatus, List<Game>> allGames;
 
     public GamesSwipeViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);
-        allGameIds = new EnumMap<>(GameStatus.class);
+        allGames = new EnumMap<>(GameStatus.class);
         for (GameStatus gameStatus : GameStatus.values()) {
-            allGameIds.put(gameStatus, new ArrayList<>());
+            allGames.put(gameStatus, new ArrayList<>());
         }
     }
 
-    public void updateGameIds(Map<GameStatus, List<String>> newAllGameIds) {
-        if (newAllGameIds != null && !newAllGameIds.isEmpty()) {
-            allGameIds = new EnumMap<>(newAllGameIds);
+    public void updateGames(Map<GameStatus, List<Game>> newAllGames) {
+        if (newAllGames != null && !newAllGames.isEmpty()) {
+            allGames = new EnumMap<>(newAllGames);
         }
 
         for (GameStatus gameStatus : GameStatus.values()) {
-            if (!allGameIds.containsKey(gameStatus)) {
-                allGameIds.put(gameStatus, new ArrayList<>());
+            if (!allGames.containsKey(gameStatus)) {
+                allGames.put(gameStatus, new ArrayList<>());
             }
         }
         notifyDataSetChanged();
@@ -43,7 +44,7 @@ public class GamesSwipeViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         GameStatus gameStatus = GameStatus.fromId(position);
         return GamesTabFragment
-                .newInstance(gameStatus.toString(), new ArrayList<>(allGameIds.get(gameStatus)));
+                .newInstance(gameStatus.toString(), new ArrayList<>(allGames.get(gameStatus)));
     }
 
     @Override
@@ -51,7 +52,7 @@ public class GamesSwipeViewPagerAdapter extends FragmentPagerAdapter {
         if (item instanceof GamesTabFragment) {
             GamesTabFragment gamesTabFragment = (GamesTabFragment) item;
             GameStatus gameStatus = GameStatus.fromString(gamesTabFragment.getTabName());
-            gamesTabFragment.updateIds(allGameIds.get(gameStatus));
+            gamesTabFragment.updateGames(allGames.get(gameStatus));
         }
 
         return super.getItemPosition(item);
@@ -59,7 +60,7 @@ public class GamesSwipeViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return allGameIds.size();
+        return allGames.size();
     }
 
     @Override

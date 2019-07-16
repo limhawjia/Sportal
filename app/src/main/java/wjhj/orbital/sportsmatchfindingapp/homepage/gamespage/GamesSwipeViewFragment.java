@@ -57,7 +57,7 @@ public class GamesSwipeViewFragment extends Fragment {
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         setUpSwipeView(adapter);
 
-        userProfileViewModel.getGameIds().observe(getActivity(), adapter::updateGameIds);
+        userProfileViewModel.getGames().observe(getActivity(), adapter::updateGames);
 
         return binding.getRoot();
     }

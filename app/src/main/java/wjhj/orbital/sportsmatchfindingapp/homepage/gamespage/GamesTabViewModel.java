@@ -1,56 +1,71 @@
 package wjhj.orbital.sportsmatchfindingapp.homepage.gamespage;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
-
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
+import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
-import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
+import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 
 public class GamesTabViewModel extends ViewModel {
 
-    private SportalRepo repo = new SportalRepo();
-    private MutableLiveData<List<Game>> games = new MutableLiveData<>();
+    private MediatorLiveData<List<Game>> gamesLiveData = new MediatorLiveData<>();
     private MutableLiveData<List<Game>> filteredGames = new MutableLiveData<>();
 
-    public void loadGames(List<String> ids) {
-        List<Task<Game>> gamesTasks = new ArrayList<>();
-        List<Game> loadedGames = new ArrayList<>();
+    public GamesTabViewModel(GameStatus gameStatus, UserProfileViewModel userProfileViewModel) {
+        gamesLiveData.addSource(userProfileViewModel.getGames(), new Observer<Map<GameStatus, List<Game>>>() {
+            List<Game> prevGames;
+            @Override
+            public void onChanged(Map<GameStatus, List<Game>> gamesMap) {
+                List<Game> newGames = gamesMap.get(gameStatus);
+                if (prevGames == null || !prevGames.equals(newGames)) {
+                    gamesLiveData.setValue(newGames);
+                }
+                prevGames = newGames;
+            }
+        });
+    }
 
-        for (String id : ids) {
-            gamesTasks.add(repo.getGame(id).addOnSuccessListener(loadedGames::add));
-        }
-
-        Tasks.whenAllComplete(gamesTasks)
-                .addOnSuccessListener(tasks -> {
-                    Collections.sort(loadedGames,
-                            (game1, game2) -> game1.getStartTime().compareTo(game2.getStartTime()));
-                    games.postValue(loadedGames);
-                });
+    public void loadGames(List<Game> games) {
+        this.gamesLiveData.setValue(games);
+//        List<LiveData<Game>> gamesLiveData = new ArrayList<>();
+//        List<Game> loadedGames = new ArrayList<>();
+//
+//        for (String id : ids) {
+//            gamesLiveData.add(repo.getGame(id));
+//        }
+//
+//        Tasks.whenAllComplete(gamesLiveData)
+//                .addOnSuccessListener(tasks -> {
+//                    Collections.sort(loadedGames,
+//                            (game1, game2) -> game1.getStartTime().compareTo(game2.getStartTime()));
+//                    gamesLiveData.postValue(loadedGames);
+//                });
     }
 
     public void sortGames(Comparator<Game> comparator) {
-        if (games.getValue() != null) {
-            List<Game> currGames = new ArrayList<>(games.getValue());
+        if (gamesLiveData.getValue() != null) {
+            List<Game> currGames = new ArrayList<>(gamesLiveData.getValue());
             Collections.sort(currGames, comparator);
-            games.setValue(currGames);
+            gamesLiveData.setValue(currGames);
         }
     }
 
     public void filterSports(Sport filter) {
-        if (games.getValue() != null) {
+        if (gamesLiveData.getValue() != null) {
             List<Game> filtered = new ArrayList<>();
-            for (Game game : games.getValue()) {
+            for (Game game : gamesLiveData.getValue()) {
                 if (game.getSport() == filter) {
                     filtered.add(game);
                 }
@@ -60,9 +75,9 @@ public class GamesTabViewModel extends ViewModel {
     }
 
     public void filterDifficulty(Difficulty filter) {
-        if (games.getValue() != null) {
+        if (gamesLiveData.getValue() != null) {
             List<Game> filtered = new ArrayList<>();
-            for (Game game : games.getValue()) {
+            for (Game game : gamesLiveData.getValue()) {
                 if (game.getSkillLevel() == filter) {
                     filtered.add(game);
                 }
@@ -71,13 +86,13 @@ public class GamesTabViewModel extends ViewModel {
         }
     }
 
-    public LiveData<List<Game>> getGames() {
-        return games;
+    public LiveData<List<Game>> getGamesLiveData() {
+        return gamesLiveData;
     }
 
     public LiveData<List<Game>> getFilteredGames() {
-        if (games.getValue() != null) {
-            filteredGames.setValue(games.getValue());
+        if (gamesLiveData.getValue() != null) {
+            filteredGames.setValue(gamesLiveData.getValue());
         }
         return filteredGames;
     }

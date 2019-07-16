@@ -22,6 +22,7 @@ import java.util.List;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGamesTabBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
+import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 
 /**
@@ -91,7 +92,7 @@ public class GamesTabFragment extends Fragment implements AdapterView.OnItemSele
         GamesCardAdapter mGamesCardAdapter = new GamesCardAdapter();
         recyclerView.setAdapter(mGamesCardAdapter);
 
-        gamesTabViewModel.getGames().observe(getViewLifecycleOwner(), mGamesCardAdapter::updateGames);
+        gamesTabViewModel.getGamesLiveData().observe(getViewLifecycleOwner(), mGamesCardAdapter::updateGames);
         gamesTabViewModel.getFilteredGames().observe(getViewLifecycleOwner(), mGamesCardAdapter::updateGames);
     }
 
@@ -168,7 +169,7 @@ public class GamesTabFragment extends Fragment implements AdapterView.OnItemSele
         return mTabName;
     }
 
-    public void updateIds(List<String> newIds) {
-        gamesTabViewModel.loadGames(newIds);
+    public void updateGames(List<Game> newGames) {
+        gamesTabViewModel.loadGames(newGames);
     }
 }

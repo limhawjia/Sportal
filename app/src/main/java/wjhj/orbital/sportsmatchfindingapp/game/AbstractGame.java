@@ -1,7 +1,6 @@
 package wjhj.orbital.sportsmatchfindingapp.game;
 
 import android.location.Location;
-import android.util.Log;
 
 import org.immutables.value.Value;
 import org.threeten.bp.LocalDate;
@@ -48,7 +47,6 @@ public abstract class AbstractGame {
     public String dateString() {
         LocalDate startDay = getStartTime().toLocalDate();
         LocalDate endDay = getStartTime().toLocalDate();
-        Log.d("TESTIN", getStartTime().toString() + "  |  " + getEndTime().toString());
 
         if (startDay.equals(endDay)) {
             return "Date: " + startDay.format(DateTimeFormatter.ISO_LOCAL_DATE)

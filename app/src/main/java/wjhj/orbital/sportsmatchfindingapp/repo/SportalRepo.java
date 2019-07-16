@@ -3,7 +3,12 @@ package wjhj.orbital.sportsmatchfindingapp.repo;
 import android.location.Location;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
+
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -27,7 +32,6 @@ public class SportalRepo implements ISportalRepo {
 
     @Override
     public void addUser(String uid, UserProfile userProfile) {
-        Log.d(DATA_DEBUG, "hi");
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         UserProfileDataModel dataModel = toUserProfileDataModel(userProfile);
 
@@ -45,13 +49,14 @@ public class SportalRepo implements ISportalRepo {
     }
 
     @Override
-    public Task<UserProfile> getUser(String userUid) {
-        Task<UserProfileDataModel> dataModelTask = convertToObject(
+    public LiveData<UserProfile> getUser(String userUid) {
+        LiveData<UserProfileDataModel> dataModelLiveData = convertToLiveData(
                 getDocumentFromCollection(userUid, "Users"), UserProfileDataModel.class);
 
-        return dataModelTask.continueWith(task -> toUserProfile(task.getResult()));
+        return Transformations.map(dataModelLiveData, this::toUserProfile);
     }
 
+    //TODO: CHANGE TO LIVE DATA
     @Override
     public Task<List<UserProfile>> selectUsersStartingWith(String field, String queryText) {
         return queryStartingWith("Users", field, queryText)
@@ -106,10 +111,11 @@ public class SportalRepo implements ISportalRepo {
     }
 
     @Override
-    public Task<Game> getGame(String gameID) {
-        Task<GameDataModel> dataModelTask =
-                convertToObject(getDocumentFromCollection(gameID, "Games"), GameDataModel.class);
-        return dataModelTask.continueWith(task -> toGame(task.getResult()));
+    public LiveData<Game> getGame(String gameID) {
+        LiveData<GameDataModel> dataModelLiveData =
+                convertToLiveData(getDocumentFromCollection(gameID, "Games"), GameDataModel.class);
+
+        return Transformations.map(dataModelLiveData, this::toGame);
     }
 
     @Override
@@ -150,27 +156,29 @@ public class SportalRepo implements ISportalRepo {
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, docId + "updateDocument failure", e));
     }
 
-    private Task<DocumentSnapshot> getDocumentFromCollection(String docID, String collectionPath) {
+    private DocumentReference getDocumentFromCollection(String docID, String collectionPath) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         return db.collection(collectionPath)
-                .document(docID)
-                .get()
-                .addOnSuccessListener(snapshot -> Log.d(DATA_DEBUG, "Document retrieval success"))
-                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Document retrieval failed", e));
+                .document(docID);
     }
 
-    private <T> Task<T> convertToObject (Task<DocumentSnapshot> snapshotTask, Class<T> valueType) {
-        return snapshotTask.continueWith(task -> {
-            DocumentSnapshot snapshot = task.getResult();
-            if (snapshot.exists()) {
-                return snapshot.toObject(valueType);
+    private <T> LiveData<T> convertToLiveData(DocumentReference docRef, Class<T> valueType) {
+        MutableLiveData<T> liveData = new MutableLiveData<>();
+
+        // docRef.get().addOnSuccessListener(res -> liveData.postValue(res.toObject(valueType)));
+        docRef.addSnapshotListener((value, err) -> {
+            if (err != null) {
+                Log.d(DATA_DEBUG, "database snapshot error", err);
+            } else if (value.exists()) {
+                liveData.postValue(value.toObject(valueType));
             } else {
-                Log.d(DATA_DEBUG,  snapshot.toString() + " does not exist.");
-                return null;
+                Log.d(DATA_DEBUG, "document does not exist");
             }
         });
+        return liveData;
     }
+
 
     private Task<QuerySnapshot> queryStartingWith(String collection, String field, String queryText) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -183,7 +191,7 @@ public class SportalRepo implements ISportalRepo {
                 .addOnSuccessListener(snapshot -> Log.d(DATA_DEBUG, snapshot + " retrieved"))
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "query collection failure", e));
     }
-    
+
     private Task<QuerySnapshot> queryArrayContains(String collection, String field, String queryText) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 

@@ -1,5 +1,7 @@
 package wjhj.orbital.sportsmatchfindingapp.repo;
 
+import androidx.lifecycle.LiveData;
+
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;
@@ -13,7 +15,7 @@ public interface ISportalRepo {
 
     void updateUser(String uid, UserProfile userProfile);
 
-    Task<UserProfile> getUser(String userUid);
+    LiveData<UserProfile> getUser(String userUid);
 
     Task<List<UserProfile>> selectUsersStartingWith(String field, String queryText);
 
@@ -27,7 +29,7 @@ public interface ISportalRepo {
 
     void updateGame(String gameId, Game game);
 
-    Task<Game> getGame(String gameId);
+    LiveData<Game> getGame(String gameId);
 
     Task<List<Game>> selectGamesStartingWith(String field, String queryText);
 
