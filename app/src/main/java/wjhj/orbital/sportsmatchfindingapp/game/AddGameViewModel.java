@@ -3,6 +3,7 @@ package wjhj.orbital.sportsmatchfindingapp.game;
 import androidx.databinding.ObservableInt;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import org.threeten.bp.Duration;
@@ -13,15 +14,22 @@ import org.threeten.bp.LocalTime;
 public class AddGameViewModel extends ViewModel {
 
     private ObservableInt sportSelection = new ObservableInt();
+    private MutableLiveData<String> gameName = new MutableLiveData<>();
     private MutableLiveData<LocalDate> date = new MutableLiveData<>();
     private MutableLiveData<LocalTime> time = new MutableLiveData<>();
     private MutableLiveData<Duration> duration = new MutableLiveData<>();
+    private MutableLiveData<String> minPlayersInput = new MutableLiveData<>();
+    private MutableLiveData<String> maxPlayersInput = new MutableLiveData<>();
 
     public ObservableInt getSportSelection() {
         return sportSelection;
     }
 
-    public LiveData<LocalDate> date() {
+    public MutableLiveData<String> getGameName() {
+        return gameName;
+    }
+
+    public LiveData<LocalDate> getDate() {
         return date;
     }
 
@@ -29,7 +37,7 @@ public class AddGameViewModel extends ViewModel {
         this.date.setValue(date);
     }
 
-    public MutableLiveData<LocalTime> getTime() {
+    public LiveData<LocalTime> getTime() {
         return time;
     }
 
@@ -37,7 +45,7 @@ public class AddGameViewModel extends ViewModel {
         this.time.setValue(time);
     }
 
-    public MutableLiveData<Duration> getDuration() {
+    public LiveData<Duration> getDuration() {
         return duration;
     }
 
@@ -45,5 +53,20 @@ public class AddGameViewModel extends ViewModel {
         this.duration.setValue(duration);
     }
 
+    public LiveData<String> durationString() {
+        return Transformations.map(duration, value -> {
+            long hours = value.getSeconds() / 3600;
+            long minutes = (value.getSeconds() % 3600) / 60;
+            return hours + " h  " + minutes + " m";
+        });
+    }
+
+    public MutableLiveData<String> getMinPlayersInput() {
+        return minPlayersInput;
+    }
+
+    public MutableLiveData<String> getMaxPlayersInput() {
+        return maxPlayersInput;
+    }
 
 }

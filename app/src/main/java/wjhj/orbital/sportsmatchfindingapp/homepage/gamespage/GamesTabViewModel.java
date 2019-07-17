@@ -27,20 +27,13 @@ public class GamesTabViewModel extends ViewModel {
     public GamesTabViewModel(LiveData<List<Game>> source) {
         currentSort.setValue((game1, game2) -> game1.getStartTime().compareTo(game2.getStartTime()));
 
-        gamesLiveData.addSource(source, new Observer<List<Game>>() {
-            List<Game> prevGames;
-            @Override
-            public void onChanged(List<Game> newGames) {
-                if (newGames == null) {
-                    newGames = new ArrayList<>();
-                }
-                Log.d(GAMES_TAB_DEBUG, "list of games changed!");
-                if (prevGames == null || !prevGames.equals(newGames)) {
-                    Collections.sort(newGames, currentSort.getValue());
-                    gamesLiveData.setValue(newGames);
-                }
-                prevGames = newGames;
+        gamesLiveData.addSource(source, newGames -> {
+            if (newGames == null) {
+                newGames = new ArrayList<>();
             }
+            Log.d(GAMES_TAB_DEBUG, "list of games changed!");
+            Collections.sort(newGames, currentSort.getValue());
+            gamesLiveData.setValue(newGames);
         });
 
         gamesLiveData.addSource(currentSort, newComparator -> {

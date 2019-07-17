@@ -4,10 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="addGameViewModel"
             type="wjhj.orbital.sportsmatchfindingapp.game.AddGameViewModel" />
+        <variable
+            name="activity"
+            type="wjhj.orbital.sportsmatchfindingapp.game.AddGameActivity" />
     </data>
 
     <RelativeLayout
@@ -79,10 +81,9 @@
 
             <RelativeLayout
                 android:id="@+id/add_game_required_details_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:background="@color/white"
                 app:layout_constraintLeft_toRightOf="parent"
                 app:layout_constraintRight_toLeftOf="parent"
@@ -100,12 +101,13 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/add_game_name_text_input"
                         style="@style/ThemeOverlay.MaterialComponents.Light"
-                        android:background="@color/white"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@color/white"
                         android:fontFamily="sans-serif-light"
                         android:inputType="text"
-                        android:maxLines="1" />
+                        android:maxLines="1"
+                        android:text="@={addGameViewModel.gameName}"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -124,7 +126,8 @@
                     android:gravity="center_vertical"
                     android:hint="@string/add_game_select_a_date"
                     android:text="@{addGameViewModel.date.toString()}"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp"
+                    android:onClick="@{v -> activity.openDatePicker()}"/>
 
                 <TextView
                     android:id="@+id/add_game_time_picker"
@@ -141,7 +144,8 @@
                     android:gravity="center_vertical"
                     android:hint="@string/add_game_select_a_time"
                     android:text="@{addGameViewModel.time.toString()}"
-                    android:textSize="14sp"/>
+                    android:textSize="14sp"
+                    android:onClick="@{v -> activity.openTimePicker()}"/>
 
                 <TextView
                     android:id="@+id/add_game_duration_picker"
@@ -157,8 +161,84 @@
                     android:fontFamily="sans-serif-light"
                     android:gravity="center_vertical"
                     android:hint="@string/add_game_set_a_duration"
-                    android:text="@{addGameViewModel.duration.toString()}"
-                    android:textSize="14sp"/>
+                    android:text="@{addGameViewModel.durationString()}"
+                    android:textSize="14sp"
+                    android:onClick="@{v -> activity.openDurationPicker()}"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/add_game_num_players_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/add_game_duration_picker"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/add_game_min_players"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/add_game_min_players"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/add_game_to"
+                        app:errorEnabled="true">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            style="@style/ThemeOverlay.MaterialComponents.Light"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/white"
+                            android:fontFamily="sans-serif-light"
+                            android:inputType="number"
+                            android:textSize="13sp"
+                            android:maxLines="1"
+                            android:text="@={addGameViewModel.minPlayersInput}"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/add_game_to"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="@string/to"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/add_game_max_players"
+                        app:layout_constraintStart_toEndOf="@id/add_game_min_players"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/add_game_max_players"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/add_game_max_players"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/add_game_to"
+                        app:errorEnabled="true">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            style="@style/ThemeOverlay.MaterialComponents.Light"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:fontFamily="sans-serif-light"
+                            android:inputType="number"
+                            android:textSize="13sp"
+                            android:maxLines="1"
+                            android:text="@={addGameViewModel.maxPlayersInput}"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </RelativeLayout>
 

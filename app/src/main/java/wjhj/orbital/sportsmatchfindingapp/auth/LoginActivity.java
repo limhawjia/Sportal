@@ -137,7 +137,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         Intent intent = new Intent(this, HomepageActivity.class);
-        intent.putExtra(CURR_USER_TAG, currUser);
         startActivity(intent);
         finish();
     }

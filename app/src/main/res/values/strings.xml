@@ -51,6 +51,7 @@
     <string name="to">to</string>
     <string name="date">Date</string>
     <string name="games_tab_sort_by">Sort by:</string>
+    <string name="duration_picker_text">:</string>
 
 
     <!-- MapBox access token -->
@@ -67,6 +68,8 @@
     <string name="add_game_select_a_date">Select a date</string>
     <string name="add_game_select_a_time">Select a time</string>
     <string name="add_game_set_a_duration">Set a duration</string>
+    <string name="add_game_min_players">Min players</string>
+    <string name="add_game_max_players">Max players</string>
 
 
 </resources>

@@ -3,25 +3,25 @@ package wjhj.orbital.sportsmatchfindingapp.game;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
-import android.widget.TimePicker;
 
+import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalTime;
 
-import java.util.Calendar;
-
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.AddGameActivityBinding;
+import wjhj.orbital.sportsmatchfindingapp.dialogs.DatePickerFragment;
+import wjhj.orbital.sportsmatchfindingapp.dialogs.DurationPickerFragment;
+import wjhj.orbital.sportsmatchfindingapp.dialogs.TimePickerFragment;
 
-public class AddGameActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener,
-        TimePickerDialog.OnTimeSetListener {
+public class AddGameActivity extends AppCompatActivity implements DatePickerFragment.DatePickerListener,
+        TimePickerFragment.TimePickerListener, DurationPickerFragment.DurationPickerListener {
 
     private AddGameActivityBinding binding;
     private AddGameViewModel viewModel;
@@ -40,70 +40,43 @@ public class AddGameActivity extends AppCompatActivity implements DatePickerDial
 
         viewModel = ViewModelProviders.of(this).get(AddGameViewModel.class);
         binding.setAddGameViewModel(viewModel);
+        binding.setActivity(this);
         binding.setLifecycleOwner(this);
 
         ArrayAdapter<Sport> sportAdapter = new ArrayAdapter<>(this,
                 R.layout.dropdown_menu_popup_item, Sport.values());
         sportAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         binding.addGameSelectSport.setAdapter(sportAdapter);
-
-        binding.addGameDatePicker.setOnClickListener(view -> openDatePicker());
-
-        binding.addGameTimePicker.setOnClickListener(view -> openTimePicker());
-
-        binding.addGameDurationPicker.setOnClickListener(view -> openDurationPicker());
-
-
-
-//        ArrayAdapter<String> locationAdapter = new ArrayAdapter<>(this, R.layout.dropdown_menu_popup_item, new String[]{"North", "South", "East", "West"});
-//        binding.addGameLocationInput.setAdapter(locationAdapter);
-//
-//        ArrayAdapter<String> skillAdapter = new ArrayAdapter<>(this, R.layout.dropdown_menu_popup_item, new String[]{"Beginner", "Intermediate", "Advanced"});
-//        binding.addGameSkillInput.setAdapter(skillAdapter);
-//
-//        binding.startDate.setOnClickListener((View v) -> getDate(viewModel.getStartDate()));
-//        binding.endDate.setOnClickListener((View v) -> getDate(viewModel.getEndDate()));
-//
-//
-//        binding.addGamePickStartTime.setOnClickListener((View v) -> getTime(viewModel.getStartTime()));
-//        binding.addGamePickEndTime.setOnClickListener((View v) -> getTime(viewModel.getEndTime()));
     }
 
-    private void openDatePicker() {
-        Calendar calendar = Calendar.getInstance();
-        DatePickerDialog dialog = new DatePickerDialog(this,
-                this,
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH));
-        dialog.show();
+    public void openDatePicker() {
+        DialogFragment datePicker = new DatePickerFragment();
+        datePicker.show(getSupportFragmentManager(), "date picker");
     }
 
-    private void openTimePicker() {
-        Calendar calendar = Calendar.getInstance();
-        TimePickerDialog dialog = new TimePickerDialog(this,
-                this,
-                calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE),
-                true);
-        dialog.show();
+    public void openTimePicker() {
+        DialogFragment timePicker = new TimePickerFragment();
+        timePicker.show(getSupportFragmentManager(), "time picker");
     }
 
-    private void openDurationPicker() {
-
+    public void openDurationPicker() {
+        DialogFragment durationPicker = new DurationPickerFragment();
+        durationPicker.show(getSupportFragmentManager(), "duration picker");
     }
 
     @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        LocalDate date = LocalDate.of(year, month, dayOfMonth);
-        viewModel.setDate(date);
+    public void onDialogDateSet(DatePickerFragment datePickerFragment, LocalDate dateSet) {
+        viewModel.setDate(dateSet);
     }
 
     @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        LocalTime time = LocalTime.of(hourOfDay, minute);
-        viewModel.setTime(time);
+    public void onDialogTimeSet(TimePickerFragment timePickerFragment, LocalTime timeSet) {
+        viewModel.setTime(timeSet);
     }
 
-
+    @Override
+    public void onDialogDurationSet(DurationPickerFragment durationPickerFragment, Duration durationSet) {
+        viewModel.setDuration(durationSet);
+    }
 }

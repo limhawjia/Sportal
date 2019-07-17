@@ -68,7 +68,7 @@ public class SignUpActivity extends AppCompatActivity {
             auths.tryCreateUser(signUpAuth)
                     .addOnSuccessListener(result -> {
                         Log.d(SIGNUP_DEBUG, "User created successfully");
-                        updateOnSignedUp(result.getUser());
+                        updateOnSignedUp();
                     })
                     .addOnFailureListener(e -> {
                         Log.d(SIGNUP_DEBUG, "Create user failed", e);
@@ -80,9 +80,8 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
-    private void updateOnSignedUp(FirebaseUser currUser) {
+    private void updateOnSignedUp() {
         Intent preferencesIntent = new Intent(this, PreferencesActivity.class);
-        preferencesIntent.putExtra(LoginActivity.CURR_USER_TAG, currUser);
         startActivity(preferencesIntent);
         finish();
     }

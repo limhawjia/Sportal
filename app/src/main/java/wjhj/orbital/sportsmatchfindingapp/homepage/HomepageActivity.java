@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,7 +45,16 @@ public class HomepageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(HOMEPAGE_DEBUG, "homepage activity created");
-        currUser = getIntent().getParcelableExtra(CURR_USER_TAG);
+
+        currUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (currUser == null) {
+            Toast.makeText(this, "Not logged in. Redirecting...", Toast.LENGTH_SHORT)
+                    .show();
+            Intent loginIntent = new Intent(this, LoginActivity.class);
+            startActivity(loginIntent);
+            finish();
+        }
 
         UserProfileViewModelFactory factory = new UserProfileViewModelFactory(currUser.getUid());
         userProfileViewModel = ViewModelProviders.of(this, factory)
