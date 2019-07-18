@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.mapbox.geojson.Point;
+
 import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalTime;
@@ -20,6 +22,8 @@ public class AddGameViewModel extends ViewModel {
     private MutableLiveData<Duration> duration = new MutableLiveData<>();
     private MutableLiveData<String> minPlayersInput = new MutableLiveData<>();
     private MutableLiveData<String> maxPlayersInput = new MutableLiveData<>();
+    private Point locationPoint;
+    private MutableLiveData<String> placeName = new MutableLiveData<>();
 
     public ObservableInt getSportSelection() {
         return sportSelection;
@@ -69,4 +73,19 @@ public class AddGameViewModel extends ViewModel {
         return maxPlayersInput;
     }
 
+    public Point getLocationPoint() {
+        return locationPoint;
+    }
+
+    public void setLocationPoint(Point locationPoint) {
+        this.locationPoint = locationPoint;
+    }
+
+    public MutableLiveData<String> getPlaceName() {
+        return placeName;
+    }
+
+    public void setPlaceName(String placeName) {
+        this.placeName.setValue(placeName);
+    }
 }

@@ -18,6 +18,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.maps.SupportMapFragment;
 
@@ -72,17 +75,25 @@ public class HomepageActivity extends AppCompatActivity {
             startActivityForResult(addGameIntent, ADD_GAME_RC);
         });
 
-        Mapbox.getInstance(this,  getString(R.string.mapbox_access_token));
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        mapFragment = SupportMapFragment.newInstance();
-        transaction.replace(R.id.homepage_fragment_container, mapFragment)
-                .commit();
-        mapFragment.getMapAsync(mapboxMap -> {
-            mapboxMap.setStyle(Style.DARK, style -> {
-                Log.d(HOMEPAGE_DEBUG, "style loaded");
-            });
-        });
+//        Mapbox.getInstance(this,  getString(R.string.mapbox_access_token));
+//
+//        MapboxMapOptions options = MapboxMapOptions.createFromAttributes(this, null);
+//        options.camera(new CameraPosition.Builder()
+//                .target(new LatLng(-52.6885, -70.1395))
+//                .zoom(9)
+//                .build());
+//
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//
+//
+//        mapFragment = SupportMapFragment.newInstance(options);
+//        transaction.replace(R.id.homepage_fragment_container, mapFragment)
+//                .commit();
+//        mapFragment.getMapAsync(mapboxMap -> {
+//            mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
+//                Log.d(HOMEPAGE_DEBUG, "style loaded");
+//            });
+//        });
 
     }
 

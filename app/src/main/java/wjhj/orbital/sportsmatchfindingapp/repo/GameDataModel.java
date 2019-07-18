@@ -12,7 +12,8 @@ class GameDataModel {
     private String gameName;
     private String description;
     private Sport sport;
-    private GeoPoint location;
+    private GeoPoint locationPoint;
+    private String placeName;
     private int minPlayers;
     private int maxPlayers;
     private Difficulty skillLevel;
@@ -29,7 +30,8 @@ class GameDataModel {
         gameName = game.getGameName();
         description = game.getDescription();
         sport = game.getSport();
-        location = new GeoPoint(game.getLocation().getLatitude(), game.getLocation().getLongitude());
+        locationPoint = new GeoPoint(game.getLocationPoint().latitude(), game.getLocationPoint().longitude());
+        placeName = game.getPlaceName();
         minPlayers = game.getMinPlayers();
         maxPlayers = game.getMaxPlayers();
         skillLevel = game.getSkillLevel();
@@ -51,8 +53,12 @@ class GameDataModel {
         return sport;
     }
 
-    public GeoPoint getLocation() {
-        return location;
+    public GeoPoint getLocationPoint() {
+        return locationPoint;
+    }
+
+    public String getPlaceName() {
+        return placeName;
     }
 
     public int getMinPlayers() {

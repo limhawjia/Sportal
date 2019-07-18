@@ -2,6 +2,8 @@ package wjhj.orbital.sportsmatchfindingapp.game;
 
 import android.location.Location;
 
+import com.mapbox.geojson.Point;
+
 import org.immutables.value.Value;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
@@ -25,8 +27,9 @@ public abstract class AbstractGame {
 
     public abstract Sport getSport();
 
-    //TODO: Type to be changed depending on map implementation
-    public abstract Location getLocation();
+    public abstract Point getLocationPoint();
+
+    public abstract String getPlaceName();
 
     public abstract int getMinPlayers();
 

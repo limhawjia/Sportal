@@ -1,6 +1,5 @@
 package wjhj.orbital.sportsmatchfindingapp.repo;
 
-import android.location.Location;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -9,11 +8,12 @@ import androidx.lifecycle.Transformations;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.mapbox.geojson.Point;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
@@ -250,15 +250,15 @@ public class SportalRepo implements ISportalRepo {
     }
 
     private Game toGame(GameDataModel dataModel) {
-        Location location = new Location("");
-        location.setLatitude(dataModel.getLocation().getLatitude());
-        location.setLongitude(dataModel.getLocation().getLongitude());
+        GeoPoint geoPoint = dataModel.getLocationPoint();
+        Point point = Point.fromLngLat(geoPoint.getLongitude(), geoPoint.getLatitude());
 
         return Game.builder()
                 .withGameName(dataModel.getGameName())
                 .withDescription(dataModel.getDescription())
                 .withSport(dataModel.getSport())
-                .withLocation(location)
+                .withLocationPoint(point)
+                .withPlaceName(dataModel.getPlaceName())
                 .withMinPlayers(dataModel.getMinPlayers())
                 .withMaxPlayers(dataModel.getMaxPlayers())
                 .withSkillLevel(dataModel.getSkillLevel())
