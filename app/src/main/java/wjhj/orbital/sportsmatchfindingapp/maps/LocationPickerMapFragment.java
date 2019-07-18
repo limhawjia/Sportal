@@ -29,6 +29,7 @@ import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
+import com.mapbox.mapboxsdk.location.LocationComponentOptions;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapView;
@@ -139,10 +140,18 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
         if (PermissionsManager.areLocationPermissionsGranted(requireActivity())) {
 
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
-            LocationComponentActivationOptions options = LocationComponentActivationOptions
-                    .builder(requireActivity(), loadedMapStyle)
+            LocationComponentOptions options = LocationComponentOptions
+                    .builder(requireActivity())
+                    .backgroundTintColor(ContextCompat.getColor(requireActivity(), R.color.colorPrimaryVariant))
+                    .bearingTintColor(ContextCompat.getColor(requireActivity(), R.color.mapbox_blue))
                     .build();
-            locationComponent.activateLocationComponent(options);
+
+            LocationComponentActivationOptions activationOptions = LocationComponentActivationOptions
+                    .builder(requireActivity(), loadedMapStyle)
+                    .locationComponentOptions(options)
+                    .build();
+
+            locationComponent.activateLocationComponent(activationOptions);
             locationComponent.setLocationComponentEnabled(true);
 
             locationComponent.setCameraMode(CameraMode.TRACKING);
@@ -156,7 +165,7 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
 
     private void initHoveringMarker() {
         hoveringMarker = new ImageView(getActivity());
-        hoveringMarker.setImageResource(R.drawable.ic_location_on_red_24dp);
+        hoveringMarker.setImageResource(R.drawable.ic_location_on_red_36dp);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
@@ -166,7 +175,7 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
     }
 
     private void initDroppedMarker(@NonNull Style loadedMapStyle) {
-        Drawable marker = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_location_on_blue_24dp);
+        Drawable marker = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_location_on_blue_36dp);
         if (marker != null) {
             loadedMapStyle.addImage("dropped-icon-image", marker);
         }

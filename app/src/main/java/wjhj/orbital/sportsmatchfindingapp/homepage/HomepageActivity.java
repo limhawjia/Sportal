@@ -74,27 +74,6 @@ public class HomepageActivity extends AppCompatActivity {
             Intent addGameIntent = new Intent(this, AddGameActivity.class);
             startActivityForResult(addGameIntent, ADD_GAME_RC);
         });
-
-//        Mapbox.getInstance(this,  getString(R.string.mapbox_access_token));
-//
-//        MapboxMapOptions options = MapboxMapOptions.createFromAttributes(this, null);
-//        options.camera(new CameraPosition.Builder()
-//                .target(new LatLng(-52.6885, -70.1395))
-//                .zoom(9)
-//                .build());
-//
-//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//
-//
-//        mapFragment = SupportMapFragment.newInstance(options);
-//        transaction.replace(R.id.homepage_fragment_container, mapFragment)
-//                .commit();
-//        mapFragment.getMapAsync(mapboxMap -> {
-//            mapboxMap.setStyle(Style.MAPBOX_STREETS, style -> {
-//                Log.d(HOMEPAGE_DEBUG, "style loaded");
-//            });
-//        });
-
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {

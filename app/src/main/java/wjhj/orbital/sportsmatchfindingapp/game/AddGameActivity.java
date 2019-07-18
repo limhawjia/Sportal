@@ -83,8 +83,7 @@ public class AddGameActivity extends AppCompatActivity implements
 
         MapboxMapOptions options = MapboxMapOptions.createFromAttributes(this, null);
         options.camera(new CameraPosition.Builder()
-                .target(new LatLng(-52.6885, -70.1395))
-                .zoom(9)
+                .zoom(13)
                 .build());
 
         LocationPickerMapFragment mapFragment = LocationPickerMapFragment.newInstance(options);
