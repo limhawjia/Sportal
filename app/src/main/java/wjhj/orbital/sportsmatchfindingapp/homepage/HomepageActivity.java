@@ -5,7 +5,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
@@ -17,12 +16,6 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
-import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.mapboxsdk.maps.SupportMapFragment;
 
 
 import wjhj.orbital.sportsmatchfindingapp.R;
@@ -42,7 +35,6 @@ public class HomepageActivity extends AppCompatActivity {
     private FirebaseUser currUser;
     private UserProfileViewModel userProfileViewModel;
     private HomepageActivityBinding binding;
-    private SupportMapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +72,7 @@ public class HomepageActivity extends AppCompatActivity {
         Fragment fragment = new Fragment();// IMPLEMENT PROPERLY
         switch (item.getItemId()) {
             case R.id.nav_home:
-                fragment = mapFragment;
+                //todo
                 break;
             case R.id.nav_games:
                 fragment = GamesSwipeViewFragment.newInstance();
