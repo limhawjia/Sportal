@@ -43,55 +43,55 @@ class GameDataModel {
         participatingUids = game.getParticipatingUids();
     }
 
-     String getGameName() {
+    public String getGameName() {
         return gameName;
     }
 
-     String getDescription() {
+    public String getDescription() {
         return description;
     }
 
-     Sport getSport() {
+    public Sport getSport() {
         return sport;
     }
 
-     GeoPoint getLocation() {
+    public GeoPoint getLocation() {
         return location;
     }
 
-     String getPlaceName() {
+    public String getPlaceName() {
         return placeName;
     }
 
-     int getMinPlayers() {
+    public int getMinPlayers() {
         return minPlayers;
     }
 
-     int getMaxPlayers() {
+    public int getMaxPlayers() {
         return maxPlayers;
     }
 
-     Difficulty getSkillLevel() {
+    public Difficulty getSkillLevel() {
         return skillLevel;
     }
 
-     String getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-     String getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-     String getUid() {
+    public String getUid() {
         return uid;
     }
 
-     String getCreatorUid() {
+    public String getCreatorUid() {
         return creatorUid;
     }
 
-     List<String> getParticipatingUids() {
+    public List<String> getParticipatingUids() {
         return participatingUids;
     }
 
