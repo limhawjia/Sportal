@@ -48,7 +48,7 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         try {
             listener = (TimePickerListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(getActivity().toString() +
+            throw new ClassCastException(getActivity().getClass().getSimpleName() +
                     "must implement TimePickerListener");
         }
     }

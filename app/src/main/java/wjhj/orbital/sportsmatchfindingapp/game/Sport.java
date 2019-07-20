@@ -1,5 +1,7 @@
 package wjhj.orbital.sportsmatchfindingapp.game;
 
+import androidx.annotation.NonNull;
+
 import wjhj.orbital.sportsmatchfindingapp.R;
 
 public enum Sport {
@@ -24,13 +26,14 @@ public enum Sport {
     }
 
     public static String[] getAllSportsString() {
-        String[] string = new String[values().length];
+        String[] strings = new String[values().length];
         for (int i = 0; i < values().length; i++) {
-            string[i] = values()[i].toString();
+            strings[i] = values()[i].toString();
         }
-        return string;
+        return strings;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return str;

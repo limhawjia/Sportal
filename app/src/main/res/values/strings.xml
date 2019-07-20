@@ -74,6 +74,10 @@
     <string name="add_game_select_location">Select location</string>
     <string name="add_game_confirm">Confirm</string>
     <string name="add_game_try_again">Try again</string>
+    <string name="add_game_select_skill_level">Select the rough skill level of the game!</string>
+    <string name="add_game_optional_details_text">OPTIONAL DETAILS</string>
+    <string name="add_game_game_description">Enter game description</string>
+    <string name="add_game_make_game">MAKE GAME!</string>
 
 
 </resources>

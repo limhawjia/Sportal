@@ -9,11 +9,13 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
 
 import org.threeten.bp.Duration;
@@ -24,6 +26,7 @@ import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.AddGameActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.DatePickerFragment;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.DurationPickerFragment;
+import wjhj.orbital.sportsmatchfindingapp.dialogs.SkillLevelPickerFragment;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.TimePickerFragment;
 import wjhj.orbital.sportsmatchfindingapp.maps.LocationPickerMapFragment;
 
@@ -32,7 +35,8 @@ public class AddGameActivity extends AppCompatActivity implements
         TimePickerFragment.TimePickerListener,
         DurationPickerFragment.DurationPickerListener,
         LocationPickerMapFragment.OnMapFragmentCancelledListener,
-        LocationPickerMapFragment.LocationPickerListener {
+        LocationPickerMapFragment.LocationPickerListener,
+        SkillLevelPickerFragment.SkillLevelPickerListener {
 
     private static String LOCATION_PICKER_TAG = "location_picker";
 
@@ -61,6 +65,25 @@ public class AddGameActivity extends AppCompatActivity implements
         sportAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         binding.addGameSelectSport.setAdapter(sportAdapter);
+
+        binding.addGameButton.setOnClickListener(v -> {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null) {
+                viewModel.makeGame(user.getUid());
+            } else {
+                Toast.makeText(this, "Not logged in.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        viewModel.getNewGameResult().observe(this, result -> {
+            if (result.isSuccessful()) {
+                //TODO redirect to game page when it is implemented.
+                Toast.makeText(this, result.getResult().toString(), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Could not make game, please try again.", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
     }
 
     public void openDatePicker() {
@@ -83,7 +106,7 @@ public class AddGameActivity extends AppCompatActivity implements
 
         MapboxMapOptions options = MapboxMapOptions.createFromAttributes(this, null);
         options.camera(new CameraPosition.Builder()
-                .zoom(13)
+                .zoom(13.3)
                 .build());
 
         LocationPickerMapFragment mapFragment = LocationPickerMapFragment.newInstance(options);
@@ -92,6 +115,12 @@ public class AddGameActivity extends AppCompatActivity implements
                 .add(R.id.add_game_page_container, mapFragment, LOCATION_PICKER_TAG)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    public void openSkillPicker() {
+        Difficulty currDifficulty = viewModel.getSkillLevel().getInput();
+        DialogFragment skillPicker = new SkillLevelPickerFragment(currDifficulty);
+        skillPicker.show(getSupportFragmentManager(), "skill picker");
     }
 
     @Override
@@ -124,5 +153,10 @@ public class AddGameActivity extends AppCompatActivity implements
         getSupportFragmentManager().beginTransaction()
                 .remove(locationPickerMapFragment)
                 .commit();
+    }
+
+    @Override
+    public void onSkillLevelSet(SkillLevelPickerFragment skillLevelPickerFragment, int skillLevelSet) {
+        viewModel.setSkillLevel(Difficulty.values()[skillLevelSet]);
     }
 }

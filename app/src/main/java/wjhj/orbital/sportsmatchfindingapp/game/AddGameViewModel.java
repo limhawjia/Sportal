@@ -3,89 +3,172 @@ package wjhj.orbital.sportsmatchfindingapp.game;
 import androidx.databinding.ObservableInt;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.mapbox.geojson.Point;
 
 import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.LocalTime;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import java9.util.stream.StreamSupport;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
+import wjhj.orbital.sportsmatchfindingapp.utils.Result;
+import wjhj.orbital.sportsmatchfindingapp.utils.ValidationInput;
 
 
 public class AddGameViewModel extends ViewModel {
 
-    private ObservableInt sportSelection = new ObservableInt();
-    private MutableLiveData<String> gameName = new MutableLiveData<>();
-    private MutableLiveData<LocalDate> date = new MutableLiveData<>();
-    private MutableLiveData<LocalTime> time = new MutableLiveData<>();
-    private MutableLiveData<Duration> duration = new MutableLiveData<>();
-    private MutableLiveData<String> minPlayersInput = new MutableLiveData<>();
-    private MutableLiveData<String> maxPlayersInput = new MutableLiveData<>();
+    private ObservableInt sportSelection;
+    private ValidationInput<String> gameName;
+    private ValidationInput<LocalDate> date;
+    private ValidationInput<LocalTime> time;
+    private ValidationInput<Duration> duration;
     private Point locationPoint;
-    private MutableLiveData<String> placeName = new MutableLiveData<>();
+    private ValidationInput<String> placeName;
+    private ValidationInput<String> minPlayersInput;
+    private ValidationInput<String> maxPlayersInput;
+    private ValidationInput<Difficulty> skillLevel;
+    private MutableLiveData<String> gameDescription;
+    private MutableLiveData<Result<Game>> newGameResult;
+
+    private List<ValidationInput<?>> validations;
+    private SportalRepo repo;
+
+    public AddGameViewModel() {
+        sportSelection = new ObservableInt();
+        gameName = new ValidationInput<>(text -> text != null && !text.equals(""), "Name cannot be blank.");
+        date = new ValidationInput<>(date -> date != null && !date.isBefore(LocalDate.now()), "");
+        time = new ValidationInput<>(time -> time != null, "");
+        duration = new ValidationInput<>(duration -> duration != null, "");
+        placeName = new ValidationInput<>(text -> text != null && !text.equals(""), "");
+        minPlayersInput = new ValidationInput<>(num -> num != null && !num.equals("0"), "Enter valid number.");
+        maxPlayersInput = new ValidationInput<>(num -> num != null && !num.equals("0"), "Enter valid number.");
+        skillLevel = new ValidationInput<>(difficulty -> difficulty != null, "");
+        gameDescription = new MutableLiveData<>();
+        newGameResult = new MutableLiveData<>();
+
+        validations = new ArrayList<>();
+        validations.add(gameName);
+        validations.add(date);
+        validations.add(time);
+        validations.add(duration);
+        validations.add(placeName);
+        validations.add(minPlayersInput);
+        validations.add(maxPlayersInput);
+        validations.add(skillLevel);
+
+        repo = new SportalRepo();
+    }
 
     public ObservableInt getSportSelection() {
         return sportSelection;
     }
 
-    public MutableLiveData<String> getGameName() {
+    public ValidationInput getGameName() {
         return gameName;
     }
 
-    public LiveData<LocalDate> getDate() {
+    public ValidationInput<LocalDate> getDate() {
         return date;
     }
 
     public void setDate(LocalDate date) {
-        this.date.setValue(date);
+        this.date.setInput(date);
     }
 
-    public LiveData<LocalTime> getTime() {
+    public ValidationInput<LocalTime> getTime() {
         return time;
     }
 
     public void setTime(LocalTime time) {
-        this.time.setValue(time);
+        this.time.setInput(time);
     }
 
-    public LiveData<Duration> getDuration() {
+    public ValidationInput<Duration> getDuration() {
         return duration;
     }
 
     public void setDuration(Duration duration) {
-        this.duration.setValue(duration);
+        this.duration.setInput(duration);
     }
 
-    public LiveData<String> durationString() {
-        return Transformations.map(duration, value -> {
-            long hours = value.getSeconds() / 3600;
-            long minutes = (value.getSeconds() % 3600) / 60;
-            return hours + " h  " + minutes + " m";
-        });
-    }
-
-    public MutableLiveData<String> getMinPlayersInput() {
-        return minPlayersInput;
-    }
-
-    public MutableLiveData<String> getMaxPlayersInput() {
-        return maxPlayersInput;
-    }
-
-    public Point getLocationPoint() {
-        return locationPoint;
+    public String toDurationString(Duration duration) {
+        if (duration == null) {
+            return null;
+        }
+        long hours = duration.getSeconds() / 3600;
+        long minutes = (duration.getSeconds() % 3600) / 60;
+        return hours + " h  " + minutes + " m";
     }
 
     public void setLocationPoint(Point locationPoint) {
         this.locationPoint = locationPoint;
     }
 
-    public MutableLiveData<String> getPlaceName() {
+    public ValidationInput<String> getPlaceName() {
         return placeName;
     }
 
-    public void setPlaceName(String placeName) {
-        this.placeName.setValue(placeName);
+    public ValidationInput<String> getMinPlayersInput() {
+        return minPlayersInput;
     }
+
+    public ValidationInput<String> getMaxPlayersInput() {
+        return maxPlayersInput;
+    }
+
+
+    public void setPlaceName(String placeName) {
+        this.placeName.setInput(placeName);
+    }
+
+    public ValidationInput<Difficulty> getSkillLevel() {
+        return skillLevel;
+    }
+
+    public void setSkillLevel(Difficulty skillLevel) {
+        this.skillLevel.setInput(skillLevel);
+    }
+
+    public MutableLiveData<String> getGameDescription() {
+        return gameDescription;
+    }
+
+    public LiveData<Result<Game>> getNewGameResult() {
+        return newGameResult;
+    }
+
+    public void makeGame(String creatorUid) {
+        StreamSupport.stream(validations).forEach(ValidationInput::validate);
+
+        if (StreamSupport.stream(validations)
+                .allMatch(input -> input.getState() == ValidationInput.State.VALIDATED)) {
+            String description = gameDescription.getValue() == null ? "" : gameDescription.getValue();
+            String gameUid = repo.generateGameUid();
+            Game game = Game.builder()
+                    .withGameName(gameName.getInput())
+                    .withDescription(description)
+                    .withSport(Sport.values()[sportSelection.get()])
+                    .withLocation(locationPoint)
+                    .withPlaceName(placeName.getInput())
+                    .withMinPlayers(Integer.valueOf(minPlayersInput.getInput()))
+                    .withMaxPlayers(Integer.valueOf(maxPlayersInput.getInput()))
+                    .withSkillLevel(skillLevel.getInput())
+                    .withStartTime(LocalDateTime.of(date.getInput(), time.getInput()))
+                    .withEndTime(LocalDateTime.of(date.getInput(), time.getInput()).plus(duration.getInput()))
+                    .withUid(gameUid)
+                    .withCreatorUid(creatorUid)
+                    .build();
+
+            repo.addGame(gameUid, game)
+                    .addOnSuccessListener(aVoid -> newGameResult.postValue(new Result<>(game)))
+                    .addOnFailureListener(e -> newGameResult.postValue(new Result<>(e)));
+        }
+    }
+
 }

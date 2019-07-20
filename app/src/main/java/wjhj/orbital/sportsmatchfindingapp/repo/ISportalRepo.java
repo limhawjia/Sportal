@@ -11,9 +11,9 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
 public interface ISportalRepo {
 
-    void addUser(String uid, UserProfile userProfile);
+    Task<Void> addUser(String uid, UserProfile userProfile);
 
-    void updateUser(String uid, UserProfile userProfile);
+    Task<Void> updateUser(String uid, UserProfile userProfile);
 
     LiveData<UserProfile> getUser(String userUid);
 
@@ -21,13 +21,13 @@ public interface ISportalRepo {
 
     Task<List<UserProfile>> selectUsersArrayContains(String field, String queryText);
 
-    void deleteUser(String userUid);
+    Task<Void> deleteUser(String userUid);
 
     String generateGameUid();
 
-    void addGame(String gameId, Game game);
+    Task<Void> addGame(String gameId, Game game);
 
-    void updateGame(String gameId, Game game);
+    Task<Void> updateGame(String gameId, Game game);
 
     LiveData<Game> getGame(String gameId);
 
@@ -35,5 +35,5 @@ public interface ISportalRepo {
 
     Task<List<Game>> selectGamesArrayContains(String field, String queryText);
 
-    void deleteGame(String gameId);
+    Task<Void> deleteGame(String gameId);
 }

@@ -1,12 +1,12 @@
 Proposed Level of Achievement: Apollo 11
 
 
-# **_<span style="text-decoration:underline;">Android application: Sportal</span>_**
+# **_<span style="input-decoration:underline;">Android application: Sportal</span>_**
 
 An all-in-one Android app to solve all your sports match-finding needs
 
 
-## **_<span style="text-decoration:underline;">IDEATION</span>_**
+## **_<span style="input-decoration:underline;">IDEATION</span>_**
 
 
 ### **Problem Motivation**:
@@ -45,7 +45,7 @@ As of present, we feel like there is a lack of a centralized platform for sports
 
 5. As a sports venue owner, I can promote my venue to groups of sport players by organizing matches when my venue is unbooked.
 
-## **_<span style="text-decoration:underline;">Project Scope</span>_**
+## **_<span style="input-decoration:underline;">Project Scope</span>_**
 
 
 ### **Aim**:
@@ -113,7 +113,7 @@ Our objective is to provide a service that addresses the above issues in an Andr
 *   Find out more about fellow users and see what your friends have been up to!
 
 
-## **_<span style="text-decoration:underline;">Program Overview</span>_**
+## **_<span style="input-decoration:underline;">Program Overview</span>_**
 
 **Application flowchart:**
 

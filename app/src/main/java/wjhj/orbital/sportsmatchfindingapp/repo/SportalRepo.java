@@ -31,11 +31,11 @@ public class SportalRepo implements ISportalRepo {
     private static final String DATA_DEBUG = "SportalRepo";
 
     @Override
-    public void addUser(String uid, UserProfile userProfile) {
+    public Task<Void> addUser(String uid, UserProfile userProfile) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         UserProfileDataModel dataModel = toUserProfileDataModel(userProfile);
 
-        db.collection("Users")
+        return db.collection("Users")
                 .document(uid)
                 .set(dataModel)
                 .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, uid + " added"))
@@ -43,9 +43,9 @@ public class SportalRepo implements ISportalRepo {
     }
 
     @Override
-    public void updateUser(String uid, UserProfile userProfile) {
+    public Task<Void> updateUser(String uid, UserProfile userProfile) {
         UserProfileDataModel dataModel = toUserProfileDataModel(userProfile);
-        updateDocument(uid, "Users", dataModel);
+        return updateDocument(uid, "Users", dataModel);
     }
 
     @Override
@@ -72,8 +72,8 @@ public class SportalRepo implements ISportalRepo {
     }
 
     @Override
-    public void deleteUser(String userUid) {
-        deleteDocument(userUid, "Users");
+    public Task<Void> deleteUser(String userUid) {
+        return deleteDocument(userUid, "Users");
     }
 
     // Should be called when building a game to get the uid for the game.
@@ -86,16 +86,17 @@ public class SportalRepo implements ISportalRepo {
     }
 
     @Override
-    public void addGame(String gameUid, Game game) {
+    public Task<Void> addGame(String gameUid, Game game) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
         GameDataModel dataModel = toGameDataModel(game);
 
-        db.collection("Games")
+        return db.collection("Games")
                 .document(gameUid)
                 .set(dataModel)
                 .addOnSuccessListener(documentReference -> {
                     Log.d(DATA_DEBUG, "Add game complete.");
                     // If game added successfully, also add game to all users participating
+                    addGameToUser(game.getCreatorUid(), gameUid);
                     for (String user : game.getParticipatingUids()) {
                         addGameToUser(user, gameUid);
                     }
@@ -105,9 +106,9 @@ public class SportalRepo implements ISportalRepo {
     }
 
     @Override
-    public void updateGame(String gameId, Game game) {
+    public Task<Void> updateGame(String gameId, Game game) {
         GameDataModel dataModel = toGameDataModel(game);
-        updateDocument(gameId, "Games", dataModel);
+        return updateDocument(gameId, "Games", dataModel);
     }
 
     @Override
@@ -131,8 +132,8 @@ public class SportalRepo implements ISportalRepo {
     }
 
     @Override
-    public void deleteGame(String gameId) {
-        deleteDocument(gameId, "Games");
+    public Task<Void> deleteGame(String gameId) {
+        return deleteDocument(gameId, "Games");
     }
 
     // HELPER METHODS
@@ -146,10 +147,10 @@ public class SportalRepo implements ISportalRepo {
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game to " + userUid + " failed", e));
     }
 
-    private void updateDocument(String docId, String collectionPath, Object dataModel) {
+    private Task<Void> updateDocument(String docId, String collectionPath, Object dataModel) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection(collectionPath)
+        return db.collection(collectionPath)
                 .document(docId)
                 .set(dataModel, SetOptions.merge())
                 .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, docId + " updateDocument success"))
@@ -202,10 +203,10 @@ public class SportalRepo implements ISportalRepo {
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "query collection failure", e));
     }
 
-    private void deleteDocument(String docID, String collectionPath) {
+    private Task<Void> deleteDocument(String docID, String collectionPath) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection(collectionPath)
+        return db.collection(collectionPath)
                 .document(docID)
                 .delete()
                 .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, docID + " successfully deleted!"))
@@ -250,14 +251,14 @@ public class SportalRepo implements ISportalRepo {
     }
 
     private Game toGame(GameDataModel dataModel) {
-        GeoPoint geoPoint = dataModel.getLocationPoint();
-        Point point = Point.fromLngLat(geoPoint.getLongitude(), geoPoint.getLatitude());
+        GeoPoint geoPoint = dataModel.getLocation();
+        Point location = Point.fromLngLat(geoPoint.getLongitude(), geoPoint.getLatitude());
 
         return Game.builder()
                 .withGameName(dataModel.getGameName())
                 .withDescription(dataModel.getDescription())
                 .withSport(dataModel.getSport())
-                .withLocationPoint(point)
+                .withLocation(location)
                 .withPlaceName(dataModel.getPlaceName())
                 .withMinPlayers(dataModel.getMinPlayers())
                 .withMaxPlayers(dataModel.getMaxPlayers())
@@ -265,6 +266,7 @@ public class SportalRepo implements ISportalRepo {
                 .withStartTime(LocalDateTime.parse(dataModel.getStartTime()))
                 .withEndTime(LocalDateTime.parse(dataModel.getEndTime()))
                 .withUid(dataModel.getUid())
+                .withCreatorUid(dataModel.getCreatorUid())
                 .addAllParticipatingUids(dataModel.getParticipatingUids())
                 .build();
     }

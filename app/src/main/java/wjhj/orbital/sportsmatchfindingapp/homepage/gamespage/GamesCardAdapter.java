@@ -51,12 +51,6 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
         return games.size();
     }
 
-    @BindingAdapter("android:bindingSrc")
-    public static void setImageResource(ImageView view, int resource) {
-        view.setImageResource(resource);
-    }
-
-
     static class CardViewHolder extends RecyclerView.ViewHolder {
 
         CardView cardView;
@@ -72,5 +66,4 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
             cardBinding.setGame(game);
         }
     }
-
 }

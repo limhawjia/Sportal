@@ -27,7 +27,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Calendar calendar = Calendar.getInstance();
-        return new DatePickerDialog(getActivity(),
+        return new DatePickerDialog(requireActivity(),
                 R.style.PopupDialogTheme,
                 this,
                 calendar.get(Calendar.YEAR),
@@ -37,7 +37,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        LocalDate date = LocalDate.of(year, month, dayOfMonth);
+        LocalDate date = LocalDate.of(year, month + 1, dayOfMonth);
         listener.onDialogDateSet(this, date);
     }
 
@@ -47,7 +47,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         try {
             listener = (DatePickerListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(getActivity().toString() +
+            throw new ClassCastException(getActivity().getClass().getSimpleName() +
                     "must implement DatePickerListener");
         }
     }

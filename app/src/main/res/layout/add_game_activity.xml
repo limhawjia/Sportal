@@ -4,9 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="addGameViewModel"
             type="wjhj.orbital.sportsmatchfindingapp.game.AddGameViewModel" />
+
         <variable
             name="activity"
             type="wjhj.orbital.sportsmatchfindingapp.game.AddGameActivity" />
@@ -14,234 +16,318 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".game.AddGameActivity">
 
         <include
             android:id="@+id/top_toolbar"
             layout="@layout/top_toolbar" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/add_game_page_container"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/top_toolbar"
-            android:background="@color/offWhite">
+            android:layout_below="@id/top_toolbar">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/add_game_select_sport_text"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/add_game_select_sport"
-                android:textSize="14sp"
-                app:layout_constraintLeft_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:background="@color/offWhite">
 
-            <RelativeLayout
-                android:id="@+id/add_game_select_sport_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@color/white"
-                app:layout_constraintLeft_toRightOf="parent"
-                app:layout_constraintRight_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/add_game_select_sport_text">
-
-
-                <Spinner
-                    android:id="@+id/add_game_select_sport"
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/add_game_select_sport_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/add_game_select_sport"
+                    android:textSize="14sp"
+                    app:layout_constraintLeft_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <RelativeLayout
+                    android:id="@+id/add_game_select_sport_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:selectedItemPosition="@={addGameViewModel.getSportSelection}"/>
-
-            </RelativeLayout>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/add_game_required_details_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/add_game_required_details_text"
-                android:textSize="14sp"
-                app:layout_constraintLeft_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/add_game_select_sport_container" />
+                    android:background="@color/white"
+                    app:layout_constraintLeft_toRightOf="parent"
+                    app:layout_constraintRight_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/add_game_select_sport_text">
 
 
-            <RelativeLayout
-                android:id="@+id/add_game_required_details_container"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/white"
-                app:layout_constraintLeft_toRightOf="parent"
-                app:layout_constraintRight_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/add_game_required_details_text">
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/add_game_name_text_input_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="24dp"
-                    android:hint="@string/add_game_enter_game_name">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/add_game_name_text_input"
-                        style="@style/ThemeOverlay.MaterialComponents.Light"
+                    <Spinner
+                        android:id="@+id/add_game_select_sport"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/white"
-                        android:fontFamily="sans-serif-light"
-                        android:inputType="text"
-                        android:maxLines="1"
-                        android:text="@={addGameViewModel.gameName}"/>
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:selectedItemPosition="@={addGameViewModel.getSportSelection}" />
 
-                </com.google.android.material.textfield.TextInputLayout>
+                </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/add_game_date_picker"
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/add_game_required_details_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/add_game_name_text_input_layout"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="8dp"
-                    android:drawableStart="@drawable/ic_date_range_black_24dp"
-                    android:drawablePadding="8dp"
-                    android:fontFamily="sans-serif-light"
-                    android:gravity="center_vertical"
-                    android:hint="@string/add_game_select_a_date"
-                    android:text="@{addGameViewModel.date.toString()}"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/add_game_required_details_text"
                     android:textSize="14sp"
-                    android:onClick="@{v -> activity.openDatePicker()}"/>
+                    app:layout_constraintLeft_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/add_game_select_sport_container" />
 
-                <TextView
-                    android:id="@+id/add_game_time_picker"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/add_game_date_picker"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:drawableStart="@drawable/ic_access_time_black_24dp"
-                    android:drawablePadding="8dp"
-                    android:fontFamily="sans-serif-light"
-                    android:gravity="center_vertical"
-                    android:hint="@string/add_game_select_a_time"
-                    android:text="@{addGameViewModel.time.toString()}"
-                    android:textSize="14sp"
-                    android:onClick="@{v -> activity.openTimePicker()}"/>
 
-                <TextView
-                    android:id="@+id/add_game_duration_picker"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/add_game_time_picker"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:drawableStart="@drawable/ic_hourglass_empty_black_24dp"
-                    android:drawablePadding="8dp"
-                    android:fontFamily="sans-serif-light"
-                    android:gravity="center_vertical"
-                    android:hint="@string/add_game_set_a_duration"
-                    android:text="@{addGameViewModel.durationString()}"
-                    android:textSize="14sp"
-                    android:onClick="@{v -> activity.openDurationPicker()}"/>
+                <RelativeLayout
+                    android:id="@+id/add_game_required_details_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/white"
+                    app:layout_constraintLeft_toRightOf="parent"
+                    app:layout_constraintRight_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/add_game_required_details_text">
 
-                <TextView
-                    android:id="@+id/add_game_location_picker"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/add_game_duration_picker"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:drawableStart="@drawable/ic_add_location_black_24dp"
-                    android:drawablePadding="8dp"
-                    android:fontFamily="sans-serif-light"
-                    android:gravity="center_vertical"
-                    android:hint="@string/add_game_pick_a_location"
-                    android:text="@{addGameViewModel.placeName}"
-                    android:textSize="14sp"
-                    android:onClick="@{v -> activity.openLocationPicker()}"/>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/add_game_num_players_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/add_game_location_picker"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="center_vertical">
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/add_game_min_players"
-                        android:layout_width="0dp"
+                        android:id="@+id/add_game_name_text_input_layout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/add_game_min_players"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/add_game_to"
-                        app:errorEnabled="true">
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:hint="@string/add_game_enter_game_name"
+                        app:errorEnabled="true"
+                        android:errorText="@{addGameViewModel.gameName.errMessage}">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/add_game_name_text_input"
                             style="@style/ThemeOverlay.MaterialComponents.Light"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:background="@color/white"
                             android:fontFamily="sans-serif-light"
-                            android:inputType="number"
-                            android:textSize="13sp"
+                            android:inputType="text"
                             android:maxLines="1"
-                            android:text="@={addGameViewModel.minPlayersInput}"/>
+                            android:text="@={addGameViewModel.gameName.input}"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <TextView
-                        android:id="@+id/add_game_to"
-                        android:layout_width="wrap_content"
+                    <wjhj.orbital.sportsmatchfindingapp.utils.MyTextView
+                        android:id="@+id/add_game_date_picker"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/add_game_name_text_input_layout"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:drawableStart="@drawable/ic_date_range_black_24dp"
+                        android:drawablePadding="8dp"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center_vertical"
+                        android:hint="@string/add_game_select_a_date"
+                        android:onClick="@{v -> activity.openDatePicker()}"
+                        android:text="@{addGameViewModel.date.input.toString()}"
+                        android:errorText="@{addGameViewModel.date.errMessage}"
+                        android:textSize="14sp" />
+
+                    <wjhj.orbital.sportsmatchfindingapp.utils.MyTextView
+                        android:id="@+id/add_game_time_picker"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/add_game_date_picker"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:drawableStart="@drawable/ic_access_time_black_24dp"
+                        android:drawablePadding="8dp"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center_vertical"
+                        android:hint="@string/add_game_select_a_time"
+                        android:onClick="@{v -> activity.openTimePicker()}"
+                        android:text="@{addGameViewModel.time.input.toString()}"
+                        android:errorText="@{addGameViewModel.time.errMessage}"
+                        android:textSize="14sp" />
+
+                    <wjhj.orbital.sportsmatchfindingapp.utils.MyTextView
+                        android:id="@+id/add_game_duration_picker"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/add_game_time_picker"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:drawableStart="@drawable/ic_hourglass_empty_black_24dp"
+                        android:drawablePadding="8dp"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center_vertical"
+                        android:hint="@string/add_game_set_a_duration"
+                        android:onClick="@{v -> activity.openDurationPicker()}"
+                        android:text="@{addGameViewModel.toDurationString(addGameViewModel.duration.input)}"
+                        android:errorText="@{addGameViewModel.duration.errMessage}"
+                        android:textSize="14sp" />
+
+                    <wjhj.orbital.sportsmatchfindingapp.utils.MyTextView
+                        android:id="@+id/add_game_location_picker"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/add_game_duration_picker"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:drawableStart="@drawable/ic_add_location_black_24dp"
+                        android:drawablePadding="8dp"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center_vertical"
+                        android:hint="@string/add_game_pick_a_location"
+                        android:onClick="@{v -> activity.openLocationPicker()}"
+                        android:text="@{addGameViewModel.placeName.input}"
+                        android:errorText="@{addGameViewModel.placeName.errMessage}"
+                        android:textSize="14sp" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/add_game_num_players_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/add_game_location_picker"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center_vertical">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/add_game_min_players"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/add_game_min_players"
+                            app:errorEnabled="true"
+                            android:errorText="@{addGameViewModel.minPlayersInput.errMessage}"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/add_game_to"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                style="@style/ThemeOverlay.MaterialComponents.Light"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/white"
+                                android:fontFamily="sans-serif-light"
+                                android:inputType="number"
+                                android:maxLines="1"
+                                android:text="@={addGameViewModel.minPlayersInput.input}"
+                                android:textSize="13sp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <TextView
+                            android:id="@+id/add_game_to"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="12dp"
+                            android:text="@string/to"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/add_game_max_players"
+                            app:layout_constraintStart_toEndOf="@id/add_game_min_players"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/add_game_max_players"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/add_game_max_players"
+                            app:errorEnabled="true"
+                            android:errorText="@{addGameViewModel.maxPlayersInput.errMessage}"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/add_game_to"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                style="@style/ThemeOverlay.MaterialComponents.Light"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/white"
+                                android:fontFamily="sans-serif-light"
+                                android:inputType="number"
+                                android:maxLines="1"
+                                android:text="@={addGameViewModel.maxPlayersInput.input}"
+                                android:textSize="13sp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <wjhj.orbital.sportsmatchfindingapp.utils.MyTextView
+                        android:id="@+id/add_game_skill_picker"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/add_game_num_players_layout"
+                        android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginEnd="12dp"
-                        android:text="@string/to"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/add_game_max_players"
-                        app:layout_constraintStart_toEndOf="@id/add_game_min_players"
-                        app:layout_constraintTop_toTopOf="parent"/>
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="12dp"
+                        android:drawableStart="@drawable/ic_levels_black_24dp"
+                        android:drawablePadding="8dp"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center_vertical"
+                        android:hint="@string/add_game_select_skill_level"
+                        android:onClick="@{v -> activity.openSkillPicker()}"
+                        android:text="@{addGameViewModel.skillLevel.input.toString()}"
+                        android:errorText="@{addGameViewModel.skillLevel.errMessage}"
+                        android:textSize="14sp" />
+
+                </RelativeLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/add_game_optional_details_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/add_game_optional_details_text"
+                    android:textSize="14sp"
+                    app:layout_constraintLeft_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/add_game_required_details_container" />
+
+                <RelativeLayout
+                    android:id="@+id/add_game_optional_details_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/white"
+                    app:layout_constraintLeft_toRightOf="parent"
+                    app:layout_constraintRight_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/add_game_optional_details_text">
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/add_game_max_players"
-                        android:layout_width="0dp"
+
+                        android:id="@+id/add_game_description"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/add_game_max_players"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/add_game_to"
-                        app:errorEnabled="true">
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:gravity="top|start"
+                        android:hint="@string/add_game_game_description"
+                        app:counterEnabled="true"
+                        app:counterMaxLength="250">
 
                         <com.google.android.material.textfield.TextInputEditText
                             style="@style/ThemeOverlay.MaterialComponents.Light"
@@ -249,20 +335,42 @@
                             android:layout_height="wrap_content"
                             android:background="@color/white"
                             android:fontFamily="sans-serif-light"
-                            android:inputType="number"
-                            android:textSize="13sp"
-                            android:maxLines="1"
-                            android:text="@={addGameViewModel.maxPlayersInput}"/>
+                            android:gravity="top|start"
+                            android:inputType="textMultiLine"
+                            android:maxLines="6"
+                            android:scrollbars="vertical"
+                            android:text="@={addGameViewModel.gameDescription}" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
+                </RelativeLayout>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/add_game_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="@string/add_game_make_game"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/add_game_optional_details_container" />
 
-            </RelativeLayout>
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+        <FrameLayout
+            android:id="@+id/add_game_page_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/top_toolbar"/>
 
     </RelativeLayout>
+
 </layout>

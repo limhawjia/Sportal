@@ -1,7 +1,5 @@
 package wjhj.orbital.sportsmatchfindingapp.game;
 
-import android.location.Location;
-
 import com.mapbox.geojson.Point;
 
 import org.immutables.value.Value;
@@ -27,7 +25,7 @@ public abstract class AbstractGame {
 
     public abstract Sport getSport();
 
-    public abstract Point getLocationPoint();
+    public abstract Point getLocation();
 
     public abstract String getPlaceName();
 
@@ -43,10 +41,10 @@ public abstract class AbstractGame {
 
     public abstract String getUid();
 
+    public abstract String getCreatorUid();
+
     public abstract List<String> getParticipatingUids();
 
-    // TODO: Maybe implement a precondition check for minimum number of participating.
-    // Alternatively, refactor to have a game creator attribute.
     public String dateString() {
         LocalDate startDay = getStartTime().toLocalDate();
         LocalDate endDay = getStartTime().toLocalDate();

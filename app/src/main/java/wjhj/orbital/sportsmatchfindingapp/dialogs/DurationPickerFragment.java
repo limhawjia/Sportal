@@ -17,7 +17,7 @@ import wjhj.orbital.sportsmatchfindingapp.R;
 
 public class DurationPickerFragment extends DialogFragment {
 
-    public static final String[] MINUTES = new String[] {"00", "15", "30", "45"};
+    private static final String[] MINUTES = new String[] {"00", "15", "30", "45"};
 
     private DurationPickerListener listener;
     private NumberPicker mHourPicker;
@@ -47,7 +47,7 @@ public class DurationPickerFragment extends DialogFragment {
         mMinutePicker.setDisplayedValues(MINUTES);
         mMinutePicker.setWrapSelectorWheel(false);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.PopupDialogTheme)
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), R.style.PopupDialogTheme)
                 .setView(pickerLayout)
                 .setPositiveButton("Ok", (dialog, id) -> {
                     Duration durationSet = Duration.ofHours(mHourPicker.getValue())
@@ -65,7 +65,7 @@ public class DurationPickerFragment extends DialogFragment {
         try {
             listener = (DurationPickerListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(getActivity().toString() +
+            throw new ClassCastException(getActivity().getClass().getSimpleName() +
                     "must implement DurationPickerListener");
         }
     }

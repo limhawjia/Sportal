@@ -22,7 +22,6 @@ import wjhj.orbital.sportsmatchfindingapp.databinding.LoginActivityBinding;
 
 public class LoginActivity extends AppCompatActivity {
     public static final String LOGIN_DEBUG = "login";
-    public static final String CURR_USER_TAG = "current_user";
     public static final int GOOGLE_SIGN_IN_RC = 1;
 
     private LoginViewModel loginViewModel;

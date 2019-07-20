@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
@@ -47,23 +48,15 @@ public class PreferencesActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.preferences_activity);
         binding.setUserPreferences(userPreferencesViewModel);
         binding.setActivity(this);
-        userPreferencesViewModel.getBirthdayLiveData().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                binding.birthdayField.setText(s);
-                Log.d(PreferencesActivity.PREFERENCES_DEBUG, "Birthday changed");
-            }
+        userPreferencesViewModel.getBirthdayLiveData().observe(this, s -> {
+            binding.birthdayField.setText(s);
+            Log.d(PreferencesActivity.PREFERENCES_DEBUG, "Birthday changed");
         });
         sportsPreferenceRecyclerView = binding.sportsPreferenceRecyclerView;
         sportsPreferenceRecyclerView.setHasFixedSize(true);
         sportsPreferenceRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         sportsPreferenceRecyclerView.setAdapter(new SportPreferencesAdapter());
-        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updatePreferences(v);
-            }
-        });
+        findViewById(R.id.button2).setOnClickListener(this::updatePreferences);
     }
 
     public void selectDate(View v) {
@@ -74,17 +67,14 @@ public class PreferencesActivity extends AppCompatActivity {
         View dialogView = getLayoutInflater().inflate(R.layout.date_dialog, null);
 
         builder.setView(dialogView)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        DatePicker datePicker = dialogView.findViewById(R.id.dialog_datepicker);
-                        int day = datePicker.getDayOfMonth();
-                        int month = datePicker.getMonth();
-                        int year = datePicker.getYear();
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    DatePicker datePicker = dialogView.findViewById(R.id.dialog_datepicker);
+                    int day = datePicker.getDayOfMonth();
+                    int month = datePicker.getMonth();
+                    int year = datePicker.getYear();
 
-                        String date = day + "/" + month + "/" + year;
-                        userPreferencesViewModel.setBirthday(date);
-                    }
+                    String date = day + "/" + month + "/" + year;
+                    userPreferencesViewModel.setBirthday(date);
                 })
                 .setTitle(R.string.birthday_dialog)
                 .create()
@@ -102,28 +92,22 @@ public class PreferencesActivity extends AppCompatActivity {
                 checked[i] = true;
             }
         }
-        builder.setMultiChoiceItems(string, checked, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                if (isChecked) {
-                    selectedItems.add(sports[which]);
-                } else {
-                    selectedItems.remove(sports[which]);
-                }
+        builder.setMultiChoiceItems(string, checked, (dialog, which, isChecked) -> {
+            if (isChecked) {
+                selectedItems.add(sports[which]);
+            } else {
+                selectedItems.remove(sports[which]);
             }
         })
                 .setTitle(R.string.sport_dialog)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        List<Sport> sports = userPreferencesViewModel.getSportPreferences();
-                        for (Sport selectedItem : selectedItems) {
-                            if (!sports.contains(selectedItem)) {
-                                sports.add(selectedItem);
-                            }
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    List<Sport> sports1 = userPreferencesViewModel.getSportPreferences();
+                    for (Sport selectedItem : selectedItems) {
+                        if (!sports1.contains(selectedItem)) {
+                            sports1.add(selectedItem);
                         }
-                        sportsPreferenceRecyclerView.getAdapter().notifyDataSetChanged();
                     }
+                    sportsPreferenceRecyclerView.getAdapter().notifyDataSetChanged();
                 })
                 .create()
                 .show();
@@ -190,13 +174,14 @@ public class PreferencesActivity extends AppCompatActivity {
             sportPreferences.add(0, null);
         }
 
+        @NonNull
         @Override
-        public SportsPreferenceHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public SportsPreferenceHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new SportsPreferenceHolder(getLayoutInflater(), parent);
         }
 
         @Override
-        public void onBindViewHolder(SportsPreferenceHolder holder, int position) {
+        public void onBindViewHolder(@NonNull SportsPreferenceHolder holder, int position) {
             if (position == 0) {
                 holder.bindAddButton();
             } else {

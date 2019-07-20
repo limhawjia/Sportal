@@ -12,7 +12,7 @@ class GameDataModel {
     private String gameName;
     private String description;
     private Sport sport;
-    private GeoPoint locationPoint;
+    private GeoPoint location;
     private String placeName;
     private int minPlayers;
     private int maxPlayers;
@@ -20,6 +20,7 @@ class GameDataModel {
     private String startTime;
     private String endTime;
     private String uid;
+    private String creatorUid;
     private List<String> participatingUids;
 
     // Mandatory no args constructor
@@ -30,7 +31,7 @@ class GameDataModel {
         gameName = game.getGameName();
         description = game.getDescription();
         sport = game.getSport();
-        locationPoint = new GeoPoint(game.getLocationPoint().latitude(), game.getLocationPoint().longitude());
+        location = new GeoPoint(game.getLocation().latitude(), game.getLocation().longitude());
         placeName = game.getPlaceName();
         minPlayers = game.getMinPlayers();
         maxPlayers = game.getMaxPlayers();
@@ -38,55 +39,62 @@ class GameDataModel {
         startTime = game.getStartTime().toString();
         endTime = game.getEndTime().toString();
         uid = game.getUid();
+        creatorUid = game.getCreatorUid();
         participatingUids = game.getParticipatingUids();
     }
 
-    public String getGameName() {
+     String getGameName() {
         return gameName;
     }
 
-    public String getDescription() {
+     String getDescription() {
         return description;
     }
 
-    public Sport getSport() {
+     Sport getSport() {
         return sport;
     }
 
-    public GeoPoint getLocationPoint() {
-        return locationPoint;
+     GeoPoint getLocation() {
+        return location;
     }
 
-    public String getPlaceName() {
+     String getPlaceName() {
         return placeName;
     }
 
-    public int getMinPlayers() {
+     int getMinPlayers() {
         return minPlayers;
     }
 
-    public int getMaxPlayers() {
+     int getMaxPlayers() {
         return maxPlayers;
     }
 
-    public Difficulty getSkillLevel() {
+     Difficulty getSkillLevel() {
         return skillLevel;
     }
 
-    public String getStartTime() {
+     String getStartTime() {
         return startTime;
     }
 
-    public String getEndTime() {
+     String getEndTime() {
         return endTime;
     }
 
-    public String getUid() {
+     String getUid() {
         return uid;
     }
 
-    public List<String> getParticipatingUids() {
+     String getCreatorUid() {
+        return creatorUid;
+    }
+
+     List<String> getParticipatingUids() {
         return participatingUids;
     }
+
+
 }
 
