@@ -23,8 +23,6 @@ public class MyTextView extends AppCompatTextView {
                 null,
                 null,
                 null);
-        setFocusable(true);
-        setFocusableInTouchMode(true);
     }
 
     @Override

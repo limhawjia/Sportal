@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -42,16 +43,18 @@ public class PreferencesActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        currUser = (FirebaseUser) getIntent().getExtras().get(HomepageActivity.CURR_USER_TAG);
+        currUser = FirebaseAuth.getInstance().getCurrentUser();
         Log.d(PREFERENCES_DEBUG, "Preferences created");
         userPreferencesViewModel = ViewModelProviders.of(this).get(UserPreferencesViewModel.class);
         binding = DataBindingUtil.setContentView(this, R.layout.preferences_activity);
         binding.setUserPreferences(userPreferencesViewModel);
         binding.setActivity(this);
+
         userPreferencesViewModel.getBirthdayLiveData().observe(this, s -> {
             binding.birthdayField.setText(s);
             Log.d(PreferencesActivity.PREFERENCES_DEBUG, "Birthday changed");
         });
+
         sportsPreferenceRecyclerView = binding.sportsPreferenceRecyclerView;
         sportsPreferenceRecyclerView.setHasFixedSize(true);
         sportsPreferenceRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
