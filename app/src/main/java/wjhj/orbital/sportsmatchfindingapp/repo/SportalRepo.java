@@ -30,6 +30,22 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 public class SportalRepo implements ISportalRepo {
     private static final String DATA_DEBUG = "SportalRepo";
 
+    private static SportalRepo instance;
+
+    public static SportalRepo getInstance() {
+        if (instance == null) {
+            synchronized (SportalRepo.class) {
+                if (instance == null) {
+                    instance = new SportalRepo();
+                }
+            }
+        }
+        return instance;
+    }
+
+    private SportalRepo() {
+    }
+
     @Override
     public Task<Void> addUser(String uid, UserProfile userProfile) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -167,7 +183,6 @@ public class SportalRepo implements ISportalRepo {
     private <T> LiveData<T> convertToLiveData(DocumentReference docRef, Class<T> valueType) {
         MutableLiveData<T> liveData = new MutableLiveData<>();
 
-        // docRef.get().addOnSuccessListener(res -> liveData.postValue(res.toObject(valueType)));
         docRef.addSnapshotListener((value, err) -> {
             if (err != null) {
                 Log.d(DATA_DEBUG, "database snapshot error", err);

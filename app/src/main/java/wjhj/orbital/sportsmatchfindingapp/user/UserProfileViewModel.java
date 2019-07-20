@@ -24,7 +24,7 @@ public class UserProfileViewModel extends ViewModel {
     private LiveData<Map<GameStatus, List<Game>>> games;
 
     public UserProfileViewModel(String userUid) {
-        repo = new SportalRepo();
+        repo = SportalRepo.getInstance();
         currUser = repo.getUser(userUid);
         gameIds = Transformations.map(currUser, UserProfile::getGames);
         games = new MutableLiveData<>();

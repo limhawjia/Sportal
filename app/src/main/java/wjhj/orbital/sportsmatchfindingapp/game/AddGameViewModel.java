@@ -62,7 +62,7 @@ public class AddGameViewModel extends ViewModel {
         validations.add(maxPlayersInput);
         validations.add(skillLevel);
 
-        repo = new SportalRepo();
+        repo = SportalRepo.getInstance();
     }
 
     public ObservableInt getSportSelection() {
@@ -121,7 +121,6 @@ public class AddGameViewModel extends ViewModel {
     public ValidationInput<String> getMaxPlayersInput() {
         return maxPlayersInput;
     }
-
 
     public void setPlaceName(String placeName) {
         this.placeName.setInput(placeName);

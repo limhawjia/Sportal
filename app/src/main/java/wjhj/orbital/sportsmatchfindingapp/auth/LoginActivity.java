@@ -124,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
                     Log.d(LOGIN_DEBUG, "Google sign in fail", e);
                 }
             } else {
-                Log.d(LOGIN_DEBUG, "Google login cancelled");
+                Log.d(LOGIN_DEBUG, "Google login cancelled with result code: " + resultCode);
             }
         }
     }

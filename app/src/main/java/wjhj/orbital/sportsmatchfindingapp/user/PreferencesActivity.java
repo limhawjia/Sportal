@@ -123,7 +123,7 @@ public class PreferencesActivity extends AppCompatActivity {
                     .withUid(currUser.getUid())
                     .addAllPreferences(userPreferencesViewModel.getSportPreferencesToUpdate())
                     .build();
-            SportalRepo repo = new SportalRepo();
+            SportalRepo repo = SportalRepo.getInstance();
             repo.addUser(currUser.getUid(), user);
             Intent intent = new Intent(this, HomepageActivity.class);
             intent.putExtra(HomepageActivity.CURR_USER_TAG, currUser);
