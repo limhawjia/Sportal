@@ -57,12 +57,12 @@ public class Authentications {
         return firebaseAuth.createUserWithEmailAndPassword(signUpAuth.getEmail(), signUpAuth.getPassword());
     }
 
-    Task<Void> updateProfile(SignUpAuth signUpAuth, AuthResult authResult) {
+    Task<Void> updateProfile(String displayName, Uri displayPicUri, AuthResult authResult) {
         UserProfileChangeRequest.Builder additionalInfo = new UserProfileChangeRequest.Builder()
-                .setDisplayName(signUpAuth.getDisplayName());
+                .setDisplayName(displayName);
 
         try {
-            Uri uri = Tasks.await(uploadDisplayImageAndGetUri(signUpAuth.getDisplayPic(),
+            Uri uri = Tasks.await(uploadDisplayImageAndGetUri(displayPicUri,
                     authResult.getUser().getUid()));
             additionalInfo = additionalInfo.setPhotoUri(uri);
         } catch (InterruptedException | ExecutionException e) {

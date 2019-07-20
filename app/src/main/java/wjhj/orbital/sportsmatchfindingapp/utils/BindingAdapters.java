@@ -1,5 +1,7 @@
 package wjhj.orbital.sportsmatchfindingapp.utils;
 
+import android.net.Uri;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,4 +25,8 @@ public class BindingAdapters {
         view.setError(errorMessage);
     }
 
+    @BindingAdapter("android:imageUri")
+    public static void setImageUri(ImageView view, Uri uri) {
+        view.setImageURI(uri);
+    }
 }

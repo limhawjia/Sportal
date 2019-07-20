@@ -21,8 +21,6 @@
     <string name="navbar_explore">Explore</string>
     <string name="navbar_social">Social</string>
 
-
-    <string name="full_name">Full name</string>
     <string name="accept_terms">By checking this, you are agreeing to our</string>
     <string name="terms_conditions"><u>terms and conditions</u></string>
     <string name="create">Create</string>
@@ -33,9 +31,9 @@
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="gender">Gender:</string>
-    <string name="birthday">Birthday - dd/mm/yy</string>
+    <string name="preferences_birthday_text">Birthday</string>
     <string name="location">Location</string>
-    <string name="sports">Sports I play:</string>
+    <string name="preferences_sports_you_play">Select sports you play:</string>
     <string name="done">Done</string>
     <string name="click_to_add">Add</string>
     <string name="birthday_dialog">Birthday</string>
@@ -52,7 +50,7 @@
     <string name="date">Date</string>
     <string name="games_tab_sort_by">Sort by:</string>
     <string name="duration_picker_text">:</string>
-
+    <string name="image">image</string>
 
     <!-- MapBox access token -->
     <string name="mapbox_access_token">pk.eyJ1IjoiZmVpbnN0ZXIiLCJhIjoiY2p4bGo1cHV3MDZzNzN4b2FxYTFjaWdtaCJ9.B5gBlRa8pB0wRhkx-IN2aw</string>
@@ -78,9 +76,8 @@
     <string name="add_game_optional_details_text">OPTIONAL DETAILS</string>
     <string name="add_game_game_description">Enter game description</string>
     <string name="add_game_make_game">MAKE GAME!</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="preferences_pick_profile_pic">Pick a profile pic:</string>
+    <string name="preferences_enter_details">Enter details:</string>
+    <string name="preferences_bio_text">Bio (Optional)</string>
 
 </resources>
