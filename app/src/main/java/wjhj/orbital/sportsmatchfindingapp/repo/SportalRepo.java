@@ -11,7 +11,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 import com.mapbox.geojson.Point;
 
@@ -72,19 +72,20 @@ public class SportalRepo implements ISportalRepo {
         return Transformations.map(dataModelLiveData, this::toUserProfile);
     }
 
-    //TODO: CHANGE TO LIVE DATA
     @Override
-    public Task<List<UserProfile>> selectUsersStartingWith(String field, String queryText) {
-        return queryStartingWith("Users", field, queryText)
-                .continueWith(task ->
-                        toUserProfiles(task.getResult().toObjects(UserProfileDataModel.class)));
+    public LiveData<List<UserProfile>> selectUsersStartingWith(String field, String queryText) {
+        LiveData<List<UserProfileDataModel>> listLiveData = convertToLiveData(
+                queryStartingWith("Users", field, queryText), UserProfileDataModel.class);
+
+        return Transformations.map(listLiveData, this::toUserProfiles);
     }
 
     @Override
-    public Task<List<UserProfile>> selectUsersArrayContains(String field, String queryText) {
-        return queryArrayContains("Users", field, queryText)
-                .continueWith(task ->
-                        toUserProfiles(task.getResult().toObjects(UserProfileDataModel.class)));
+    public LiveData<List<UserProfile>> selectUsersArrayContains(String field, String queryText) {
+        LiveData<List<UserProfileDataModel>> listLiveData = convertToLiveData(
+                queryArrayContains("Users", field, queryText), UserProfileDataModel.class);
+
+        return Transformations.map(listLiveData, this::toUserProfiles);
     }
 
     @Override
@@ -129,22 +130,26 @@ public class SportalRepo implements ISportalRepo {
 
     @Override
     public LiveData<Game> getGame(String gameID) {
-        LiveData<GameDataModel> dataModelLiveData =
-                convertToLiveData(getDocumentFromCollection(gameID, "Games"), GameDataModel.class);
+        LiveData<GameDataModel> dataModelLiveData = convertToLiveData(
+                getDocumentFromCollection(gameID, "Games"), GameDataModel.class);
 
         return Transformations.map(dataModelLiveData, this::toGame);
     }
 
     @Override
-    public Task<List<Game>> selectGamesStartingWith(String field, String queryText) {
-        return queryStartingWith("Games", field, queryText)
-                .continueWith(task -> toGames(task.getResult().toObjects(GameDataModel.class)));
+    public LiveData<List<Game>> selectGamesStartingWith(String field, String queryText) {
+        LiveData<List<GameDataModel>> listLiveData = convertToLiveData(
+                queryStartingWith("Games", field, queryText), GameDataModel.class);
+
+        return Transformations.map(listLiveData, this::toGames);
     }
 
     @Override
-    public Task<List<Game>> selectGamesArrayContains(String field, String queryText) {
-        return queryArrayContains("Games", field, queryText)
-                .continueWith(task -> toGames(task.getResult().toObjects(GameDataModel.class)));
+    public LiveData<List<Game>> selectGamesArrayContains(String field, String queryText) {
+        LiveData<List<GameDataModel>> listLiveData = convertToLiveData(
+                queryArrayContains("Games", field, queryText), GameDataModel.class);
+
+        return Transformations.map(listLiveData, this::toGames);
     }
 
     @Override
@@ -195,27 +200,34 @@ public class SportalRepo implements ISportalRepo {
         return liveData;
     }
 
+    private <T> LiveData<List<T>> convertToLiveData(Query query, Class<T> valueType) {
+        MutableLiveData<List<T>> liveData = new MutableLiveData<>();
+        query.addSnapshotListener((value, err) -> {
+            if (err != null) {
+                Log.d(DATA_DEBUG, "database snapshot error", err);
+            } else {
+                assert value != null;
+                liveData.postValue(value.toObjects(valueType));
+            }
+        });
+        return liveData;
+    }
 
-    private Task<QuerySnapshot> queryStartingWith(String collection, String field, String queryText) {
+
+    private Query queryStartingWith(String collection, String field, String queryText) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         return db.collection(collection)
                 .orderBy(field)
                 .startAt(queryText)
-                .endAt(queryText + "\uf8ff") // StackOverflow hacks...
-                .get()
-                .addOnSuccessListener(snapshot -> Log.d(DATA_DEBUG, snapshot + " retrieved"))
-                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "query collection failure", e));
+                .endAt(queryText + "\uf8ff"); // StackOverflow hacks...
     }
 
-    private Task<QuerySnapshot> queryArrayContains(String collection, String field, String queryText) {
+    private Query queryArrayContains(String collection, String field, String queryText) {
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         return db.collection(collection)
-                .whereArrayContains(field, queryText)
-                .get()
-                .addOnSuccessListener(snapshot -> Log.d(DATA_DEBUG, snapshot + " retrieved"))
-                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "query collection failure", e));
+                .whereArrayContains(field, queryText);
     }
 
     private Task<Void> deleteDocument(String docID, String collectionPath) {

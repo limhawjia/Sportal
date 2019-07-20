@@ -17,9 +17,9 @@ public interface ISportalRepo {
 
     LiveData<UserProfile> getUser(String userUid);
 
-    Task<List<UserProfile>> selectUsersStartingWith(String field, String queryText);
+    LiveData<List<UserProfile>> selectUsersStartingWith(String field, String queryText);
 
-    Task<List<UserProfile>> selectUsersArrayContains(String field, String queryText);
+    LiveData<List<UserProfile>> selectUsersArrayContains(String field, String queryText);
 
     Task<Void> deleteUser(String userUid);
 
@@ -31,9 +31,9 @@ public interface ISportalRepo {
 
     LiveData<Game> getGame(String gameId);
 
-    Task<List<Game>> selectGamesStartingWith(String field, String queryText);
+    LiveData<List<Game>> selectGamesStartingWith(String field, String queryText);
 
-    Task<List<Game>> selectGamesArrayContains(String field, String queryText);
+    LiveData<List<Game>> selectGamesArrayContains(String field, String queryText);
 
     Task<Void> deleteGame(String gameId);
 }
