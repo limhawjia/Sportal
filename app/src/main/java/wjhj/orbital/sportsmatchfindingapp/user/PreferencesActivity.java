@@ -1,17 +1,21 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -26,11 +30,13 @@ import org.threeten.bp.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import in.galaxyofandroid.spinerdialog.OnSpinerItemClick;
+import in.galaxyofandroid.spinerdialog.SpinnerDialog;
 import wjhj.orbital.sportsmatchfindingapp.R;
-import wjhj.orbital.sportsmatchfindingapp.auth.Authentications;
 import wjhj.orbital.sportsmatchfindingapp.databinding.PreferencesActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.DatePickerFragment;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
+import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 
 public class PreferencesActivity extends AppCompatActivity implements DatePickerFragment.DatePickerListener {
 
@@ -57,6 +63,7 @@ public class PreferencesActivity extends AppCompatActivity implements DatePicker
         }
 
         userPreferencesViewModel = ViewModelProviders.of(this).get(UserPreferencesViewModel.class);
+
         binding = DataBindingUtil.setContentView(this, R.layout.preferences_activity);
         binding.setUserPreferences(userPreferencesViewModel);
         binding.setActivity(this);
@@ -68,14 +75,22 @@ public class PreferencesActivity extends AppCompatActivity implements DatePicker
             startActivityForResult(pickImageIntent, PICK_DISPLAY_IMAGE_RC);
         });
 
+        initSportsPreferencePicker();
+
+
+        binding.preferencesDoneButton.setOnClickListener(view -> {
+                Log.d("helpp", userPreferencesViewModel.getCountrySelection().get() + "");
+                userPreferencesViewModel.updatePreferences(displayName,"abcd");
+        });
+        //TODO: change when done!!
+    }
+
+
+    private void initSportsPreferencePicker() {
         sportsPreferenceRecyclerView = binding.sportsPreferenceRecyclerView;
         sportsPreferenceRecyclerView.setHasFixedSize(true);
         sportsPreferenceRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         sportsPreferenceRecyclerView.setAdapter(new SportPreferencesAdapter());
-
-
-        findViewById(R.id.preferences_done_button).setOnClickListener(view ->
-                userPreferencesViewModel.updatePreferences(displayName,"abcd"));
     }
 
     @Override
@@ -88,23 +103,38 @@ public class PreferencesActivity extends AppCompatActivity implements DatePicker
         }
     }
 
-    public void selectDate(View v) {
+    public void openDatePicker() {
         DialogFragment datePicker = new DatePickerFragment();
         datePicker.show(getSupportFragmentManager(), "birthday picker");
     }
 
+    public void openCountryPicker() {
+        SpinnerDialog dialog = new SpinnerDialog(this,
+                Country.getCountryNamesArrList(),
+                "Select country",
+                R.style.PopupDialogTheme,
+                "Close");
+
+        dialog.setCancellable(true);
+        dialog.bindOnSpinerListener((item, position) ->
+                userPreferencesViewModel.setCountry(Country.values()[position]));
+
+        dialog.showSpinerDialog();
+    }
+
+
     public void selectSport(View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         ArrayList<Sport> selectedItems = new ArrayList<>();
-        String[] string = Sport.getAllSportsString();
+        String[] sportStrings = Sport.getAllSportsString();
         Sport[] sports = Sport.values();
-        boolean[] checked = new boolean[string.length];
+        boolean[] checked = new boolean[sportStrings.length];
         for (int i = 0; i < sports.length; i++) {
             if (userPreferencesViewModel.getSportPreferences().contains(sports[i])) {
                 checked[i] = true;
             }
         }
-        builder.setMultiChoiceItems(string, checked, (dialog, which, isChecked) -> {
+        builder.setMultiChoiceItems(sportStrings, checked, (dialog, which, isChecked) -> {
             if (isChecked) {
                 selectedItems.add(sports[which]);
             } else {

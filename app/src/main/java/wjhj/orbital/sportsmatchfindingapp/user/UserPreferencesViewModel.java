@@ -1,12 +1,17 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
 import android.net.Uri;
+import android.util.Log;
 import android.widget.RadioGroup;
 
+import androidx.databinding.Observable;
+import androidx.databinding.ObservableInt;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+
+import com.google.common.base.Optional;
 
 import org.threeten.bp.LocalDate;
 import java.util.ArrayList;
@@ -25,6 +30,8 @@ public class UserPreferencesViewModel extends ViewModel {
     private MutableLiveData<Uri> displayPicUri;
     private MutableLiveData<String> bio;
     private ValidationInput<LocalDate> birthday;
+    private ValidationInput<Country> country;
+    private ObservableInt countrySelection;
     private ValidationInput<Gender> gender;
     private MutableLiveData<Boolean> success;
     private List<Sport> sports;
@@ -36,12 +43,24 @@ public class UserPreferencesViewModel extends ViewModel {
         bio = new MutableLiveData<>();
         birthday = new ValidationInput<>(date -> date != null && !date.isAfter(LocalDate.now()),
                 "Please enter a valid birthday");
+        country = new ValidationInput<>(country -> country != null, "Please select a country");
+        countrySelection = new ObservableInt(-1);
         gender = new ValidationInput<>(gender -> gender != null, "");
         success = new MutableLiveData<>();
         sports = new ArrayList<>();
 
+        countrySelection.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+            @Override
+            public void onPropertyChanged(Observable sender, int propertyId) {
+                if (propertyId >= 0) {
+                    country.setInput(Country.values()[propertyId]);
+                }
+            }
+        });
+
         validationsList = new ArrayList<>();
         validationsList.add(birthday);
+        validationsList.add(country);
         validationsList.add(gender);
     }
 
@@ -56,10 +75,6 @@ public class UserPreferencesViewModel extends ViewModel {
 
     public MutableLiveData<String> getBio() {
         return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio.setValue(bio);
     }
 
     public void onGenderChanged(RadioGroup radioGroup, int id) {
@@ -77,11 +92,21 @@ public class UserPreferencesViewModel extends ViewModel {
         return this.birthday;
     }
 
-
     public void setBirthday(LocalDate date) {
         this.birthday.setInput(date);
     }
 
+    public ValidationInput<Country> getCountry() {
+        return this.country;
+    }
+
+    public void setCountry(Country country) {
+        this.country.setInput(country);
+    }
+
+    public ObservableInt getCountrySelection() {
+        return countrySelection;
+    }
 
     public ValidationInput<Gender> getGender() {
         return this.gender;
@@ -107,30 +132,33 @@ public class UserPreferencesViewModel extends ViewModel {
         if (StreamSupport.stream(validationsList)
                 .allMatch(input -> input.getState() == ValidationInput.State.VALIDATED)) {
 
-            Uri uri = displayPicUri.getValue() == null ? Uri.parse("DEFAULT") : displayPicUri.getValue();
-
-            UserProfile.BuildFinal midBuildStage = UserProfile.builder()
+            UserProfile userProfile = UserProfile.builder()
                     .withDisplayName(displayName)
                     .withGender(gender.getInput())
                     .withBirthday(birthday.getInput())
                     .withCountry(Country.AFGHANISTAN)
-                    .withDisplayPicUri(uri)
                     .withUid(currUserUid)
-                    .addAllPreferences(sports);
+                    .withBio(Optional.fromNullable(bio.getValue()))
+                    .addAllPreferences(sports)
+                    .build();
 
-            if (bio.getValue() != null) {
-                midBuildStage = midBuildStage.withBio(bio.getValue());
-            }
-
-            UserProfile userProfile = midBuildStage.build();
-
-//            Authentications auths = new Authentications();
+            Log.d("preferences", userProfile.toString());
+//
 //            SportalRepo repo = SportalRepo.getInstance();
 //            repo.addUser(currUserUid, userProfile);
+//
+//            Uri selectedUri = displayPicUri.getValue();
+//            if (selectedUri != null) {
+//                Authentications auths = new Authentications();
+//                auths.uploadDisplayImageAndGetUri(selectedUri, currUserUid)
+//                        .addOnSuccessListener(uri ->
+//                                repo.updateUser(currUserUid, userProfile.withDisplayPicUri(uri)))
+//                        .addOnFailureListener(e ->
+//                                Log.d("preferences", "profile pic upload failed", e));
+//            }
 
             success.setValue(true);
         }
     }
-
 
 }

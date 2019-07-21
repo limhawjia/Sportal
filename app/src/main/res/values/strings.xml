@@ -55,7 +55,6 @@
     <!-- MapBox access token -->
     <string name="mapbox_access_token">pk.eyJ1IjoiZmVpbnN0ZXIiLCJhIjoiY2p4bGo1cHV3MDZzNzN4b2FxYTFjaWdtaCJ9.B5gBlRa8pB0wRhkx-IN2aw</string>
 
-
     <!-- Add Games Page -->
     <string name="add_game_select_sport">SELECT SPORT</string>
     <string name="add_game_make_game_text">make game!</string>
@@ -79,5 +78,6 @@
     <string name="preferences_pick_profile_pic">Pick a profile pic:</string>
     <string name="preferences_enter_details">Enter details:</string>
     <string name="preferences_bio_text">Bio (Optional)</string>
+    <string name="preferences_select_country_text">Country</string>
 
 </resources>
