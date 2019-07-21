@@ -20,8 +20,10 @@ import java.util.List;
 
 import java9.util.stream.StreamSupport;
 import wjhj.orbital.sportsmatchfindingapp.R;
+import wjhj.orbital.sportsmatchfindingapp.auth.Authentications;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.maps.Country;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.utils.ValidationInput;
 
 public class UserPreferencesViewModel extends ViewModel {
@@ -145,30 +147,34 @@ public class UserPreferencesViewModel extends ViewModel {
         if (StreamSupport.stream(validationsList)
                 .allMatch(input -> input.getState() == ValidationInput.State.VALIDATED)) {
 
+            List<Sport> preferences = sportPreferences.getValue() == null
+                    ? new ArrayList<>()
+                    : sportPreferences.getValue();
+
             UserProfile userProfile = UserProfile.builder()
                     .withDisplayName(displayName)
                     .withGender(gender.getInput())
                     .withBirthday(birthday.getInput())
-                    .withCountry(Country.AFGHANISTAN)
+                    .withCountry(country.getInput())
                     .withUid(currUserUid)
                     .withBio(Optional.fromNullable(bio.getValue()))
-                    .addAllPreferences(sportPreferences.getValue())
+                    .addAllPreferences(preferences)
                     .build();
 
             Log.d("preferences", userProfile.toString());
-//
-//            SportalRepo repo = SportalRepo.getInstance();
-//            repo.addUser(currUserUid, userProfile);
-//
-//            Uri selectedUri = displayPicUri.getValue();
-//            if (selectedUri != null) {
-//                Authentications auths = new Authentications();
-//                auths.uploadDisplayImageAndGetUri(selectedUri, currUserUid)
-//                        .addOnSuccessListener(uri ->
-//                                repo.updateUser(currUserUid, userProfile.withDisplayPicUri(uri)))
-//                        .addOnFailureListener(e ->
-//                                Log.d("preferences", "profile pic upload failed", e));
-//            }
+
+            SportalRepo repo = SportalRepo.getInstance();
+            repo.addUser(currUserUid, userProfile);
+
+            Uri selectedUri = displayPicUri.getValue();
+            if (selectedUri != null) {
+                Authentications auths = new Authentications();
+                auths.uploadDisplayImageAndGetUri(selectedUri, currUserUid)
+                        .addOnSuccessListener(uri ->
+                                repo.updateUser(currUserUid, userProfile.withDisplayPicUri(uri)))
+                        .addOnFailureListener(e ->
+                                Log.d("preferences", "profile pic upload failed", e));
+            }
 
             success.setValue(true);
         }

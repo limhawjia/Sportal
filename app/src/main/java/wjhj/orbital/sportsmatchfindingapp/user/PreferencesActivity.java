@@ -3,6 +3,8 @@ package wjhj.orbital.sportsmatchfindingapp.user;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,8 +76,7 @@ public class PreferencesActivity extends AppCompatActivity implements DatePicker
         initSportsPreferencePicker(binding.sportsPreferenceRecyclerView);
 
         binding.preferencesDoneButton.setOnClickListener(view ->
-                viewModel.updateProfile(displayName, "abcd"));
-        //TODO: change when done!!
+                viewModel.updateProfile(displayName, currUser.getUid()));
 
         viewModel.getSuccess().observe(this, success -> {
             if (success) {
@@ -147,12 +148,16 @@ public class PreferencesActivity extends AppCompatActivity implements DatePicker
 
     private class SportPreferencesAdapter extends RecyclerView.Adapter<SportsPreferenceHolder> {
         private List<Sport> sportPreferences;
+        private ViewGroup parent;
 
         SportPreferencesAdapter() {
             sportPreferences = new ArrayList<>();
         }
 
         void updateList(List<Sport> list) {
+            AutoTransition transition = new AutoTransition();
+            transition.setDuration(150);
+            TransitionManager.beginDelayedTransition(parent, transition);
             sportPreferences = list;
             notifyDataSetChanged();
         }
@@ -160,6 +165,7 @@ public class PreferencesActivity extends AppCompatActivity implements DatePicker
         @NonNull
         @Override
         public SportsPreferenceHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            this.parent = parent;
             return new SportsPreferenceHolder(getLayoutInflater(), parent);
         }
 
