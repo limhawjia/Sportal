@@ -24,12 +24,10 @@ import com.google.firebase.auth.FirebaseUser;
 import org.threeten.bp.LocalDate;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
-import java9.util.stream.Stream;
 import wjhj.orbital.sportsmatchfindingapp.R;
+import wjhj.orbital.sportsmatchfindingapp.auth.Authentications;
 import wjhj.orbital.sportsmatchfindingapp.databinding.PreferencesActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.DatePickerFragment;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
@@ -77,7 +75,7 @@ public class PreferencesActivity extends AppCompatActivity implements DatePicker
 
 
         findViewById(R.id.preferences_done_button).setOnClickListener(view ->
-                userPreferencesViewModel.updatePreferences("abcd"));
+                userPreferencesViewModel.updatePreferences(displayName,"abcd"));
     }
 
     @Override

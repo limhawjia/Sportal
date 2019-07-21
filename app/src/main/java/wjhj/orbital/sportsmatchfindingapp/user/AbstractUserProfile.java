@@ -1,5 +1,9 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
+import android.net.Uri;
+
+import com.google.common.base.Optional;
+
 import org.immutables.value.Value;
 import org.threeten.bp.LocalDate;
 
@@ -8,6 +12,7 @@ import java.util.Map;
 
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
+import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 
 @Value.Style(
         stagedBuilder = true,
@@ -25,9 +30,13 @@ public abstract class AbstractUserProfile {
 
     public abstract LocalDate getBirthday();
 
-    //TODO: Add in Country, Bio AND displayPicURI parameters and refactor shit to match that :)
+    public abstract Country getCountry();
+
+    public abstract Uri getDisplayPicUri();
 
     public abstract String getUid();
+
+    public abstract Optional<String> getBio();
 
     public abstract List<Sport> getPreferences();
 

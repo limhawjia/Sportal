@@ -30,7 +30,7 @@ import wjhj.orbital.sportsmatchfindingapp.dialogs.SkillLevelPickerFragment;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.TimePickerFragment;
 import wjhj.orbital.sportsmatchfindingapp.maps.LocationPickerMapFragment;
 
-public class    AddGameActivity extends AppCompatActivity implements
+public class AddGameActivity extends AppCompatActivity implements
         DatePickerFragment.DatePickerListener,
         TimePickerFragment.TimePickerListener,
         DurationPickerFragment.DurationPickerListener,

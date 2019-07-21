@@ -14,7 +14,10 @@ import java.util.List;
 
 import java9.util.stream.StreamSupport;
 import wjhj.orbital.sportsmatchfindingapp.R;
+import wjhj.orbital.sportsmatchfindingapp.auth.Authentications;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
+import wjhj.orbital.sportsmatchfindingapp.maps.Country;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.utils.ValidationInput;
 
 public class UserPreferencesViewModel extends ViewModel {
@@ -98,11 +101,33 @@ public class UserPreferencesViewModel extends ViewModel {
         return success;
     }
 
-    public void updatePreferences(String currUserUid) {
+    public void updatePreferences(String displayName, String currUserUid) {
         StreamSupport.stream(validationsList).forEach(ValidationInput::validate);
 
         if (StreamSupport.stream(validationsList)
                 .allMatch(input -> input.getState() == ValidationInput.State.VALIDATED)) {
+
+            Uri uri = displayPicUri.getValue() == null ? Uri.parse("DEFAULT") : displayPicUri.getValue();
+
+            UserProfile.BuildFinal midBuildStage = UserProfile.builder()
+                    .withDisplayName(displayName)
+                    .withGender(gender.getInput())
+                    .withBirthday(birthday.getInput())
+                    .withCountry(Country.AFGHANISTAN)
+                    .withDisplayPicUri(uri)
+                    .withUid(currUserUid)
+                    .addAllPreferences(sports);
+
+            if (bio.getValue() != null) {
+                midBuildStage = midBuildStage.withBio(bio.getValue());
+            }
+
+            UserProfile userProfile = midBuildStage.build();
+
+//            Authentications auths = new Authentications();
+//            SportalRepo repo = SportalRepo.getInstance();
+//            repo.addUser(currUserUid, userProfile);
+
             success.setValue(true);
         }
     }

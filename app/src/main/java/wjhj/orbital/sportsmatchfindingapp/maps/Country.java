@@ -1,6 +1,9 @@
 package wjhj.orbital.sportsmatchfindingapp.maps;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public enum Country {
     AFGHANISTAN("Afghanistan", "AF"),
@@ -255,10 +258,23 @@ public enum Country {
 
     private String countryName;
     private String countryCode;
+    private static Map<String, Country> namesMapping = new HashMap<>();
+    static {
+        for (Country country : values()) {
+            namesMapping.put(country.getCountryName(), country);
+        }
+    }
 
     Country(String countryName, String countryCode) {
         this.countryName = countryName;
         this.countryCode = countryCode;
+    }
+
+    public static Country fromCountryName(String name) {
+        if (namesMapping.containsKey(name)) {
+            return namesMapping.get(name);
+        }
+        throw new IllegalArgumentException("Invalid country name: " + name);
     }
 
     public String getCountryCode() {

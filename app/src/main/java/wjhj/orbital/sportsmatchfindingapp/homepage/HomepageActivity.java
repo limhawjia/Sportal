@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
@@ -23,8 +24,10 @@ import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.HomepageActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.AddGameActivity;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesSwipeViewFragment;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileFragment;
 import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileViewModel;
+import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
 
@@ -104,6 +107,7 @@ public class HomepageActivity extends AppCompatActivity {
                         DisplayUserProfileFragment.newInstance(currUser.getUid());
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.homepage_secondary_fragment_container, userProfileFragment)
+                        .addToBackStack(null)
                         .commit();
                 break;
             case R.id.options_logout:

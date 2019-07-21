@@ -33,7 +33,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="fitXY"
-                    android:background="@color/colorPrimaryDark" />
+                    android:background="@color/colorPrimaryDark"
+                    android:imageUri="@{viewModel.displayPicUri}"/>
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -51,7 +52,7 @@
                     android:scaleType="fitXY"
                     android:src="@drawable/ic_add_circle_black_24dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
             </FrameLayout>
 

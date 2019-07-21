@@ -1,6 +1,10 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
+import android.net.Uri;
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,7 +33,12 @@ public class DisplayUserProfileViewModel extends ViewModel {
         return userProfile;
     }
 
+    public LiveData<Uri> getDisplayPicUri() {
+        return Transformations.map(userProfile, UserProfile::getDisplayPicUri);
+    }
+
     public boolean isCurrentUser() {
         return isCurrentUser;
     }
+
 }

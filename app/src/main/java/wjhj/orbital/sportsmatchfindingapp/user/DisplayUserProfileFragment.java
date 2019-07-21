@@ -65,7 +65,7 @@ public class DisplayUserProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DisplayUserProfileFragmentBinding.inflate(inflater, container, false);
-        binding.setLifecycleOwner(this);
+        binding.setLifecycleOwner(getViewLifecycleOwner());
         binding.setViewModel(viewModel);
 
         return binding.getRoot();

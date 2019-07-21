@@ -32,7 +32,8 @@ public class SignUpActivity extends AppCompatActivity {
                     binding.passwordField.getText().toString(),
                     binding.nameField.getText().toString());
             updateOnSignedUp(signUpAuth);
-       //     signUp(signUpAuth);
+            // signUp(signUpAuth);
+            //TODO: change back when done
         });
 
     }
