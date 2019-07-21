@@ -14,15 +14,14 @@ import androidx.lifecycle.ViewModel;
 import com.google.common.base.Optional;
 
 import org.threeten.bp.LocalDate;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import java9.util.stream.StreamSupport;
 import wjhj.orbital.sportsmatchfindingapp.R;
-import wjhj.orbital.sportsmatchfindingapp.auth.Authentications;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.maps.Country;
-import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.utils.ValidationInput;
 
 public class UserPreferencesViewModel extends ViewModel {
@@ -31,10 +30,9 @@ public class UserPreferencesViewModel extends ViewModel {
     private MutableLiveData<String> bio;
     private ValidationInput<LocalDate> birthday;
     private ValidationInput<Country> country;
-    private ObservableInt countrySelection;
     private ValidationInput<Gender> gender;
     private MutableLiveData<Boolean> success;
-    private List<Sport> sports;
+    private MutableLiveData<List<Sport>> sportPreferences;
 
     private List<ValidationInput<?>> validationsList;
 
@@ -44,20 +42,9 @@ public class UserPreferencesViewModel extends ViewModel {
         birthday = new ValidationInput<>(date -> date != null && !date.isAfter(LocalDate.now()),
                 "Please enter a valid birthday");
         country = new ValidationInput<>(country -> country != null, "Please select a country");
-        countrySelection = new ObservableInt(-1);
         gender = new ValidationInput<>(gender -> gender != null, "");
         success = new MutableLiveData<>();
-        sports = new ArrayList<>();
-
-        countrySelection.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
-            @Override
-            public void onPropertyChanged(Observable sender, int propertyId) {
-                if (propertyId >= 0) {
-                    country.setInput(Country.values()[propertyId]);
-                }
-            }
-        });
-
+        sportPreferences = new MutableLiveData<>();
         validationsList = new ArrayList<>();
         validationsList.add(birthday);
         validationsList.add(country);
@@ -104,29 +91,55 @@ public class UserPreferencesViewModel extends ViewModel {
         this.country.setInput(country);
     }
 
-    public ObservableInt getCountrySelection() {
-        return countrySelection;
-    }
-
     public ValidationInput<Gender> getGender() {
         return this.gender;
     }
 
-
-    public List<Sport> getSportPreferences() {
-        return sports;
+    public LiveData<List<Sport>> getSportPreferences() {
+        return sportPreferences;
     }
 
-    public List<Sport> getSportPreferencesToUpdate() {
-        sports.remove(0);
-        return sports;
+    public void setSportPreferences(List<Sport> sportPreferences) {
+        this.sportPreferences.setValue(sportPreferences);
+    }
+
+    public void updateSportPreferences(boolean[] sportSelections) {
+        List<Sport> sportsPreferences = sportPreferences.getValue();
+        if (sportsPreferences == null) {
+            sportsPreferences = new ArrayList<>();
+        }
+
+        for (int i = 0; i < sportSelections.length; i++) {
+            Sport sport = Sport.values()[i];
+            boolean selected = sportSelections[i];
+            boolean contains = sportsPreferences.contains(sport);
+            if (selected && !contains) {
+                sportsPreferences.add(sport);
+            } else if (!selected && contains) {
+                sportsPreferences.remove(sport);
+            }
+        }
+
+        setSportPreferences(sportsPreferences);
+    }
+
+    public boolean[] getSportSelections() {
+        boolean[] selections = new boolean[Sport.values().length];
+        List<Sport> currList = sportPreferences.getValue();
+        if (currList != null) {
+            for (Sport sport : currList) {
+                selections[sport.ordinal()] = true;
+            }
+        }
+
+        return selections;
     }
 
     public MutableLiveData<Boolean> getSuccess() {
         return success;
     }
 
-    public void updatePreferences(String displayName, String currUserUid) {
+    public void updateProfile(String displayName, String currUserUid) {
         StreamSupport.stream(validationsList).forEach(ValidationInput::validate);
 
         if (StreamSupport.stream(validationsList)
@@ -139,7 +152,7 @@ public class UserPreferencesViewModel extends ViewModel {
                     .withCountry(Country.AFGHANISTAN)
                     .withUid(currUserUid)
                     .withBio(Optional.fromNullable(bio.getValue()))
-                    .addAllPreferences(sports)
+                    .addAllPreferences(sportPreferences.getValue())
                     .build();
 
             Log.d("preferences", userProfile.toString());

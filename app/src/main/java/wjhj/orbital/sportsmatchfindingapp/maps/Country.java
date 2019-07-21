@@ -262,9 +262,11 @@ public enum Country {
     private String countryName;
     private String countryCode;
     private static Map<String, Country> namesMapping = new HashMap<>();
+    private static ArrayList<String> countryNames = new ArrayList<>();
     static {
         for (Country country : values()) {
             namesMapping.put(country.toString(), country);
+            countryNames.add(country.toString());
         }
     }
 
@@ -281,7 +283,7 @@ public enum Country {
     }
 
     public static ArrayList<String> getCountryNamesArrList() {
-        return new ArrayList<>(namesMapping.keySet());
+        return countryNames;
     }
 
     public String getCountryCode() {
