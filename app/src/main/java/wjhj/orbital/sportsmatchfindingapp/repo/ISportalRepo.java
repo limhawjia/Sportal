@@ -31,6 +31,8 @@ public interface ISportalRepo {
 
     LiveData<Game> getGame(String gameId);
 
+    LiveData<List<Game>> getGameByQueries(GameSearchFilter filter);
+
     LiveData<List<Game>> selectGamesStartingWith(String field, String queryText);
 
     LiveData<List<Game>> selectGamesArrayContains(String field, String queryText);

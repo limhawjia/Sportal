@@ -25,8 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java9.util.stream.StreamSupport;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
+import wjhj.orbital.sportsmatchfindingapp.game.TimeOfDay;
 import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
@@ -140,6 +142,27 @@ public class SportalRepo implements ISportalRepo {
     }
 
     @Override
+    public LiveData<List<Game>> getGameByQueries(GameSearchFilter filter) {
+        Query query = FirebaseFirestore.getInstance().collection("Games");
+        if (filter.hasNameQuery()) {
+            query = addQueryStartingWith(query, "gameName", filter.getNameQuery());
+        }
+        if (filter.hasSportQuery()) {
+            query = addQueryStartingWith(query, "sport",
+                    filter.getSportQuery().toString().toUpperCase());
+        }
+        if (filter.hasSkillLevelQuery()) {
+            query = addQueryStartingWith(query, "skillLevel",
+                    filter.getSkillLevelQuery().toString().toUpperCase());
+        }
+
+        if (filter.hasTimeOfDayQuery()) {
+
+        }
+
+    }
+
+    @Override
     public LiveData<List<Game>> selectGamesStartingWith(String field, String queryText) {
         LiveData<List<GameDataModel>> listLiveData = convertToLiveData(
                 queryStartingWith("Games", field, queryText), GameDataModel.class);
@@ -224,6 +247,12 @@ public class SportalRepo implements ISportalRepo {
                 .orderBy(field)
                 .startAt(queryText)
                 .endAt(queryText + "\uf8ff"); // StackOverflow hacks...
+    }
+
+    private Query addQueryStartingWith (Query oldQuery, String field, String queryText) {
+        return oldQuery.orderBy(field)
+                .startAt(queryText)
+                .endAt(queryText + "\uf8ff");
     }
 
     private Query queryArrayContains(String collection, String field, String queryText) {
