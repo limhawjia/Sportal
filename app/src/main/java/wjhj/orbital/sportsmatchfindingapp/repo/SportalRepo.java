@@ -1,5 +1,6 @@
 package wjhj.orbital.sportsmatchfindingapp.repo;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -7,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.google.android.gms.tasks.Task;
+import com.google.common.base.Optional;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,6 +27,7 @@ import java.util.Map;
 
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
+import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
 public class SportalRepo implements ISportalRepo {
@@ -248,10 +251,12 @@ public class SportalRepo implements ISportalRepo {
     private UserProfile toUserProfile(UserProfileDataModel dataModel) {
         Map<GameStatus, List<String>> newMap = new HashMap<>();
         Map<String, List<String>> oldMap = dataModel.getGames();
-        for (String s : oldMap.keySet()) {
-            List<String> games = oldMap.get(s);
+        for (GameStatus gs : GameStatus.values()) {
+            List<String> games = oldMap.get(gs.toString());
             if (games != null) {
-                newMap.put(GameStatus.fromString(s), games);
+                newMap.put(gs, games);
+            } else {
+                newMap.put(gs, new ArrayList<>());
             }
         }
 
@@ -259,7 +264,10 @@ public class SportalRepo implements ISportalRepo {
                 .withDisplayName(dataModel.getDisplayName())
                 .withGender(dataModel.getGender())
                 .withBirthday(LocalDate.parse(dataModel.getBirthday()))
+                .withCountry(dataModel.getCountry())
+                .withDisplayPicUri(Uri.parse(dataModel.getDisplayPicUri()))
                 .withUid(dataModel.getUid())
+                .withBio(Optional.fromNullable(dataModel.getBio()))
                 .addAllPreferences(dataModel.getPreferences())
                 .putAllGames(newMap)
                 .build();

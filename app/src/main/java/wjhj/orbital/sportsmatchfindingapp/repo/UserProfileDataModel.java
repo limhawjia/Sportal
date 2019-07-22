@@ -6,6 +6,7 @@ import java.util.Map;
 
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
+import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 import wjhj.orbital.sportsmatchfindingapp.user.Gender;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
@@ -13,7 +14,10 @@ class UserProfileDataModel {
     private String displayName;
     private Gender gender;
     private String birthday;
+    private Country country;
+    private String displayPicUri;
     private String uid;
+    private String bio;
     private List<Sport> preferences;
     private Map<String, List<String>> games;
 
@@ -25,6 +29,9 @@ class UserProfileDataModel {
         displayName = userProfile.getDisplayName();
         gender = userProfile.getGender();
         birthday = userProfile.getBirthday().toString();
+        country = userProfile.getCountry();
+        displayPicUri = userProfile.getDisplayPicUri().toString();
+        bio = userProfile.getBio().orNull();
         uid = userProfile.getUid();
         preferences = userProfile.getPreferences();
         games = convertGames(userProfile.getGames());
@@ -43,8 +50,20 @@ class UserProfileDataModel {
         return birthday;
     }
 
+    public Country getCountry() {
+        return country;
+    }
+
+    public String getDisplayPicUri() {
+        return displayPicUri;
+    }
+
     public String getUid() {
         return uid;
+    }
+
+    public String getBio() {
+        return bio;
     }
 
     public List<Sport> getPreferences() {

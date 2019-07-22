@@ -1,31 +1,91 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
-import android.util.Log;
-import android.view.View;
+import android.net.Uri;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
-import androidx.databinding.BaseObservable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.firebase.firestore.auth.User;
 
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.format.DateTimeFormatter;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import java9.util.stream.StreamSupport;
 import wjhj.orbital.sportsmatchfindingapp.R;
+import wjhj.orbital.sportsmatchfindingapp.auth.Authentications;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
+import wjhj.orbital.sportsmatchfindingapp.maps.Country;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
+import wjhj.orbital.sportsmatchfindingapp.utils.ValidationInput;
 
 public class UserPreferencesViewModel extends ViewModel {
-    List<Sport> sports = new ArrayList<>();
-    MutableLiveData<Gender> gender = new MutableLiveData<>();
-    MutableLiveData<String> birthday = new MutableLiveData<>();
-    public MutableLiveData<String> displayName = new MutableLiveData<>();
+
+    private MutableLiveData<Uri> displayPicUri;
+    private MutableLiveData<String> bio;
+    private ValidationInput<LocalDate> birthday;
+    private ValidationInput<Gender> gender;
+    private MutableLiveData<Boolean> success;
+    private List<Sport> sports;
+
+    private List<ValidationInput<?>> validationsList;
+
+    public UserPreferencesViewModel() {
+        displayPicUri = new MutableLiveData<>();
+        bio = new MutableLiveData<>();
+        birthday = new ValidationInput<>(date -> date != null && !date.isAfter(LocalDate.now()),
+                "Please enter a valid birthday");
+        gender = new ValidationInput<>(gender -> gender != null, "");
+        success = new MutableLiveData<>();
+        sports = new ArrayList<>();
+
+        validationsList = new ArrayList<>();
+        validationsList.add(birthday);
+        validationsList.add(gender);
+    }
+
+
+    public LiveData<Uri> getDisplayPicUri() {
+        return displayPicUri;
+    }
+
+    public void setDisplayPicUri(Uri displayPicUri) {
+        this.displayPicUri.setValue(displayPicUri);
+    }
+
+    public MutableLiveData<String> getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio.setValue(bio);
+    }
+
+    public void onGenderChanged(RadioGroup radioGroup, int id) {
+        switch (id) {
+            case R.id.male:
+                gender.setInput(Gender.MALE);
+                break;
+            case R.id.female:
+                gender.setInput(Gender.FEMALE);
+                break;
+        }
+    }
+
+    public ValidationInput<LocalDate> getBirthday() {
+        return this.birthday;
+    }
+
+
+    public void setBirthday(LocalDate date) {
+        this.birthday.setInput(date);
+    }
+
+
+    public ValidationInput<Gender> getGender() {
+        return this.gender;
+    }
 
 
     public List<Sport> getSportPreferences() {
@@ -37,40 +97,40 @@ public class UserPreferencesViewModel extends ViewModel {
         return sports;
     }
 
-    public void onGenderChanged(RadioGroup radioGroup, int id) {
-        switch (id) {
-            case R.id.male:
-                gender.setValue(Gender.MALE);
-                break;
-            case R.id.female:
-                gender.setValue(Gender.FEMALE);
-                break;
+    public MutableLiveData<Boolean> getSuccess() {
+        return success;
+    }
+
+    public void updatePreferences(String displayName, String currUserUid) {
+        StreamSupport.stream(validationsList).forEach(ValidationInput::validate);
+
+        if (StreamSupport.stream(validationsList)
+                .allMatch(input -> input.getState() == ValidationInput.State.VALIDATED)) {
+
+            Uri uri = displayPicUri.getValue() == null ? Uri.parse("DEFAULT") : displayPicUri.getValue();
+
+            UserProfile.BuildFinal midBuildStage = UserProfile.builder()
+                    .withDisplayName(displayName)
+                    .withGender(gender.getInput())
+                    .withBirthday(birthday.getInput())
+                    .withCountry(Country.AFGHANISTAN)
+                    .withDisplayPicUri(uri)
+                    .withUid(currUserUid)
+                    .addAllPreferences(sports);
+
+            if (bio.getValue() != null) {
+                midBuildStage = midBuildStage.withBio(bio.getValue());
+            }
+
+            UserProfile userProfile = midBuildStage.build();
+
+//            Authentications auths = new Authentications();
+//            SportalRepo repo = SportalRepo.getInstance();
+//            repo.addUser(currUserUid, userProfile);
+
+            success.setValue(true);
         }
-        Log.d(PreferencesActivity.PREFERENCES_DEBUG, this.gender.getValue().toString());
     }
 
-    public void setBirthday(String date) {
-        this.birthday.setValue(date);
-    }
 
-    public LocalDate getBirthday() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy");
-        return LocalDate.parse(birthday.getValue(), formatter);
-    }
-
-    public LiveData<String> getBirthdayLiveData() {
-        return this.birthday;
-    }
-
-    public String getDisplayName() {
-        return this.displayName.getValue();
-    }
-
-    public void setDisplayName(String s) {
-        this.displayName.setValue(s);
-    }
-
-    public Gender getGender() {
-        return this.gender.getValue();
-    }
 }

@@ -46,5 +46,11 @@
             app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_nav" />
 
+        <FrameLayout
+            android:id="@+id/homepage_secondary_fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/top_toolbar"/>
+
     </RelativeLayout>
 </layout>

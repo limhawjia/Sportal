@@ -1,9 +1,13 @@
 package wjhj.orbital.sportsmatchfindingapp.utils;
 
+import android.net.Uri;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
+
+import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class BindingAdapters {
@@ -23,4 +27,8 @@ public class BindingAdapters {
         view.setError(errorMessage);
     }
 
+    @BindingAdapter("android:imageUri")
+    public static void setImageUri(ImageView view, Uri uri) {
+        Glide.with(view).load(uri).into(view);
+    }
 }

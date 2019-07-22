@@ -29,6 +29,9 @@ import wjhj.orbital.sportsmatchfindingapp.game.AddGameActivity;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesSwipeViewFragment;
 import wjhj.orbital.sportsmatchfindingapp.homepage.searchpage.SearchFragment;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
+import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileFragment;
+import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileViewModel;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
@@ -113,7 +116,12 @@ public class HomepageActivity extends AppCompatActivity {
     private Toolbar.OnMenuItemClickListener menuListener = item -> {
         switch (item.getItemId()) {
             case R.id.options_profile:
-                //todo
+                DisplayUserProfileFragment userProfileFragment =
+                        DisplayUserProfileFragment.newInstance(currUser.getUid());
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.homepage_secondary_fragment_container, userProfileFragment)
+                        .addToBackStack(null)
+                        .commit();
                 break;
             case R.id.options_logout:
                 FirebaseAuth.getInstance().signOut();
