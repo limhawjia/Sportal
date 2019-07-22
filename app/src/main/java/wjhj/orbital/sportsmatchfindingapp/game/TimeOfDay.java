@@ -35,6 +35,14 @@ public enum TimeOfDay {
         }
     }
 
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
     @Override
     public String toString() {
         return this.name;

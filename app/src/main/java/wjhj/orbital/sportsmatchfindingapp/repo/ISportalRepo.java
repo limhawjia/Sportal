@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData;
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;
+import java.util.Map;
 
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
@@ -31,7 +32,7 @@ public interface ISportalRepo {
 
     LiveData<Game> getGame(String gameId);
 
-    LiveData<List<Game>> getGameByQueries(GameSearchFilter filter);
+    LiveData<Map<String, Game>> getGamesWithFilters(GameSearchFilter filter);
 
     LiveData<List<Game>> selectGamesStartingWith(String field, String queryText);
 

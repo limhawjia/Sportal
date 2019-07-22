@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
@@ -19,7 +20,6 @@ import com.mapbox.geojson.Point;
 
 import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.LocalTime;
 
 import java.util.ArrayList;
@@ -28,10 +28,11 @@ import java.util.List;
 import java.util.Map;
 
 import java9.util.stream.StreamSupport;
+import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
+import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.game.TimeOfDay;
-import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
 public class SportalRepo implements ISportalRepo {
@@ -144,30 +145,78 @@ public class SportalRepo implements ISportalRepo {
     }
 
     @Override
-    public LiveData<List<Game>> getGameByQueries(GameSearchFilter filter) {
-        Query query = FirebaseFirestore.getInstance().collection("Games");
+    public LiveData<Map<String, Game>> getGamesWithFilters(GameSearchFilter filter) {
+        String nameQuery;
+
+        HashMap<String, Game> allGames = new HashMap<>();
+        MediatorLiveData<Map<String, Game>> data = new MediatorLiveData<>();
+        data.setValue(allGames);
+
+        nameQuery = null;
         if (filter.hasNameQuery()) {
-            query = addQueryStartingWith(query, "gameName", filter.getNameQuery());
+            if (filter.getNameQuery() != "") {
+                nameQuery = filter.getNameQuery();
+            }
         }
+
         if (filter.hasSportQuery()) {
-            query = addQueryStartingWith(query, "sport",
-                    filter.getSportQuery().toString().toUpperCase());
+            for (Sport sport : filter.getSportQuery()) {
+                Map<String, String> queryMap = new HashMap<>();
+                queryMap.put("sport", sport.toString().toUpperCase());
+                queryMap.put("gameName", nameQuery);
+                data.addSource(selectGamesStartingWithMultipleQueries(queryMap), games ->
+                    StreamSupport.stream(games).forEach(game -> allGames.put(game.getUid(), game)));
+            }
         }
+
         if (filter.hasSkillLevelQuery()) {
-            query = addQueryStartingWith(query, "skillLevel",
-                    filter.getSkillLevelQuery().toString().toUpperCase());
+            for (Difficulty skill : filter.getSkillLevelQuery()) {
+                Map<String, String> queryMap = new HashMap<>();
+                queryMap.put("skillLevel", skill.toString().toUpperCase());
+                queryMap.put("gameName", nameQuery);
+                data.addSource(selectGamesStartingWithMultipleQueries(queryMap), games ->
+                        StreamSupport.stream(games).forEach(game -> allGames.put(game.getUid(), game)));
+            }
         }
 
         if (filter.hasTimeOfDayQuery()) {
-
+            for (TimeOfDay timeOfDay: filter.getTimeOfDayQuery()) {
+                Query query = FirebaseFirestore.getInstance().collection("Games")
+                        .orderBy("time")
+                        .startAt(timeOfDay.getStartTime())
+                        .endAt(timeOfDay.getEndTime());
+                if (nameQuery != null) {
+                    query = query.orderBy("gameName")
+                            .startAt(nameQuery)
+                            .endAt(nameQuery + "\uf8ff");
+                }
+                LiveData<List<GameDataModel>> listLiveData = convertToLiveData(query, GameDataModel.class);
+                data.addSource(Transformations.map(listLiveData, this::toGames), games ->
+                        StreamSupport.stream(games).forEach(game -> allGames.put(game.getUid(), game)));
+            }
         }
-
+        return data;
     }
 
     @Override
     public LiveData<List<Game>> selectGamesStartingWith(String field, String queryText) {
         LiveData<List<GameDataModel>> listLiveData = convertToLiveData(
                 queryStartingWith("Games", field, queryText), GameDataModel.class);
+
+        return Transformations.map(listLiveData, this::toGames);
+    }
+
+    private LiveData<List<Game>> selectGamesStartingWithMultipleQueries(Map<String, String> args) {
+        Query data = FirebaseFirestore.getInstance().collection("games");
+        for (Map.Entry<String, String> query: args.entrySet()) {
+            if (query.getValue() != null) {
+                data = data.orderBy(query.getKey())
+                        .startAt(query.getValue())
+                        .endAt(query.getValue() + "\uf8ff");
+            }
+        }
+
+        LiveData<List<GameDataModel>> listLiveData = convertToLiveData(data, GameDataModel.class);
 
         return Transformations.map(listLiveData, this::toGames);
     }
@@ -249,12 +298,6 @@ public class SportalRepo implements ISportalRepo {
                 .orderBy(field)
                 .startAt(queryText)
                 .endAt(queryText + "\uf8ff"); // StackOverflow hacks...
-    }
-
-    private Query addQueryStartingWith (Query oldQuery, String field, String queryText) {
-        return oldQuery.orderBy(field)
-                .startAt(queryText)
-                .endAt(queryText + "\uf8ff");
     }
 
     private Query queryArrayContains(String collection, String field, String queryText) {

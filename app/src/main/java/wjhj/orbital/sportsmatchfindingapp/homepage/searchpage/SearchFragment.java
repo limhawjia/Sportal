@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,10 +19,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGamesTabBinding;
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentSearchBinding;
+import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesCardAdapter;
@@ -30,6 +33,9 @@ public class SearchFragment extends Fragment {
     private ImmutableList<Sport> mUserPreferences;
     private FragmentSearchBinding binding;
     private SearchViewModel searchViewModel;
+    private List<Game> gameData;
+
+    private GamesCardAdapter mRecyclerViewAdapter;
 
     private static String SPORTS_PREFERENCES_TAG = " sports_preferences";
     private static String SEARCH_PAGE_DEBUG = "search_debug";
@@ -75,8 +81,18 @@ public class SearchFragment extends Fragment {
         binding.setSearch(searchViewModel);
         binding.setLifecycleOwner(this);
 
+        gameData = new ArrayList<>();
+        searchViewModel.getGamesData()
+                .observe(getViewLifecycleOwner(), map -> {
+                    gameData = new ArrayList<>(map.values());
+                    Log.d("hi", "updating games: " + gameData.size());
+                });
+
         setUpMainSpinner(binding.sortSpinner);
         setUpRecyclerView(binding.searchRecyclerView);
+
+        binding.filtersButton.setOnClickListener(view -> refresh());
+
         return binding.getRoot();
     }
 
@@ -91,10 +107,11 @@ public class SearchFragment extends Fragment {
     private void setUpRecyclerView(RecyclerView recyclerView) {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        GamesCardAdapter mGamesCardAdapter = new GamesCardAdapter();
-        recyclerView.setAdapter(mGamesCardAdapter);
+        mRecyclerViewAdapter = new GamesCardAdapter();
+        recyclerView.setAdapter(mRecyclerViewAdapter);
+    }
 
-        searchViewModel.getGamesLiveData()
-                .observe(getViewLifecycleOwner(), mGamesCardAdapter::updateGames);
+    private void refresh() {
+        mRecyclerViewAdapter.updateGames(gameData);
     }
 }

@@ -26,6 +26,7 @@ import java9.util.stream.StreamSupport;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesDiffCallback;
+import wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
@@ -36,55 +37,36 @@ public class SearchViewModel extends ViewModel {
     private LiveData<String> sportsSelectionText;
     private MutableLiveData<ImmutableList<Sport>> sportsSelection;
 
-    private LiveData<List<Game>> gamesData;
+    private LiveData<Map<String, Game>> liveGamesData;
 
     private MutableLiveData<String> searchParameter;
+    private MediatorLiveData<GameSearchFilter> searchFilters;
 
     public SearchViewModel(ImmutableList<Sport> sportPreferences) {
-        this.repo = SportalRepo.getInstance();
+        repo = SportalRepo.getInstance();
 
-        this.sportsSelection = new MutableLiveData<>();
-        this.sportsSelection.setValue(sportPreferences);
-        this.sportsSelectionText = Transformations
+        sportsSelection = new MutableLiveData<>();
+        sportsSelection.setValue(sportPreferences);
+        sportsSelectionText = Transformations
                 .map(sportsSelection, this::configureSportsSelectionText);
-        this.searchParameter = new MutableLiveData<>();
 
-        gamesData = Transformations.switchMap(sportsSelection, listOfSports -> {
-            MediatorLiveData<List<Game>> data = new MediatorLiveData<>();
-            HashMap<Sport, LiveData<List<Game>>> gamesGroupedBySport = new HashMap<>();
+        searchParameter = new MutableLiveData<>();
+        searchParameter.setValue("");
 
-            data.addSource(searchParameter, para -> {
-
-                Map<String, Game> allGames = new ConcurrentHashMap<>();
-                for (Sport sport : listOfSports) {
-                    //Todo: refactor this to return result of combined query of search parameter and sport type
-                    LiveData<List<Game>> listOfGamesPerSport = repo
-                            .selectGamesStartingWith("sport", sport.toString().toUpperCase());
-                    data.addSource(listOfGamesPerSport, games -> {
-                        if (games != null) {
-                            Map<String, Game> newGamesMap = new HashMap<>();
-                            StreamSupport.stream(games).forEach(game -> {
-                                allGames.put(game.getUid(), game);
-                                newGamesMap.put(game.getUid(), game);
-                            });
-                            StreamSupport.stream(allGames.values())
-                                    .filter(game -> game.getSport() == sport)
-                                    .forEach(game -> {
-                                        if (!newGamesMap.containsKey(game.getUid())) {
-                                            allGames.remove(game.getUid());
-                                        }
-                                    });
-                        }
-                        data.setValue(new ArrayList<Game>(allGames.values()));
-                    });
-                }
-            });
-
-            searchParameter.setValue("");
-            return data;
+        searchFilters = new MediatorLiveData<>();
+        searchFilters.setValue(GameSearchFilter.get());
+        searchFilters.addSource(sportsSelection, sports -> {
+            GameSearchFilter filter = searchFilters.getValue();
+            filter.setSportQuery(sports);
+            searchFilters.setValue(filter);
+        });
+        searchFilters.addSource(searchParameter, para -> {
+            GameSearchFilter filter = searchFilters.getValue();
+            filter.setNameQuery(para);
+            searchFilters.setValue(filter);
         });
 
-
+        liveGamesData = Transformations.switchMap(searchFilters, repo::getGamesWithFilters);
     }
 
     public LiveData<String> getSportsSelectionText() {
@@ -100,8 +82,8 @@ public class SearchViewModel extends ViewModel {
         }
     }
 
-    public LiveData<List<Game>> getGamesLiveData() {
-        return gamesData;
+    public LiveData<Map<String, Game>> getGamesData() {
+        return liveGamesData;
     }
 
     private String configureSportsSelectionText(ImmutableList<Sport> sports) {
