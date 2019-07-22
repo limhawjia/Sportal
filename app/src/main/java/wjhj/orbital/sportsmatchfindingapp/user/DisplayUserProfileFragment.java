@@ -1,11 +1,12 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
 
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +54,7 @@ public class DisplayUserProfileFragment extends Fragment {
             Toast.makeText(getActivity(), "Error occurred, please try again", Toast.LENGTH_SHORT)
                     .show();
         }
+
     }
 
     @Override
@@ -62,7 +64,20 @@ public class DisplayUserProfileFragment extends Fragment {
         binding.setLifecycleOwner(getViewLifecycleOwner());
         binding.setViewModel(viewModel);
 
+        initPreferencesRecyclerView(binding.displayUserProfilePreferences);
+
         return binding.getRoot();
+    }
+
+    private void initPreferencesRecyclerView(RecyclerView recyclerView) {
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity(),
+                RecyclerView.HORIZONTAL, false);
+
+        PreferencesAdapter adapter = new PreferencesAdapter();
+        viewModel.getPreferences().observe(getViewLifecycleOwner(), adapter::updatePreferences);
+
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setAdapter(adapter);
     }
 
 }

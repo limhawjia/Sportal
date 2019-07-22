@@ -2,6 +2,7 @@ package wjhj.orbital.sportsmatchfindingapp.utils;
 
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,4 +32,10 @@ public class BindingAdapters {
     public static void setImageUri(ImageView view, Uri uri) {
         Glide.with(view).load(uri).into(view);
     }
+
+    @BindingAdapter("android:drawableStartResource")
+    public static void setDrawableStart(TextView view, int resource) {
+        view.setCompoundDrawablesRelativeWithIntrinsicBounds(resource, 0, 0, 0);
+    }
+
 }
