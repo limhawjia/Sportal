@@ -75,6 +75,14 @@
     <string name="add_game_optional_details_text">OPTIONAL DETAILS</string>
     <string name="add_game_game_description">Enter game description</string>
     <string name="add_game_make_game">MAKE GAME!</string>
+
+    <!--Search Page-->
+    <string name="search_sport_filter">SPORTS</string>
+    <string name="search_sort">SORT BY</string>
+    <string name="search_filters">Filters</string>
+    <string name="search_searchbar">Name</string>
+    <string name="search_title"><b>SEARCH FOR GAMES</b></string>
+
     <string name="preferences_pick_profile_pic">Pick a profile pic:</string>
     <string name="preferences_enter_details">Enter details:</string>
     <string name="preferences_bio_text">Bio (Optional)</string>

@@ -1,10 +1,13 @@
 package wjhj.orbital.sportsmatchfindingapp.game;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 
-public enum Sport {
+public enum Sport implements Parcelable {
     FOOTBALL("Football", R.drawable.soccer_icon),
     BASKETBALL("Basketball", R.drawable.basketball_icon),
     CRICKET("Cricket", R.drawable.cricket_icon),
@@ -15,6 +18,19 @@ public enum Sport {
 
     private String str;
     private int iconResourceId;
+
+    public static final Parcelable.Creator<Sport> CREATOR = new Parcelable.Creator<Sport>() {
+
+        @Override
+        public Sport createFromParcel(Parcel source) {
+            return values()[source.readInt()];
+        }
+
+        @Override
+        public Sport[] newArray(int size) {
+            return new Sport[size];
+        }
+    };
 
     Sport(String str, int iconResourceId) {
         this.str = str;
@@ -37,5 +53,15 @@ public enum Sport {
     @Override
     public String toString() {
         return str;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(ordinal());
     }
 }
