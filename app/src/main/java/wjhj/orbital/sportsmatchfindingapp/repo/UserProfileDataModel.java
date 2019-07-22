@@ -19,6 +19,7 @@ class UserProfileDataModel {
     private String uid;
     private String bio;
     private String displayPicUri;
+    private List<String> friendUids;
     private List<Sport> preferences;
     private Map<String, List<String>> games;
 
@@ -34,6 +35,7 @@ class UserProfileDataModel {
         uid = userProfile.getUid();
         bio = userProfile.getBio().orNull();
         displayPicUri = userProfile.getDisplayPicUri().toString();
+        friendUids = userProfile.getFriendUids();
         preferences = userProfile.getPreferences();
         games = convertGames(userProfile.getGames());
 
@@ -65,6 +67,10 @@ class UserProfileDataModel {
 
     public String getDisplayPicUri() {
         return displayPicUri;
+    }
+
+    public List<String> getFriendUids() {
+        return friendUids;
     }
 
     public List<Sport> getPreferences() {

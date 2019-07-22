@@ -7,6 +7,8 @@
         <variable
             name="viewModel"
             type="wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileViewModel" />
+
+        <import type="android.view.View" />
     </data>
 
     <ScrollView
@@ -16,9 +18,11 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/white">
 
             <FrameLayout
+                android:id="@+id/display_user_profile_pic_container"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_marginTop="16dp"
@@ -29,18 +33,20 @@
                 app:layout_constraintStart_toStartOf="parent">
 
                 <ImageView
-                    android:id="@+id/signup_profile_pic"
+                    android:id="@+id/display_user_profile_pic"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="fitXY"
                     android:background="@color/colorPrimaryDark"
-                    android:imageUri="@{viewModel.displayPicUri}"/>
+                    android:imageUri="@{viewModel.displayPicUri}"
+                    android:contentDescription="@string/image" />
 
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="fitXY"
-                    android:src="@drawable/circular_crop" />
+                    android:src="@drawable/circular_crop"
+                    android:contentDescription="@string/image" />
 
                 <ImageButton
                     android:id="@+id/add_display_pic_button"
@@ -52,9 +58,47 @@
                     android:scaleType="fitXY"
                     android:src="@drawable/ic_add_circle_black_24dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:contentDescription="@string/image" />
 
             </FrameLayout>
+
+            <TextView
+                android:id="@+id/display_user_display_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintStart_toEndOf="@id/display_user_profile_pic_container"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:text="@{viewModel.displayName}"/>
+
+            <TextView
+                android:id="@+id/display_user_bio"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:layout_constraintStart_toEndOf="@id/display_user_profile_pic_container"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/display_user_display_name"
+                android:textStyle="italic"
+                android:gravity="center"
+                android:text="@{viewModel.bio}"/>
+            
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:background="@{viewModel.isFriend() ? @color/colorPrimary : @color/green}"
+                app:layout_constraintStart_toEndOf="@id/display_user_profile_pic_container"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/display_user_bio"
+                android:visibility="@{viewModel.isCurrentUser() ? View.VISIBLE : View.VISIBLE}"
+                android:text='@{viewModel.isFriend() ? "Friends" : "Add friend"}'/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

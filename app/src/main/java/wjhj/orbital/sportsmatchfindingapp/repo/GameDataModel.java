@@ -33,7 +33,7 @@ class GameDataModel {
         gameName = game.getGameName();
         description = game.getDescription().orNull();
         sport = game.getSport();
-        location = new GeoPoint(game.getLocation().latitude(), game.getLocation().longitude());
+        location = game.getLocation();
         placeName = game.getPlaceName();
         minPlayers = game.getMinPlayers();
         maxPlayers = game.getMaxPlayers();

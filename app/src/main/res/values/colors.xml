@@ -16,4 +16,5 @@
     <color name="offWhite">#F8F8F8</color>
     <color name ="red">#BFCF212E</color>
     <color name ="green">#BF25D303</color>
+    <color name="dark_green">#D8166F0C</color>
 </resources>

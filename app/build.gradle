@@ -60,7 +60,7 @@ dependencies {
     implementation 'net.sourceforge.streamsupport:android-retrostreams:1.7.1' // Retrostreams
     implementation 'com.github.bumptech.glide:glide:4.9.0' // Glide
     implementation 'com.github.MdFarhanRaja:SearchableSpinner:2.0' // SearchableSpinner
-    implementation 'com.github.aliab:Two-Step-Picker-Dialog:V1.1.0'
+    implementation 'com.github.imperiumlabs:GeoFirestore-Android:v1.5.0' // GeoFireStore
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.media:media:1.0.1'

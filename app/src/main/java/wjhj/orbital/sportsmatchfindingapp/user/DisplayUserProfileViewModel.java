@@ -16,6 +16,7 @@ public class DisplayUserProfileViewModel extends ViewModel {
 
     private SportalRepo repo;
     private LiveData<UserProfile> userProfile;
+    private String currUserUid;
     private boolean isCurrentUser;
 
     public DisplayUserProfileViewModel(String userUid) {
@@ -23,22 +24,28 @@ public class DisplayUserProfileViewModel extends ViewModel {
            userProfile = repo.getUser(userUid);
 
         FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
-        String currUserUid = currUser == null ? "" : currUser.getUid();
+        currUserUid = currUser == null ? "" : currUser.getUid();
         isCurrentUser = (currUserUid.equals(userUid));
-
-
-    }
-
-    public LiveData<UserProfile> getUserProfile() {
-        return userProfile;
     }
 
     public LiveData<Uri> getDisplayPicUri() {
         return Transformations.map(userProfile, UserProfile::getDisplayPicUri);
     }
 
+    public LiveData<String> getDisplayName() {
+        return Transformations.map(userProfile, UserProfile::getDisplayName);
+    }
+
+    public LiveData<String> getBio() {
+        return Transformations.map(userProfile, profile -> profile.getBio().or("No bio"));
+    }
+
     public boolean isCurrentUser() {
         return isCurrentUser;
+    }
+
+    public LiveData<Boolean> isFriend() {
+        return Transformations.map(userProfile, profile -> profile.getFriendUids().contains(currUserUid));
     }
 
 }

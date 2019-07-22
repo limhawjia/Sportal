@@ -339,7 +339,7 @@
                             android:inputType="textMultiLine"
                             android:maxLines="6"
                             android:scrollbars="vertical"
-                            android:text="@={addGameViewModel.gameDescription}" />
+                            android:text="@={addGameViewModel.gameDescription.input}" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
