@@ -16,10 +16,6 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
@@ -37,6 +33,7 @@ public class HomepageActivity extends AppCompatActivity {
     private static final int ADD_GAME_RC = 1;
 
     private FirebaseUser currUser;
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private UserProfileViewModel userProfileViewModel;
 
     @Override
