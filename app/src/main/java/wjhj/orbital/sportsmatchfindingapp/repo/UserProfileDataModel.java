@@ -10,6 +10,7 @@ import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 import wjhj.orbital.sportsmatchfindingapp.user.Gender;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
+@SuppressWarnings("WeakerAccess")
 class UserProfileDataModel {
     private String displayName;
     private Gender gender;

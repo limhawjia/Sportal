@@ -8,7 +8,7 @@ import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 
-
+@SuppressWarnings("WeakerAccess")
 class GameDataModel {
     private String gameName;
     private String description;
