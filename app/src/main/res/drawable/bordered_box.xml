@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle" >
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <!-- View background color -->
+            <solid android:color="@color/transparent" />
 
-    <!-- View background color -->
-    <solid
-        android:color="@color/transparent" >
-    </solid>
+            <!-- View border color and width -->
+            <stroke
+                android:width="1dp"
+                android:color="#33000000" />
 
-    <!-- View border color and width -->
-    <stroke
-        android:width="1dp"
-        android:color="#33000000" >
-    </stroke>
+            <!-- The radius makes the corners rounded -->
+            <corners android:radius="1dp" />
+        </shape>
+    </item>
 
-    <!-- The radius makes the corners rounded -->
-    <corners
-        android:radius="2dp"   >
-    </corners>
+    <item>
+        <inset android:insetLeft="-2dp"
+            android:insetTop="-2dp">
+            <shape android:shape="rectangle">
+                <solid android:color="@color/transparent" />
 
-</shape>
+                <stroke
+                    android:width="2dp"
+                    android:color="#64000000" />
+
+            </shape>
+        </inset>
+    </item>
+
+</layer-list>

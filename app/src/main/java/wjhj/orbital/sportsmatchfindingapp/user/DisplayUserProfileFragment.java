@@ -73,7 +73,7 @@ public class DisplayUserProfileFragment extends Fragment {
         LinearLayoutManager manager = new LinearLayoutManager(getActivity(),
                 RecyclerView.HORIZONTAL, false);
 
-        PreferencesAdapter adapter = new PreferencesAdapter();
+        PreferencesIconAdapter adapter = new PreferencesIconAdapter();
         viewModel.getPreferences().observe(getViewLifecycleOwner(), adapter::updatePreferences);
 
         recyclerView.setLayoutManager(manager);

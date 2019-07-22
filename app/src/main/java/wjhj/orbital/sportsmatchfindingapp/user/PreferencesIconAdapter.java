@@ -14,11 +14,11 @@ import java.util.List;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 
-public class PreferencesAdapter extends RecyclerView.Adapter {
+public class PreferencesIconAdapter extends RecyclerView.Adapter {
 
     private List<Sport> sportPreferences;
 
-    public PreferencesAdapter() {
+    public PreferencesIconAdapter() {
         this.sportPreferences = new ArrayList<>();
     }
 
@@ -52,7 +52,7 @@ public class PreferencesAdapter extends RecyclerView.Adapter {
             iconView = itemView.findViewById(R.id.sport_preference_icon);
         }
 
-        public void setIconDrawable(int imageResource) {
+        void setIconDrawable(int imageResource) {
             iconView.setImageResource(imageResource);
         }
 

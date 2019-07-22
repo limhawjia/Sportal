@@ -132,8 +132,10 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/preferences_bio_input"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:hint="@string/preferences_bio_text"
@@ -157,6 +159,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/preferences_birthday_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -186,6 +189,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/preferences_country_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -242,14 +246,18 @@
 
                     <RadioButton
                         android:id="@+id/male"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
                         android:text="@string/male" />
 
                     <RadioButton
                         android:id="@+id/female"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
                         android:text="@string/female" />
                 </RadioGroup>
 
@@ -289,11 +297,9 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/sports_preference_recycler_view"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toTopOf="@id/preferences_done_button"
                 app:layout_constraintEnd_toEndOf="parent"

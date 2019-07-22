@@ -198,7 +198,7 @@ public class PreferencesActivity extends AppCompatActivity implements DatePicker
 
         void bind(Sport sport) {
             sportIcon.setImageResource(sport.getIconResourceId());
-            sportName.setText(sport.toString());
+            sportName.setText(sport.toString().toUpperCase());
             plusIcon.setVisibility(View.INVISIBLE);
             itemView.setBackgroundResource(R.drawable.bordered_box);
         }

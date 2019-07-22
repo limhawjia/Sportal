@@ -39,11 +39,4 @@
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
 
-    <style name="DurationDialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
-        <!--selected day's color: define your own-->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorPrimary</item>
-    </style>
-
 </resources>
