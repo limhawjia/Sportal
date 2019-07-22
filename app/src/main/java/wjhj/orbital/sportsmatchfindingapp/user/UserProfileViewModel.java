@@ -1,10 +1,14 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -14,6 +18,7 @@ import java.util.Map;
 
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
+import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 
 public class UserProfileViewModel extends ViewModel {
@@ -22,12 +27,14 @@ public class UserProfileViewModel extends ViewModel {
     private LiveData<UserProfile> currUser;
     private LiveData<Map<GameStatus, List<String>>> gameIds;
     private LiveData<Map<GameStatus, List<Game>>> games;
+    private LiveData<ImmutableList<Sport>> sportsPreferences;
 
     public UserProfileViewModel(String userUid) {
         repo = SportalRepo.getInstance();
         currUser = repo.getUser(userUid);
         gameIds = Transformations.map(currUser, UserProfile::getGames);
         games = new MutableLiveData<>();
+        sportsPreferences = Transformations.map(currUser, UserProfile::getPreferences);
     }
 
     public LiveData<UserProfile> getCurrUser() {
@@ -57,5 +64,9 @@ public class UserProfileViewModel extends ViewModel {
             }
             return mapMediatorLiveData;
         });
+    }
+
+    public LiveData<ImmutableList<Sport>> getSportsPreferences() {
+        return sportsPreferences;
     }
 }

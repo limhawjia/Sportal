@@ -36,9 +36,6 @@
             android:launchMode="singleTop"/>
 
         <activity
-            android:name=".homepage.GameSearchActivity"/>
-
-        <activity
             android:name=".game.AddGameActivity"
             android:parentActivityName=".homepage.HomepageActivity"/>
     </application>

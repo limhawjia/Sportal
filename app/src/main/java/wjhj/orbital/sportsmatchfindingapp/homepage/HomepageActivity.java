@@ -5,6 +5,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
@@ -14,15 +16,20 @@ import android.view.Menu;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.common.collect.ImmutableList;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.auth.User;
 
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.HomepageActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.AddGameActivity;
+import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesSwipeViewFragment;
+import wjhj.orbital.sportsmatchfindingapp.homepage.searchpage.SearchFragment;
+import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
 
@@ -78,9 +85,17 @@ public class HomepageActivity extends AppCompatActivity {
                 fragment = GamesSwipeViewFragment.newInstance();
                 break;
             case R.id.nav_search:
-                Intent intent = new Intent(this, GameSearchActivity.class);
-                intent.putExtra(HomepageActivity.CURR_USER_TAG, currUser);
-                startActivity(intent);
+                ImmutableList.Builder<Sport> builder = new ImmutableList.Builder<>();
+                LiveData<ImmutableList<Sport>> source = userProfileViewModel.getSportsPreferences();
+                userProfileViewModel.getSportsPreferences()
+                        .observe(this, new Observer<ImmutableList<Sport>>() {
+                            @Override
+                            public void onChanged(ImmutableList<Sport> sports) {
+                                builder.addAll(sports);
+                                source.removeObserver(this);
+                            }
+                        });
+                fragment = SearchFragment.newInstance(builder.build());
                 break;
             case R.id.nav_social:
                 //todo
