@@ -21,8 +21,6 @@ class GameDataModel {
     private String date;
     private String time;
     private String duration;
-    private String startTime;
-    private String endTime;
     private String uid;
     private String creatorUid;
     private List<String> participatingUids;
