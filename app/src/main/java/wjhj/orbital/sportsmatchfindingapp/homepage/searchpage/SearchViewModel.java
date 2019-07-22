@@ -37,7 +37,7 @@ public class SearchViewModel extends ViewModel {
     private LiveData<String> sportsSelectionText;
     private MutableLiveData<ImmutableList<Sport>> sportsSelection;
 
-    private LiveData<Map<String, Game>> liveGamesData;
+    private LiveData<List<Game>> liveGamesData;
 
     private MutableLiveData<String> searchParameter;
     private MediatorLiveData<GameSearchFilter> searchFilters;
@@ -45,28 +45,32 @@ public class SearchViewModel extends ViewModel {
     public SearchViewModel(ImmutableList<Sport> sportPreferences) {
         repo = SportalRepo.getInstance();
 
+        searchFilters = new MediatorLiveData<>();
+        searchFilters.setValue(GameSearchFilter.get());
+        liveGamesData = Transformations.map(
+                Transformations.switchMap(searchFilters, repo::getGamesWithFilters),
+                map -> new ArrayList<>(map.values()));
+
         sportsSelection = new MutableLiveData<>();
-        sportsSelection.setValue(sportPreferences);
+        searchParameter = new MutableLiveData<>();
+
         sportsSelectionText = Transformations
                 .map(sportsSelection, this::configureSportsSelectionText);
 
-        searchParameter = new MutableLiveData<>();
-        searchParameter.setValue("");
-
-        searchFilters = new MediatorLiveData<>();
-        searchFilters.setValue(GameSearchFilter.get());
         searchFilters.addSource(sportsSelection, sports -> {
+            Log.d("hi", "Sports selection changed: " + sports.size());
             GameSearchFilter filter = searchFilters.getValue();
             filter.setSportQuery(sports);
             searchFilters.setValue(filter);
         });
         searchFilters.addSource(searchParameter, para -> {
+            Log.d("hi", "Search parameter changed to " + para);
             GameSearchFilter filter = searchFilters.getValue();
             filter.setNameQuery(para);
             searchFilters.setValue(filter);
         });
 
-        liveGamesData = Transformations.switchMap(searchFilters, repo::getGamesWithFilters);
+        sportsSelection.setValue(sportPreferences);
     }
 
     public LiveData<String> getSportsSelectionText() {
@@ -82,7 +86,7 @@ public class SearchViewModel extends ViewModel {
         }
     }
 
-    public LiveData<Map<String, Game>> getGamesData() {
+    public LiveData<List<Game>> getGamesData() {
         return liveGamesData;
     }
 

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/filters_form"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:layout_width="match_parent"
+            android:text="@string/search_filter"
+            android:textColor="@color/black"
+            android:textFontWeight="400"
+            android:paddingEnd="8dp"
+            android:gravity="center_vertical"
+            android:drawableEnd="@drawable/icons8_slider_24"/>
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:text="@string/search_time_of_day" />
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_width="wrap_content">
+
+            <ImageButton
+                android:id="@+id/morning_button"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_launcher_foreground" />
+
+            <ImageButton
+                android:id="@+id/afternoon_button"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_launcher_foreground" />
+
+            <ImageButton
+                android:id="@+id/evening_button"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_launcher_foreground" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:text="@string/search_skill_level" />
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginBottom="16dp">
+
+            <ImageButton
+                android:id="@+id/beginner_button"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_launcher_foreground" />
+
+            <ImageButton
+                android:id="@+id/intermediate_button"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_launcher_foreground" />
+
+            <ImageButton
+                android:id="@+id/advanced_button"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_launcher_foreground" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

@@ -1,20 +1,28 @@
 package wjhj.orbital.sportsmatchfindingapp.repo;
 
+import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.common.base.Optional;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.mapbox.geojson.Point;
 
@@ -26,7 +34,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
+import java9.util.stream.Stream;
 import java9.util.stream.StreamSupport;
 import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
@@ -146,55 +156,83 @@ public class SportalRepo implements ISportalRepo {
 
     @Override
     public LiveData<Map<String, Game>> getGamesWithFilters(GameSearchFilter filter) {
+        Log.d("hi", "Filtering started...");
+        CollectionReference gamesRef = FirebaseFirestore.getInstance().collection("Games");
         String nameQuery;
 
         HashMap<String, Game> allGames = new HashMap<>();
-        MediatorLiveData<Map<String, Game>> data = new MediatorLiveData<>();
-        data.setValue(allGames);
+        List<Task<QuerySnapshot>> tasks = new ArrayList<>();
 
         nameQuery = null;
         if (filter.hasNameQuery()) {
-            if (filter.getNameQuery() != "") {
+            if (filter.getNameQuery().length() >= 3) {
+                Log.d("hi", "Name query changed to " + filter.getNameQuery());
                 nameQuery = filter.getNameQuery();
             }
         }
 
+
         if (filter.hasSportQuery()) {
+            Log.d("hi", "Filtering by sports...");
             for (Sport sport : filter.getSportQuery()) {
-                Map<String, String> queryMap = new HashMap<>();
-                queryMap.put("sport", sport.toString().toUpperCase());
-                queryMap.put("gameName", nameQuery);
-                data.addSource(selectGamesStartingWithMultipleQueries(queryMap), games ->
-                    StreamSupport.stream(games).forEach(game -> allGames.put(game.getUid(), game)));
+                Log.d("hi", "Current sport: " + sport.toString());
+                Query query = gamesRef.whereEqualTo("sport", sport.toString().toUpperCase());
+                if (nameQuery != null) {
+                    query = query.whereArrayContains("nameSubstrings", nameQuery);
+                }
+                Task<QuerySnapshot> querySnapshotTask = query.get();
+                tasks.add(querySnapshotTask);
+                Log.d("hi", "Added task " + sport.toString());
             }
         }
 
         if (filter.hasSkillLevelQuery()) {
+            Log.d("hi", "Filtering by skill...");
             for (Difficulty skill : filter.getSkillLevelQuery()) {
-                Map<String, String> queryMap = new HashMap<>();
-                queryMap.put("skillLevel", skill.toString().toUpperCase());
-                queryMap.put("gameName", nameQuery);
-                data.addSource(selectGamesStartingWithMultipleQueries(queryMap), games ->
-                        StreamSupport.stream(games).forEach(game -> allGames.put(game.getUid(), game)));
+                Log.d("hi", "Current skill: " + skill.toString());
+                Query query = gamesRef.whereEqualTo("skillLevel", skill.toString().toUpperCase());
+                if (nameQuery != null) {
+                    query = query.whereArrayContains("nameSubstrings", nameQuery);
+                }
+                Task<QuerySnapshot> querySnapshotTask = query.get();
+                tasks.add(querySnapshotTask);
             }
         }
 
         if (filter.hasTimeOfDayQuery()) {
-            for (TimeOfDay timeOfDay: filter.getTimeOfDayQuery()) {
+            Log.d("hi", "Filtering by time...");
+            for (TimeOfDay timeOfDay : filter.getTimeOfDayQuery()) {
+                Log.d("hi", "Current time: " + timeOfDay.toString());
                 Query query = FirebaseFirestore.getInstance().collection("Games")
                         .orderBy("time")
                         .startAt(timeOfDay.getStartTime())
                         .endAt(timeOfDay.getEndTime());
                 if (nameQuery != null) {
-                    query = query.orderBy("gameName")
-                            .startAt(nameQuery)
-                            .endAt(nameQuery + "\uf8ff");
+                    query = query.whereArrayContains("nameSubstrings", nameQuery);
                 }
-                LiveData<List<GameDataModel>> listLiveData = convertToLiveData(query, GameDataModel.class);
-                data.addSource(Transformations.map(listLiveData, this::toGames), games ->
-                        StreamSupport.stream(games).forEach(game -> allGames.put(game.getUid(), game)));
+                Task<QuerySnapshot> querySnapshotTask = query.get();
+                tasks.add(querySnapshotTask);
             }
         }
+
+        Task<List<Task<?>>> mediator = Tasks.whenAllComplete(tasks)
+                .addOnSuccessListener(taskList -> {
+                    StreamSupport.stream(taskList).forEach(task -> {
+                        if (task.isSuccessful()) {
+                            QuerySnapshot snapshot = (QuerySnapshot) task.getResult();
+                            StreamSupport.stream(snapshot.getDocuments())
+                                    .map(documentSnapshot -> documentSnapshot.toObject(GameDataModel.class))
+                                    .map(this::toGame)
+                                    .forEach(game -> {
+                                        Log.d("hi", "Adding game " + game.toString());
+                                        allGames.put(game.getUid(), game);
+                                    });
+                        }
+                    });
+                });
+
+        MutableLiveData<Map<String, Game>> data = new MutableLiveData<>();
+        mediator.addOnSuccessListener(result -> data.setValue(allGames));
         return data;
     }
 
@@ -202,21 +240,6 @@ public class SportalRepo implements ISportalRepo {
     public LiveData<List<Game>> selectGamesStartingWith(String field, String queryText) {
         LiveData<List<GameDataModel>> listLiveData = convertToLiveData(
                 queryStartingWith("Games", field, queryText), GameDataModel.class);
-
-        return Transformations.map(listLiveData, this::toGames);
-    }
-
-    private LiveData<List<Game>> selectGamesStartingWithMultipleQueries(Map<String, String> args) {
-        Query data = FirebaseFirestore.getInstance().collection("games");
-        for (Map.Entry<String, String> query: args.entrySet()) {
-            if (query.getValue() != null) {
-                data = data.orderBy(query.getKey())
-                        .startAt(query.getValue())
-                        .endAt(query.getValue() + "\uf8ff");
-            }
-        }
-
-        LiveData<List<GameDataModel>> listLiveData = convertToLiveData(data, GameDataModel.class);
 
         return Transformations.map(listLiveData, this::toGames);
     }
