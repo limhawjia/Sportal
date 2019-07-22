@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.common.base.Optional;
 import com.mapbox.geojson.Point;
 
 import org.threeten.bp.Duration;
@@ -147,21 +148,21 @@ public class AddGameViewModel extends ViewModel {
 
         if (StreamSupport.stream(validations)
                 .allMatch(input -> input.getState() == ValidationInput.State.VALIDATED)) {
-            String description = gameDescription.getValue() == null ? "" : gameDescription.getValue();
             String gameUid = repo.generateGameUid();
             Game game = Game.builder()
                     .withGameName(gameName.getInput())
-                    .withDescription(description)
                     .withSport(Sport.values()[sportSelection.get()])
                     .withLocation(locationPoint)
                     .withPlaceName(placeName.getInput())
                     .withMinPlayers(Integer.valueOf(minPlayersInput.getInput()))
                     .withMaxPlayers(Integer.valueOf(maxPlayersInput.getInput()))
                     .withSkillLevel(skillLevel.getInput())
-                    .withStartTime(LocalDateTime.of(date.getInput(), time.getInput()))
-                    .withEndTime(LocalDateTime.of(date.getInput(), time.getInput()).plus(duration.getInput()))
+                    .withDate(date.getInput())
+                    .withTime(time.getInput())
+                    .withDuration(duration.getInput())
                     .withUid(gameUid)
                     .withCreatorUid(creatorUid)
+                    .withDescription(Optional.fromNullable(gameDescription.getValue()))
                     .build();
 
             repo.addGame(gameUid, game)

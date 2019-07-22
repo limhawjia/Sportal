@@ -17,8 +17,10 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 import com.mapbox.geojson.Point;
 
+import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.LocalTime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -294,8 +296,8 @@ public class SportalRepo implements ISportalRepo {
                 .withGender(dataModel.getGender())
                 .withBirthday(LocalDate.parse(dataModel.getBirthday()))
                 .withCountry(dataModel.getCountry())
-                .withDisplayPicUri(Uri.parse(dataModel.getDisplayPicUri()))
                 .withUid(dataModel.getUid())
+                .withDisplayPicUri(Uri.parse(dataModel.getDisplayPicUri()))
                 .withBio(Optional.fromNullable(dataModel.getBio()))
                 .addAllPreferences(dataModel.getPreferences())
                 .putAllGames(newMap)
@@ -320,17 +322,18 @@ public class SportalRepo implements ISportalRepo {
 
         return Game.builder()
                 .withGameName(dataModel.getGameName())
-                .withDescription(dataModel.getDescription())
                 .withSport(dataModel.getSport())
                 .withLocation(location)
                 .withPlaceName(dataModel.getPlaceName())
                 .withMinPlayers(dataModel.getMinPlayers())
                 .withMaxPlayers(dataModel.getMaxPlayers())
                 .withSkillLevel(dataModel.getSkillLevel())
-                .withStartTime(LocalDateTime.parse(dataModel.getStartTime()))
-                .withEndTime(LocalDateTime.parse(dataModel.getEndTime()))
+                .withDate(LocalDate.parse(dataModel.getDate()))
+                .withTime(LocalTime.parse(dataModel.getTime()))
+                .withDuration(Duration.parse(dataModel.getDuration()))
                 .withUid(dataModel.getUid())
                 .withCreatorUid(dataModel.getCreatorUid())
+                .withDescription(Optional.fromNullable(dataModel.getDescription()))
                 .addAllParticipatingUids(dataModel.getParticipatingUids())
                 .build();
     }

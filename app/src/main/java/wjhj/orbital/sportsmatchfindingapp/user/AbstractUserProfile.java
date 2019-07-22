@@ -32,11 +32,14 @@ public abstract class AbstractUserProfile {
 
     public abstract Country getCountry();
 
-    public abstract Uri getDisplayPicUri();
-
     public abstract String getUid();
 
     public abstract Optional<String> getBio();
+
+    @Value.Default
+    public Uri getDisplayPicUri() {
+        return Uri.parse("https://firebasestorage.googleapis.com/v0/b/orbital2019-8cd87.appspot.com/o/display-images%2Fdefault_display_pic.png?alt=media&token=7275d878-8ccc-4e46-9c37-3d26ec533a05");
+    }
 
     public abstract List<Sport> getPreferences();
 

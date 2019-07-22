@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
@@ -20,6 +21,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.auth.User;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 
 import wjhj.orbital.sportsmatchfindingapp.R;
@@ -31,8 +35,6 @@ import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesSwipeViewFragm
 import wjhj.orbital.sportsmatchfindingapp.homepage.searchpage.SearchFragment;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileFragment;
-import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileViewModel;
-import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
 
@@ -44,7 +46,6 @@ public class HomepageActivity extends AppCompatActivity {
 
     private FirebaseUser currUser;
     private UserProfileViewModel userProfileViewModel;
-    private HomepageActivityBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,20 +54,14 @@ public class HomepageActivity extends AppCompatActivity {
 
         currUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (currUser == null) {
-            Toast.makeText(this, "Not logged in. Redirecting...", Toast.LENGTH_SHORT)
-                    .show();
-            Intent loginIntent = new Intent(this, LoginActivity.class);
-            startActivity(loginIntent);
-            finish();
-        }
+        checkLoggedIn();
 
         UserProfileViewModelFactory factory = new UserProfileViewModelFactory(currUser.getUid());
         userProfileViewModel = ViewModelProviders.of(this, factory)
                 .get(UserProfileViewModel.class);
 
 
-        binding = DataBindingUtil.setContentView(this, R.layout.homepage_activity);
+        HomepageActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.homepage_activity);
         setSupportActionBar((Toolbar) binding.topToolbar);
 
 
@@ -77,6 +72,23 @@ public class HomepageActivity extends AppCompatActivity {
             startActivityForResult(addGameIntent, ADD_GAME_RC);
         });
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        checkLoggedIn();
+    }
+
+    private void checkLoggedIn() {
+        if (currUser == null) {
+            Toast.makeText(this, "Not logged in. Redirecting...", Toast.LENGTH_SHORT)
+                    .show();
+            Intent loginIntent = new Intent(this, LoginActivity.class);
+            startActivity(loginIntent);
+            finish();
+        }
+    }
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
         Fragment fragment = new Fragment();// IMPLEMENT PROPERLY

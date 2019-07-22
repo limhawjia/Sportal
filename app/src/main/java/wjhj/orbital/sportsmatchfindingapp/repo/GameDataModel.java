@@ -8,6 +8,7 @@ import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 
+
 class GameDataModel {
     private String gameName;
     private String description;
@@ -17,6 +18,9 @@ class GameDataModel {
     private int minPlayers;
     private int maxPlayers;
     private Difficulty skillLevel;
+    private String date;
+    private String time;
+    private String duration;
     private String startTime;
     private String endTime;
     private String uid;
@@ -29,15 +33,16 @@ class GameDataModel {
 
     GameDataModel(Game game) {
         gameName = game.getGameName();
-        description = game.getDescription();
+        description = game.getDescription().orNull();
         sport = game.getSport();
         location = new GeoPoint(game.getLocation().latitude(), game.getLocation().longitude());
         placeName = game.getPlaceName();
         minPlayers = game.getMinPlayers();
         maxPlayers = game.getMaxPlayers();
         skillLevel = game.getSkillLevel();
-        startTime = game.getStartTime().toString();
-        endTime = game.getEndTime().toString();
+        date = game.getDate().toString();
+        time = game.getTime().toString();
+        duration = game.getDuration().toString();
         uid = game.getUid();
         creatorUid = game.getCreatorUid();
         participatingUids = game.getParticipatingUids();
@@ -75,12 +80,16 @@ class GameDataModel {
         return skillLevel;
     }
 
-    public String getStartTime() {
-        return startTime;
+    public String getDate() {
+        return date;
     }
 
-    public String getEndTime() {
-        return endTime;
+    public String getTime() {
+        return time;
+    }
+
+    public String getDuration() {
+        return duration;
     }
 
     public String getUid() {
@@ -94,7 +103,5 @@ class GameDataModel {
     public List<String> getParticipatingUids() {
         return participatingUids;
     }
-
-
 }
 

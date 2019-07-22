@@ -1,5 +1,8 @@
 package wjhj.orbital.sportsmatchfindingapp.maps;
 
+import androidx.annotation.NonNull;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
@@ -259,9 +262,11 @@ public enum Country {
     private String countryName;
     private String countryCode;
     private static Map<String, Country> namesMapping = new HashMap<>();
+    private static ArrayList<String> countryNames = new ArrayList<>();
     static {
         for (Country country : values()) {
-            namesMapping.put(country.getCountryName(), country);
+            namesMapping.put(country.toString(), country);
+            countryNames.add(country.toString());
         }
     }
 
@@ -277,15 +282,21 @@ public enum Country {
         throw new IllegalArgumentException("Invalid country name: " + name);
     }
 
+    public static ArrayList<String> getCountryNamesArrList() {
+        return countryNames;
+    }
+
     public String getCountryCode() {
         return countryCode;
     }
 
-    public String getCountryName() {
-        return countryName;
-    }
-
     public Locale getLocale() {
         return new Locale("", countryCode);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return countryName;
     }
 }

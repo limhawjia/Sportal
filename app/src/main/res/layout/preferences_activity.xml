@@ -13,7 +13,7 @@
             name="activity"
             type="wjhj.orbital.sportsmatchfindingapp.user.PreferencesActivity" />
 
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
     </data>
 
     <ScrollView
@@ -58,9 +58,9 @@
                 android:layout_marginStart="16dp"
                 android:text="@string/preferences_pick_profile_pic"
                 android:textColor="#DD313131"
-                app:layout_constraintBottom_toTopOf="@id/preferences_divider_1"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/setup_account_message" />
+                app:layout_constraintTop_toBottomOf="@id/setup_account_message"
+                app:layout_constraintBottom_toTopOf="@id/preferences_divider_1"/>
 
             <FrameLayout
                 android:id="@+id/signup_profile_pic_container"
@@ -69,7 +69,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/preferences_pick_profile_pic_text"
                 app:layout_constraintTop_toBottomOf="@id/setup_account_message">
@@ -157,18 +157,17 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/preferences_birthday_input"
+                android:id="@+id/preferences_birthday_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
+                android:errorText="@{userPreferences.birthday.errMessage}"
                 android:hint="@string/preferences_birthday_text"
-                android:inputType="date"
                 app:boxStrokeColor="@color/colorPrimaryDark"
                 app:errorEnabled="true"
-                android:errorText="@{userPreferences.birthday.errMessage}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -180,11 +179,43 @@
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_date_range_black_24dp"
                     android:drawablePadding="8dp"
+                    android:focusable="false"
                     android:focusableInTouchMode="false"
                     android:fontFamily="sans-serif-light"
-                    android:onClick="@{activity::selectDate}"
+                    android:onClick="@{v -> activity.openDatePicker()}"
                     android:text="@{userPreferences.birthday.input.toString()}" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/preferences_country_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:errorText="@{userPreferences.country.errMessage}"
+                android:hint="@string/preferences_select_country_text"
+                app:boxStrokeColor="@color/colorPrimaryDark"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/preferences_birthday_layout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/preferences_country_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_add_location_black_24dp"
+                    android:drawablePadding="8dp"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:fontFamily="sans-serif-light"
+                    android:onClick="@{v -> activity.openCountryPicker()}"
+                    android:text="@{userPreferences.country.input.toString()}" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
 
             <LinearLayout
                 android:id="@+id/gender_select_layout"
@@ -194,7 +225,7 @@
                 android:gravity="start|center_vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/preferences_birthday_input">
+                app:layout_constraintTop_toBottomOf="@id/preferences_country_layout">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -231,20 +262,20 @@
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"
                     android:src="@drawable/ic_error_outline_red_24dp"
-                    android:visibility="@{userPreferences.gender.errMessage == null ? View.GONE : View.VISIBLE}"/>
+                    android:visibility="@{userPreferences.gender.errMessage == null ? View.GONE : View.VISIBLE}" />
 
             </LinearLayout>
 
 
             <ImageView
-                android:id="@+id/preferences_divider"
+                android:id="@+id/preferences_divider_2"
                 style="@style/Divider"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
+                android:contentDescription="@string/image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/gender_select_layout"
-                android:contentDescription="@string/image"/>
+                app:layout_constraintTop_toBottomOf="@id/gender_select_layout" />
 
             <TextView
                 android:id="@+id/sports_you_play"
@@ -254,8 +285,9 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:text="@string/preferences_sports_you_play"
+                android:textColor="#DD313131"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/preferences_divider" />
+                app:layout_constraintTop_toBottomOf="@+id/preferences_divider_2" />
 
 
             <androidx.recyclerview.widget.RecyclerView
@@ -275,11 +307,11 @@
                 android:id="@+id/preferences_done_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
                 android:text="@string/done"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"

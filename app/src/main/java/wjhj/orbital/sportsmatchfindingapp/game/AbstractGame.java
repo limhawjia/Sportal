@@ -1,10 +1,13 @@
 package wjhj.orbital.sportsmatchfindingapp.game;
 
+import com.google.common.base.Optional;
 import com.mapbox.geojson.Point;
 
 import org.immutables.value.Value;
+import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.LocalTime;
 import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.List;
@@ -21,8 +24,6 @@ public abstract class AbstractGame {
 
     public abstract String getGameName();
 
-    public abstract String getDescription();
-
     public abstract Sport getSport();
 
     public abstract Point getLocation();
@@ -35,30 +36,39 @@ public abstract class AbstractGame {
 
     public abstract Difficulty getSkillLevel();
 
-    public abstract LocalDateTime getStartTime();
+    public abstract LocalDate getDate();
 
-    public abstract LocalDateTime getEndTime();
+    public abstract LocalTime getTime();
+
+    public abstract Duration getDuration();
 
     public abstract String getUid();
 
     public abstract String getCreatorUid();
 
+    public abstract Optional<String> getDescription();
+
     public abstract List<String> getParticipatingUids();
 
+    public LocalDateTime getStartDateTime() {
+        return LocalDateTime.of(getDate(), getTime());
+    }
+
     public String dateString() {
-        LocalDate startDay = getStartTime().toLocalDate();
-        LocalDate endDay = getStartTime().toLocalDate();
+        LocalDate startDay = getDate();
+        LocalDate endDay = getStartDateTime().plus(getDuration()).toLocalDate();
+        //TODO: test if date will wrap around midnight
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         if (startDay.equals(endDay)) {
             return "Date: " + startDay.format(DateTimeFormatter.ISO_LOCAL_DATE)
-                    + "\nFrom: " + getStartTime().format(timeFormatter)
-                    + "    To: " + getEndTime().format(timeFormatter);
+                    + "\nFrom: " + getTime().format(timeFormatter)
+                    + "    To: " + getTime().plus(getDuration()).format(timeFormatter);
         } else {
             return "Date: " + startDay.format(DateTimeFormatter.ISO_LOCAL_DATE) + " - "
                     + endDay.format(DateTimeFormatter.ISO_LOCAL_DATE)
-                    + "\nFrom: " + getStartTime().format(timeFormatter)
-                    + "    To: " + getEndTime().format(timeFormatter);
+                    + "\nFrom: " + getTime().format(timeFormatter)
+                    + "    To: " + getTime().plus(getDuration()).format(timeFormatter);
         }
     }
 
