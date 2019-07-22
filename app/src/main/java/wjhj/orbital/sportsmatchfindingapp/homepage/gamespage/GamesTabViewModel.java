@@ -24,7 +24,7 @@ public class GamesTabViewModel extends ViewModel {
     private MutableLiveData<Comparator<Game>> currentSort = new MutableLiveData<>();
 
     public GamesTabViewModel(LiveData<List<Game>> source) {
-        currentSort.setValue((game1, game2) -> game1.getStartTime().compareTo(game2.getStartTime()));
+        currentSort.setValue((game1, game2) -> game1.getStartDateTime().compareTo(game2.getStartDateTime()));
 
         gamesLiveData.addSource(source, newGames -> {
             if (newGames == null) {

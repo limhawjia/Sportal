@@ -99,7 +99,7 @@ public class GamesTabFragment extends Fragment implements AdapterView.OnItemSele
     }
 
     private void setUpMainSpinner(AppCompatSpinner spinner) {
-        ArrayAdapter<CharSequence> sortByAdapter = ArrayAdapter.createFromResource(getContext(),
+        ArrayAdapter<CharSequence> sortByAdapter = ArrayAdapter.createFromResource(requireContext(),
                 R.array.games_search_options, android.R.layout.simple_spinner_item);
 
         sortByAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -108,8 +108,8 @@ public class GamesTabFragment extends Fragment implements AdapterView.OnItemSele
     }
 
     private <T> void addSecondarySpinner(T[] objects, int viewId) {
-        AppCompatSpinner spinner = new AppCompatSpinner(getContext());
-        ArrayAdapter<T> secondaryAdapter = new ArrayAdapter<>(getContext(),
+        AppCompatSpinner spinner = new AppCompatSpinner(requireContext());
+        ArrayAdapter<T> secondaryAdapter = new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_spinner_dropdown_item, objects);
         secondaryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -143,7 +143,7 @@ public class GamesTabFragment extends Fragment implements AdapterView.OnItemSele
         switch (position) {
             case 0: // Date
                 gamesTabViewModel.sortGames((game1, game2)
-                        -> game1.getStartTime().compareTo(game2.getStartTime()));
+                        -> game1.getStartDateTime().compareTo(game2.getStartDateTime()));
                 break;
             case 1: // Players needed
                 gamesTabViewModel.sortGames((game1, game2)

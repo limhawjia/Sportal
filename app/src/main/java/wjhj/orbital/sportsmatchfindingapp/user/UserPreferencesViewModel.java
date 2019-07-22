@@ -4,8 +4,6 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.RadioGroup;
 
-import androidx.databinding.Observable;
-import androidx.databinding.ObservableInt;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -101,7 +99,7 @@ public class UserPreferencesViewModel extends ViewModel {
         return sportPreferences;
     }
 
-    public void setSportPreferences(List<Sport> sportPreferences) {
+    private void setSportPreferences(List<Sport> sportPreferences) {
         this.sportPreferences.setValue(sportPreferences);
     }
 
@@ -141,7 +139,7 @@ public class UserPreferencesViewModel extends ViewModel {
         return success;
     }
 
-    public void updateProfile(String displayName, String currUserUid) {
+    void updateProfile(String displayName, String currUserUid) {
         StreamSupport.stream(validationsList).forEach(ValidationInput::validate);
 
         if (StreamSupport.stream(validationsList)
