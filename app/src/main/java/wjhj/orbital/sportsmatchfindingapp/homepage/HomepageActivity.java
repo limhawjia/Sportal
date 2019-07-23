@@ -29,7 +29,9 @@ import wjhj.orbital.sportsmatchfindingapp.game.AddGameActivity;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesSwipeViewFragment;
 import wjhj.orbital.sportsmatchfindingapp.homepage.searchpage.SearchFragment;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileFragment;
+import wjhj.orbital.sportsmatchfindingapp.user.UserPreferencesActivity;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
 
@@ -51,6 +53,7 @@ public class HomepageActivity extends AppCompatActivity {
         currUser = FirebaseAuth.getInstance().getCurrentUser();
 
         checkLoggedIn();
+        checkProfileSetup();
 
         UserProfileViewModelFactory factory = new UserProfileViewModelFactory(currUser.getUid());
         userProfileViewModel = ViewModelProviders.of(this, factory)
@@ -83,6 +86,20 @@ public class HomepageActivity extends AppCompatActivity {
             startActivity(loginIntent);
             finish();
         }
+    }
+
+    private void checkProfileSetup() {
+        SportalRepo repo = SportalRepo.getInstance();
+        repo.isProfileSetUp(currUser.getUid())
+                .addOnSuccessListener(this, setup -> {
+                    if (!setup) {
+                        Toast.makeText(this, "Please setup user profile", Toast.LENGTH_SHORT)
+                                .show();
+                        Intent profileSetUpIntent = new Intent(this, UserPreferencesActivity.class);
+                        startActivity(profileSetUpIntent);
+                        finish();
+                    }
+                });
     }
 
     private void logOut() {

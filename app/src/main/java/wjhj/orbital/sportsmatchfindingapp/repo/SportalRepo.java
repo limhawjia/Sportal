@@ -73,6 +73,20 @@ public class SportalRepo implements ISportalRepo {
         return updateDocument(uid, "Users", dataModel);
     }
 
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public Task<Boolean> isProfileSetUp(String uid) {
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final FirebaseFirestore db2 = FirebaseFirestore.getInstance();
+
+        Log.d("TESTIN", "is same: " + (db == db2) + "");
+
+        return db.collection("Users")
+                .document(uid)
+                .get()
+                .continueWith(task -> task.getResult().exists());
+    }
+
     @Override
     public LiveData<UserProfile> getUser(String userUid) {
         LiveData<UserProfileDataModel> dataModelLiveData = convertToLiveData(

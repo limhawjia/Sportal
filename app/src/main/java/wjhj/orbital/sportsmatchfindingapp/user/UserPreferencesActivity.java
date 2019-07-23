@@ -46,7 +46,7 @@ public class UserPreferencesActivity extends AppCompatActivity implements DatePi
     private UserPreferencesActivityBinding binding;
     private UserPreferencesViewModel viewModel;
 
-    private String displayName;
+    private String displayName = "default_name";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +56,7 @@ public class UserPreferencesActivity extends AppCompatActivity implements DatePi
 
         Bundle args = getIntent().getExtras();
         if (args != null) {
-            displayName = args.getString(DISPLAY_NAME_TAG, "default_name");
+            displayName = args.getString(DISPLAY_NAME_TAG);
         }
 
         viewModel = ViewModelProviders.of(this).get(UserPreferencesViewModel.class);

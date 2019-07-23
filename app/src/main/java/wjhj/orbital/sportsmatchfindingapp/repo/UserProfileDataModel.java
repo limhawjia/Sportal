@@ -22,6 +22,7 @@ class UserProfileDataModel {
     private List<String> friendUids;
     private List<Sport> preferences;
     private Map<String, List<String>> games;
+    private boolean profileSetup;
 
     // Mandatory no args constructor
     public UserProfileDataModel() {
@@ -38,7 +39,6 @@ class UserProfileDataModel {
         friendUids = userProfile.getFriendUids();
         preferences = userProfile.getPreferences();
         games = convertGames(userProfile.getGames());
-
     }
 
     public String getDisplayName() {
@@ -80,6 +80,7 @@ class UserProfileDataModel {
     public Map<String, List<String>> getGames() {
         return games;
     }
+
 
     private Map<String, List<String>> convertGames(Map<GameStatus, List<String>> oldGames) {
         Map<String, List<String>> newGames = new HashMap<>();
