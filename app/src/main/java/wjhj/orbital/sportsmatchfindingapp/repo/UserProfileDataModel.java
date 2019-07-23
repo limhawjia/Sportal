@@ -10,6 +10,7 @@ import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 import wjhj.orbital.sportsmatchfindingapp.user.Gender;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
+@SuppressWarnings("WeakerAccess")
 class UserProfileDataModel {
     private String displayName;
     private Gender gender;
@@ -18,8 +19,10 @@ class UserProfileDataModel {
     private String uid;
     private String bio;
     private String displayPicUri;
+    private List<String> friendUids;
     private List<Sport> preferences;
     private Map<String, List<String>> games;
+    private boolean profileSetup;
 
     // Mandatory no args constructor
     public UserProfileDataModel() {
@@ -33,9 +36,9 @@ class UserProfileDataModel {
         uid = userProfile.getUid();
         bio = userProfile.getBio().orNull();
         displayPicUri = userProfile.getDisplayPicUri().toString();
+        friendUids = userProfile.getFriendUids();
         preferences = userProfile.getPreferences();
         games = convertGames(userProfile.getGames());
-
     }
 
     public String getDisplayName() {
@@ -66,6 +69,10 @@ class UserProfileDataModel {
         return displayPicUri;
     }
 
+    public List<String> getFriendUids() {
+        return friendUids;
+    }
+
     public List<Sport> getPreferences() {
         return preferences;
     }
@@ -73,6 +80,7 @@ class UserProfileDataModel {
     public Map<String, List<String>> getGames() {
         return games;
     }
+
 
     private Map<String, List<String>> convertGames(Map<GameStatus, List<String>> oldGames) {
         Map<String, List<String>> newGames = new HashMap<>();

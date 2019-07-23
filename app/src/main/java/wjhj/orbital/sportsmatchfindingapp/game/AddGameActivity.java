@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.GeoPoint;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -148,7 +149,7 @@ public class AddGameActivity extends AppCompatActivity implements
     @Override
     public void onLocationPicked(LocationPickerMapFragment locationPickerMapFragment,
                                  Point selectedPoint, String selectedPlaceName) {
-        viewModel.setLocationPoint(selectedPoint);
+        viewModel.setLocationPoint(new GeoPoint(selectedPoint.latitude(), selectedPoint.longitude()));
         viewModel.setPlaceName(selectedPlaceName);
         getSupportFragmentManager().beginTransaction()
                 .remove(locationPickerMapFragment)

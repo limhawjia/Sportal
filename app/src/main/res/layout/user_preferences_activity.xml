@@ -11,7 +11,7 @@
 
         <variable
             name="activity"
-            type="wjhj.orbital.sportsmatchfindingapp.user.PreferencesActivity" />
+            type="wjhj.orbital.sportsmatchfindingapp.user.UserPreferencesActivity" />
 
         <import type="android.view.View" />
     </data>
@@ -123,7 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginBottom="4dp"
                 android:text="@string/preferences_enter_details"
                 android:textColor="#DD313131"
@@ -132,17 +132,18 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/preferences_bio_input"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:hint="@string/preferences_bio_text"
                 android:inputType="textMultiLine"
                 app:boxStrokeColor="@color/colorPrimaryDark"
                 app:counterEnabled="true"
                 app:counterMaxLength="150"
+                app:boxBackgroundColor="@color/transparent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/preferences_enter_details_text">
@@ -158,16 +159,16 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/preferences_birthday_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:errorText="@{userPreferences.birthday.errMessage}"
                 android:hint="@string/preferences_birthday_text"
                 app:boxStrokeColor="@color/colorPrimaryDark"
                 app:errorEnabled="true"
+                app:boxBackgroundColor="@color/transparent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -188,14 +189,14 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/preferences_country_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:errorText="@{userPreferences.country.errMessage}"
                 android:hint="@string/preferences_select_country_text"
+                app:boxBackgroundColor="@color/transparent"
                 app:boxStrokeColor="@color/colorPrimaryDark"
                 app:errorEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -245,14 +246,18 @@
 
                     <RadioButton
                         android:id="@+id/male"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
                         android:text="@string/male" />
 
                     <RadioButton
                         android:id="@+id/female"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
                         android:text="@string/female" />
                 </RadioGroup>
 
@@ -282,7 +287,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginEnd="16dp"
                 android:text="@string/preferences_sports_you_play"
                 android:textColor="#DD313131"
@@ -292,11 +297,9 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/sports_preference_recycler_view"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toTopOf="@id/preferences_done_button"
                 app:layout_constraintEnd_toEndOf="parent"

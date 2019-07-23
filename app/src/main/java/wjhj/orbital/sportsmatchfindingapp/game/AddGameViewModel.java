@@ -6,11 +6,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.common.base.Optional;
+import com.google.firebase.firestore.GeoPoint;
 import com.mapbox.geojson.Point;
 
 import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
-import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.LocalTime;
 
 import java.util.ArrayList;
@@ -29,12 +29,12 @@ public class AddGameViewModel extends ViewModel {
     private ValidationInput<LocalDate> date;
     private ValidationInput<LocalTime> time;
     private ValidationInput<Duration> duration;
-    private Point locationPoint;
+    private GeoPoint locationPoint;
     private ValidationInput<String> placeName;
     private ValidationInput<String> minPlayersInput;
     private ValidationInput<String> maxPlayersInput;
     private ValidationInput<Difficulty> skillLevel;
-    private MutableLiveData<String> gameDescription;
+    private ValidationInput<String> gameDescription;
     private MutableLiveData<Result<Game>> newGameResult;
 
     private List<ValidationInput<?>> validations;
@@ -50,7 +50,7 @@ public class AddGameViewModel extends ViewModel {
         minPlayersInput = new ValidationInput<>(num -> num != null && !num.equals("0"), "Enter valid number.");
         maxPlayersInput = new ValidationInput<>(num -> num != null && !num.equals("0"), "Enter valid number.");
         skillLevel = new ValidationInput<>(difficulty -> difficulty != null, "");
-        gameDescription = new MutableLiveData<>();
+        gameDescription = new ValidationInput<>(text -> text.length() <= 250, "");
         newGameResult = new MutableLiveData<>();
 
         validations = new ArrayList<>();
@@ -62,6 +62,7 @@ public class AddGameViewModel extends ViewModel {
         validations.add(minPlayersInput);
         validations.add(maxPlayersInput);
         validations.add(skillLevel);
+        validations.add(gameDescription);
 
         repo = SportalRepo.getInstance();
     }
@@ -107,7 +108,7 @@ public class AddGameViewModel extends ViewModel {
         return hours + " h  " + minutes + " m";
     }
 
-    public void setLocationPoint(Point locationPoint) {
+    public void setLocationPoint(GeoPoint locationPoint) {
         this.locationPoint = locationPoint;
     }
 
@@ -135,7 +136,7 @@ public class AddGameViewModel extends ViewModel {
         this.skillLevel.setInput(skillLevel);
     }
 
-    public MutableLiveData<String> getGameDescription() {
+    public ValidationInput<String> getGameDescription() {
         return gameDescription;
     }
 
@@ -145,6 +146,11 @@ public class AddGameViewModel extends ViewModel {
 
     public void makeGame(String creatorUid) {
         StreamSupport.stream(validations).forEach(ValidationInput::validate);
+
+        if (Integer.valueOf(maxPlayersInput.getInput()) < Integer.valueOf(minPlayersInput.getInput())) {
+            maxPlayersInput.setState(ValidationInput.State.ERROR);
+            return;
+        }
 
         if (StreamSupport.stream(validations)
                 .allMatch(input -> input.getState() == ValidationInput.State.VALIDATED)) {
@@ -162,7 +168,7 @@ public class AddGameViewModel extends ViewModel {
                     .withDuration(duration.getInput())
                     .withUid(gameUid)
                     .withCreatorUid(creatorUid)
-                    .withDescription(Optional.fromNullable(gameDescription.getValue()))
+                    .withDescription(Optional.fromNullable(gameDescription.getInput()))
                     .build();
 
             repo.addGame(gameUid, game)

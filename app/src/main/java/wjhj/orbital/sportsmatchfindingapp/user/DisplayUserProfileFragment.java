@@ -1,21 +1,17 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserProfileChangeRequest;
 
 import wjhj.orbital.sportsmatchfindingapp.databinding.DisplayUserProfileFragmentBinding;
 
@@ -29,7 +25,6 @@ public class DisplayUserProfileFragment extends Fragment {
     private DisplayUserProfileFragmentBinding binding;
     private DisplayUserProfileViewModel viewModel;
     private String mUserUid;
-    private Uri displayPicUri;
 
     public DisplayUserProfileFragment() {
         // Required empty public constructor
@@ -59,6 +54,7 @@ public class DisplayUserProfileFragment extends Fragment {
             Toast.makeText(getActivity(), "Error occurred, please try again", Toast.LENGTH_SHORT)
                     .show();
         }
+
     }
 
     @Override
@@ -68,8 +64,20 @@ public class DisplayUserProfileFragment extends Fragment {
         binding.setLifecycleOwner(getViewLifecycleOwner());
         binding.setViewModel(viewModel);
 
+        initPreferencesRecyclerView(binding.displayUserProfilePreferences);
+
         return binding.getRoot();
     }
 
+    private void initPreferencesRecyclerView(RecyclerView recyclerView) {
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity(),
+                RecyclerView.HORIZONTAL, false);
+
+        PreferencesIconAdapter adapter = new PreferencesIconAdapter();
+        viewModel.getPreferences().observe(getViewLifecycleOwner(), adapter::updatePreferences);
+
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setAdapter(adapter);
+    }
 
 }

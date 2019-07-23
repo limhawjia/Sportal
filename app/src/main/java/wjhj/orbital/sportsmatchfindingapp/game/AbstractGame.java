@@ -1,7 +1,7 @@
 package wjhj.orbital.sportsmatchfindingapp.game;
 
 import com.google.common.base.Optional;
-import com.mapbox.geojson.Point;
+import com.google.firebase.firestore.GeoPoint;
 
 import org.immutables.value.Value;
 import org.threeten.bp.Duration;
@@ -26,7 +26,7 @@ public abstract class AbstractGame {
 
     public abstract Sport getSport();
 
-    public abstract Point getLocation();
+    public abstract GeoPoint getLocation();
 
     public abstract String getPlaceName();
 

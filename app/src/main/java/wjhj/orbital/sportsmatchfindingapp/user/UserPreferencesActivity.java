@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,23 +30,23 @@ import java.util.List;
 
 import in.galaxyofandroid.spinerdialog.SpinnerDialog;
 import wjhj.orbital.sportsmatchfindingapp.R;
-import wjhj.orbital.sportsmatchfindingapp.databinding.PreferencesActivityBinding;
+import wjhj.orbital.sportsmatchfindingapp.databinding.UserPreferencesActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.DatePickerFragment;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.HomepageActivity;
 import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 
-public class PreferencesActivity extends AppCompatActivity implements DatePickerFragment.DatePickerListener {
+public class UserPreferencesActivity extends AppCompatActivity implements DatePickerFragment.DatePickerListener {
 
     public static String PREFERENCES_DEBUG = "preferences";
-    private static final String DISPLAY_NAME_TAG = "display_name;";
+    public static final String DISPLAY_NAME_TAG = "display_name";
     public static final int PICK_DISPLAY_IMAGE_RC = 1;
 
     private FirebaseUser currUser;
-    private PreferencesActivityBinding binding;
+    private UserPreferencesActivityBinding binding;
     private UserPreferencesViewModel viewModel;
 
-    private String displayName;
+    private String displayName = "default_name";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,12 +56,12 @@ public class PreferencesActivity extends AppCompatActivity implements DatePicker
 
         Bundle args = getIntent().getExtras();
         if (args != null) {
-            displayName = args.getString(DISPLAY_NAME_TAG, "default_name");
+            displayName = args.getString(DISPLAY_NAME_TAG);
         }
 
         viewModel = ViewModelProviders.of(this).get(UserPreferencesViewModel.class);
 
-        binding = DataBindingUtil.setContentView(this, R.layout.preferences_activity);
+        binding = DataBindingUtil.setContentView(this, R.layout.user_preferences_activity);
         binding.setUserPreferences(viewModel);
         binding.setActivity(this);
         binding.setLifecycleOwner(this);
@@ -198,7 +197,7 @@ public class PreferencesActivity extends AppCompatActivity implements DatePicker
 
         void bind(Sport sport) {
             sportIcon.setImageResource(sport.getIconResourceId());
-            sportName.setText(sport.toString());
+            sportName.setText(sport.toString().toUpperCase());
             plusIcon.setVisibility(View.INVISIBLE);
             itemView.setBackgroundResource(R.drawable.bordered_box);
         }
@@ -208,7 +207,7 @@ public class PreferencesActivity extends AppCompatActivity implements DatePicker
             sportName.setText("");
             plusIcon.setVisibility(View.VISIBLE);
             itemView.setBackgroundResource(R.drawable.dotted_bordered_box);
-            itemView.setOnClickListener(PreferencesActivity.this::openSportPicker);
+            itemView.setOnClickListener(UserPreferencesActivity.this::openSportPicker);
         }
     }
 

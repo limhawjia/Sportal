@@ -16,6 +16,8 @@ public interface ISportalRepo {
 
     Task<Void> updateUser(String uid, UserProfile userProfile);
 
+    Task<Boolean> isProfileSetUp(String uid);
+
     LiveData<UserProfile> getUser(String userUid);
 
     LiveData<List<UserProfile>> selectUsersStartingWith(String field, String queryText);
