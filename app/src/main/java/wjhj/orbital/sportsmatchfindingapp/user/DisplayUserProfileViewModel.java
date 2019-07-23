@@ -3,7 +3,6 @@ package wjhj.orbital.sportsmatchfindingapp.user;
 import android.net.Uri;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
@@ -18,49 +17,65 @@ import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 
 public class DisplayUserProfileViewModel extends ViewModel {
 
-    private SportalRepo repo;
     private LiveData<UserProfile> userProfile;
     private String currUserUid;
     private boolean isCurrentUser;
+    private LiveData<Uri> displayPicUri;
+    private LiveData<String> displayName;
+    private LiveData<String> bio;
+    private LiveData<Gender> gender;
+    private LiveData<Country> country;
+    private LiveData<List<Sport>> preferences;
+    private LiveData<Boolean> isFriend;
 
     public DisplayUserProfileViewModel(String userUid) {
-           repo = SportalRepo.getInstance();
-           userProfile = repo.getUser(userUid);
+        SportalRepo repo = SportalRepo.getInstance();
+        userProfile = repo.getUser(userUid);
 
         FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
         currUserUid = currUser == null ? "" : currUser.getUid();
         isCurrentUser = (currUserUid.equals(userUid));
+
+        displayPicUri = Transformations.map(userProfile, UserProfile::getDisplayPicUri);
+        displayName = Transformations.map(userProfile, UserProfile::getDisplayName);
+        bio = Transformations.map(userProfile, profile -> profile.getBio().or("No bio"));
+        gender = Transformations.map(userProfile, UserProfile::getGender);
+        country = Transformations.map(userProfile, UserProfile::getCountry);
+        preferences = Transformations.map(userProfile, UserProfile::getPreferences);
+        isFriend = Transformations.map(userProfile, profile -> profile.getFriendUids().contains(currUserUid));
     }
 
-    public LiveData<Uri> getDisplayPicUri() {
-        return Transformations.map(userProfile, UserProfile::getDisplayPicUri);
-    }
-
-    public LiveData<String> getDisplayName() {
-        return Transformations.map(userProfile, UserProfile::getDisplayName);
-    }
-
-    public LiveData<String> getBio() {
-        return Transformations.map(userProfile, profile -> profile.getBio().or("No bio"));
-    }
-
-    public LiveData<Gender> getGender() {
-        return Transformations.map(userProfile, UserProfile::getGender);
-    }
-
-    public LiveData<Country> getCountry() {
-        return Transformations.map(userProfile, UserProfile::getCountry);
-    }
-
-    public LiveData<List<Sport>> getPreferences() {
-        return Transformations.map(userProfile, UserProfile::getPreferences);
-    }
     public boolean isCurrentUser() {
         return isCurrentUser;
     }
 
+    public LiveData<Uri> getDisplayPicUri() {
+        return displayPicUri;
+    }
+
+    public LiveData<String> getDisplayName() {
+        return displayName;
+    }
+
+    public LiveData<String> getBio() {
+        return bio;
+    }
+
+    public LiveData<Gender> getGender() {
+        return gender;
+    }
+
+    public LiveData<Country> getCountry() {
+        return country;
+    }
+
+    LiveData<List<Sport>> getPreferences() {
+        return preferences;
+    }
+
+
     public LiveData<Boolean> isFriend() {
-        return Transformations.map(userProfile, profile -> profile.getFriendUids().contains(currUserUid));
+        return isFriend;
     }
 
 }

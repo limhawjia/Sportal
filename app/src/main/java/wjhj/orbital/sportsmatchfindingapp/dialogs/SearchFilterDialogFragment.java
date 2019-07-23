@@ -36,7 +36,7 @@ public class SearchFilterDialogFragment extends DialogFragment {
         binding = DataBindingUtil.inflate(requireActivity().getLayoutInflater(),
                         R.layout.search_game_filters_dialog,null, false);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), R.style.DurationDialogTheme)
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), R.style.PopupDialogTheme)
                 .setView(binding.getRoot())
                 .setPositiveButton(R.string.apply, (view, which) -> {
                     getTargetFragment().onActivityResult(getTargetRequestCode(), 0, null);

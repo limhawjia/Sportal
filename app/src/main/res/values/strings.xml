@@ -93,5 +93,8 @@
     <string name="preferences_bio_text">Bio (Optional)</string>
     <string name="preferences_select_country_text">Country</string>
     <string name="display_user_looking_to_play">Looking to play:</string>
+    <string name="user_profile_edit_profile">Edit Profile</string>
+    <string name="display_profile_friends">Friends</string>
+    <string name="display_user_add_friend">Add Friend</string>
 
 </resources>

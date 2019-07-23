@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
@@ -14,6 +15,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -38,12 +40,14 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
 public class HomepageActivity extends AppCompatActivity {
 
     public static final String CURR_USER_TAG = "current_user";
+    public static final String DISPLAY_PROFILE_PIC_TAG = "display_profile_pic";
     public static final String HOMEPAGE_DEBUG = "homepage";
     private static final int ADD_GAME_RC = 1;
 
     private FirebaseUser currUser;
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private UserProfileViewModel userProfileViewModel;
+    private HomepageActivityBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +64,7 @@ public class HomepageActivity extends AppCompatActivity {
                 .get(UserProfileViewModel.class);
 
 
-        HomepageActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.homepage_activity);
+        binding = DataBindingUtil.setContentView(this, R.layout.homepage_activity);
         Toolbar toolbar = (Toolbar) binding.topToolbar;
         setSupportActionBar(toolbar);
 
@@ -134,7 +138,7 @@ public class HomepageActivity extends AppCompatActivity {
                 fragment = SearchFragment.newInstance(builder.build());
                 break;
             case R.id.nav_social:
-                //todo
+                fragment = DisplayUserProfileFragment.newInstance("9EdldWC2b3ZW0z13UwGBPJ6a5Vv1");
                 break;
         }
 
@@ -149,12 +153,19 @@ public class HomepageActivity extends AppCompatActivity {
     private Toolbar.OnMenuItemClickListener menuListener = item -> {
         switch (item.getItemId()) {
             case R.id.options_profile:
-                DisplayUserProfileFragment userProfileFragment =
-                        DisplayUserProfileFragment.newInstance(currUser.getUid());
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.homepage_secondary_fragment_container, userProfileFragment)
-                        .addToBackStack(null)
-                        .commit();
+                FragmentManager manager = getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+                Fragment fragment = manager.findFragmentByTag(DISPLAY_PROFILE_PIC_TAG);
+                if (fragment == null) {
+                    transaction.add(R.id.homepage_secondary_fragment_container,
+                            DisplayUserProfileFragment.newInstance(currUser.getUid()),
+                            DISPLAY_PROFILE_PIC_TAG)
+                            .addToBackStack(null);
+                } else {
+                    transaction.replace(R.id.homepage_secondary_fragment_container,
+                            fragment, DISPLAY_PROFILE_PIC_TAG);
+                }
+                transaction.commit();
                 break;
             case R.id.options_logout:
                 logOut();

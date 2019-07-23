@@ -36,7 +36,7 @@ public class PreferencesIconAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ((IconViewHolder) holder).setIconDrawable(Sport.values()[position].getIconResourceId());
+        ((IconViewHolder) holder).setIconDrawable(sportPreferences.get(position).getIconResourceId());
     }
 
     @Override

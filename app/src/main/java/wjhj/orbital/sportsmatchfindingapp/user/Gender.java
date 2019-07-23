@@ -1,26 +1,21 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
-import wjhj.orbital.sportsmatchfindingapp.R;
+
+import androidx.annotation.NonNull;
 
 public enum Gender {
-    MALE("Male", R.drawable.ic_male_solid),
-    FEMALE("Female", R.drawable.ic_female_solid);
+    MALE("Male"),
+    FEMALE("Female");
 
     private String str;
-    private int iconResourceId;
 
-    Gender(String str, int iconResourceId) {
+    Gender(String str) {
         this.str = str;
-        this.iconResourceId = iconResourceId;
     }
 
-    public int getIconResourceId() {
-        return iconResourceId;
-    }
-
+    @NonNull
     @Override
     public String toString() {
         return str;
     }
-
 }
