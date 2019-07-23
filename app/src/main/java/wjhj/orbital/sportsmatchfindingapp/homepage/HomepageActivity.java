@@ -22,13 +22,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
+import wjhj.orbital.sportsmatchfindingapp.auth.Authentications;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.HomepageActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.AddGameActivity;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesSwipeViewFragment;
 import wjhj.orbital.sportsmatchfindingapp.homepage.searchpage.SearchFragment;
-import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileFragment;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
@@ -58,8 +58,8 @@ public class HomepageActivity extends AppCompatActivity {
 
 
         HomepageActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.homepage_activity);
-        setSupportActionBar((Toolbar) binding.topToolbar);
-
+        Toolbar toolbar = (Toolbar) binding.topToolbar;
+        setSupportActionBar(toolbar);
 
         binding.bottomNav.setOnNavigationItemSelectedListener(navListener);
         ((Toolbar) binding.topToolbar).setOnMenuItemClickListener(menuListener);
@@ -85,6 +85,14 @@ public class HomepageActivity extends AppCompatActivity {
         }
     }
 
+    private void logOut() {
+        Authentications auths = new Authentications();
+        auths.logOutFirebase();
+        auths.logOutGoogle(this);
+        Intent logoutIntent = new Intent(this, LoginActivity.class);
+        startActivity(logoutIntent);
+        finish();
+    }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
         Fragment fragment = new Fragment();// IMPLEMENT PROPERLY
@@ -132,13 +140,9 @@ public class HomepageActivity extends AppCompatActivity {
                         .commit();
                 break;
             case R.id.options_logout:
-                FirebaseAuth.getInstance().signOut();
-                Intent logoutIntent = new Intent(this, LoginActivity.class);
-                startActivity(logoutIntent);
-                finish();
+                logOut();
                 break;
         }
-
         return true;
     };
 

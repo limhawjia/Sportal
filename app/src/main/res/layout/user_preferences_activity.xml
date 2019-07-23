@@ -11,7 +11,7 @@
 
         <variable
             name="activity"
-            type="wjhj.orbital.sportsmatchfindingapp.user.PreferencesActivity" />
+            type="wjhj.orbital.sportsmatchfindingapp.user.UserPreferencesActivity" />
 
         <import type="android.view.View" />
     </data>

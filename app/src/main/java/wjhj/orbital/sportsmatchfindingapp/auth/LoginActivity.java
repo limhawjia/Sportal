@@ -14,14 +14,20 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AdditionalUserInfo;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
 import wjhj.orbital.sportsmatchfindingapp.homepage.HomepageActivity;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.LoginActivityBinding;
+import wjhj.orbital.sportsmatchfindingapp.user.UserPreferencesActivity;
 
 public class LoginActivity extends AppCompatActivity {
     public static final String LOGIN_DEBUG = "login";
+    public static final String GOOGLE_NAME_TAG = "google_name";
     public static final int GOOGLE_SIGN_IN_RC = 1;
 
     private LoginViewModel loginViewModel;
@@ -50,12 +56,20 @@ public class LoginActivity extends AppCompatActivity {
                 auths.trySignIn(loginUser)
                         .addOnSuccessListener(this, task -> {
                             Log.d(LOGIN_DEBUG, "sign in w email/password success");
-                            updateOnLoggedIn(task.getUser());
+                            updateOnLoggedIn(task);
                         })
                         .addOnFailureListener(this, e -> {
                             Log.d(LOGIN_DEBUG, "sign in w email/password failure", e);
-                            Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT)
-                                    .show();
+                            if (e instanceof FirebaseAuthInvalidUserException) {
+                                Toast.makeText(this, "Account does not exist", Toast.LENGTH_LONG)
+                                        .show();
+                            } else if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                                Toast.makeText(this, "Wrong password", Toast.LENGTH_LONG)
+                                        .show();
+                            } else {
+                                Toast.makeText(this, "Authentication failed", Toast.LENGTH_LONG)
+                                        .show();
+                            }
                         });
             }
         });
@@ -80,7 +94,9 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseUser currUser = auths.getCurrentFirebaseUser();
 
         if (currUser != null) {
-            updateOnLoggedIn(currUser);
+            Intent intent = new Intent(this, HomepageActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         GoogleSignInAccount googleAccount = auths.getLastSignedInGoogleAccount(this);
@@ -89,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
             auths.firebaseAuthWithGoogle(googleAccount)
                     .addOnSuccessListener(this, result -> {
                         Log.d(LOGIN_DEBUG, "Sign in with Google credentials success");
-                        updateOnLoggedIn(result.getUser());
+                        updateOnLoggedIn(result);
                     })
                     .addOnFailureListener(this, e -> {
                         Log.d(LOGIN_DEBUG, "Sign in with Google credentials failure", e);
@@ -113,11 +129,11 @@ public class LoginActivity extends AppCompatActivity {
                     auths.firebaseAuthWithGoogle(account)
                             .addOnSuccessListener(this, result -> {
                                 Log.d(LOGIN_DEBUG, "Sign in with Google credentials success");
-                                updateOnLoggedIn(result.getUser());
+                                updateOnLoggedIn(result);
                             })
                             .addOnFailureListener(this, e -> {
                                 Log.d(LOGIN_DEBUG, "Sign in with Google credentials failure", e);
-                                Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT)
+                                Toast.makeText(this, "Authentication failed.", Toast.LENGTH_LONG)
                                         .show();
                             });
                 } catch (ApiException e) {
@@ -129,14 +145,26 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void updateOnLoggedIn(FirebaseUser currUser) {
-        if (currUser == null) {
-            Log.d(LOGIN_DEBUG, "No current user");
+    private void updateOnLoggedIn(AuthResult authResult) {
+        AdditionalUserInfo additionalUserInfo = authResult.getAdditionalUserInfo();
+
+        if (additionalUserInfo != null && additionalUserInfo.isNewUser()) {
+            if (additionalUserInfo.getProviderId().equals("google.com")) {
+                Intent profileSetupIntent = new Intent(this, UserPreferencesActivity.class);
+                try {
+                    profileSetupIntent.putExtra(UserPreferencesActivity.DISPLAY_NAME_TAG,
+                            (String) additionalUserInfo.getProfile().get("name"));
+                } catch (ClassCastException e) {
+                    Log.d(LOGIN_DEBUG, "Class cast exception", e);
+                }
+                startActivity(profileSetupIntent);
+                finish();
+            }
             return;
         }
 
-        Intent intent = new Intent(this, HomepageActivity.class);
-        startActivity(intent);
+        Intent homepageIntent = new Intent(this, HomepageActivity.class);
+        startActivity(homepageIntent);
         finish();
     }
 }

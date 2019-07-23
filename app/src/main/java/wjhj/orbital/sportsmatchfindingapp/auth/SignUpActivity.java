@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.SignupActivityBinding;
-import wjhj.orbital.sportsmatchfindingapp.user.PreferencesActivity;
+import wjhj.orbital.sportsmatchfindingapp.user.UserPreferencesActivity;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -59,7 +59,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void updateOnSignedUp(SignUpAuth signUpAuth) {
-        Intent preferencesIntent = new Intent(this, PreferencesActivity.class);
+        Intent preferencesIntent = new Intent(this, UserPreferencesActivity.class);
         preferencesIntent.putExtra(DISPLAY_NAME_TAG, signUpAuth.getDisplayName());
         startActivity(preferencesIntent);
         finish();

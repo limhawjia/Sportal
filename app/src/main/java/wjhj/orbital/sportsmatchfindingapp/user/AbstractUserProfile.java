@@ -46,4 +46,5 @@ public abstract class AbstractUserProfile {
     public abstract List<Sport> getPreferences();
 
     public abstract Map<GameStatus, List<String>> getGames();
+
 }

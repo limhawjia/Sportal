@@ -21,7 +21,6 @@ import com.google.firebase.storage.UploadTask;
 import wjhj.orbital.sportsmatchfindingapp.R;
 
 public class Authentications {
-    private static String AUTHENTICATION_DEBUG = "authentications";
 
     final FirebaseAuth firebaseAuth;
 
@@ -68,4 +67,11 @@ public class Authentications {
         return firebaseAuth.signInWithCredential(credential);
     }
 
+    public void logOutFirebase() {
+        firebaseAuth.signOut();
+    }
+
+    public void logOutGoogle(Context context) {
+        getGoogleSignInClient(context).signOut();
+    }
 }
