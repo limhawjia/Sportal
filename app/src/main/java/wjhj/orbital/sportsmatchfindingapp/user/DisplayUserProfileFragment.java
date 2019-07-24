@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ public class DisplayUserProfileFragment extends Fragment {
     private DisplayUserProfileFragmentBinding binding;
     private DisplayUserProfileViewModel viewModel;
     private String mUserUid;
+    private UserProfile profile;
 
     public DisplayUserProfileFragment() {
         // Required empty public constructor

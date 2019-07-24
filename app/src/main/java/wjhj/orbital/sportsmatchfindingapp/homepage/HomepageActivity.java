@@ -15,7 +15,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -34,9 +33,11 @@ import wjhj.orbital.sportsmatchfindingapp.homepage.searchpage.SearchFragment;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileFragment;
 import wjhj.orbital.sportsmatchfindingapp.user.UserPreferencesActivity;
+import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
 
+@SuppressWarnings({"FieldCanBeLocal"})
 public class HomepageActivity extends AppCompatActivity {
 
     public static final String CURR_USER_TAG = "current_user";
@@ -45,9 +46,10 @@ public class HomepageActivity extends AppCompatActivity {
     private static final int ADD_GAME_RC = 1;
 
     private FirebaseUser currUser;
-    @SuppressWarnings({"FieldCanBeLocal", "unused"})
+    @SuppressWarnings({"unused"})
     private UserProfileViewModel userProfileViewModel;
     private HomepageActivityBinding binding;
+    private UserProfile profile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +75,12 @@ public class HomepageActivity extends AppCompatActivity {
         binding.homepageAddGameButton.setOnClickListener(view -> {
             Intent addGameIntent = new Intent(this, AddGameActivity.class);
             startActivityForResult(addGameIntent, ADD_GAME_RC);
+        });
+
+        userProfileViewModel.getCurrUser().observe(this, userProfile -> {
+            if (userProfile != null) {
+                profile = userProfile;
+            }
         });
     }
 
@@ -153,19 +161,7 @@ public class HomepageActivity extends AppCompatActivity {
     private Toolbar.OnMenuItemClickListener menuListener = item -> {
         switch (item.getItemId()) {
             case R.id.options_profile:
-                FragmentManager manager = getSupportFragmentManager();
-                FragmentTransaction transaction = manager.beginTransaction();
-                Fragment fragment = manager.findFragmentByTag(DISPLAY_PROFILE_PIC_TAG);
-                if (fragment == null) {
-                    transaction.add(R.id.homepage_secondary_fragment_container,
-                            DisplayUserProfileFragment.newInstance(currUser.getUid()),
-                            DISPLAY_PROFILE_PIC_TAG)
-                            .addToBackStack(null);
-                } else {
-                    transaction.replace(R.id.homepage_secondary_fragment_container,
-                            fragment, DISPLAY_PROFILE_PIC_TAG);
-                }
-                transaction.commit();
+                openProfilePage();
                 break;
             case R.id.options_logout:
                 logOut();
@@ -173,6 +169,23 @@ public class HomepageActivity extends AppCompatActivity {
         }
         return true;
     };
+
+    private void openProfilePage() {
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        Fragment fragment = manager.findFragmentByTag(DISPLAY_PROFILE_PIC_TAG);
+
+        if (fragment == null) {
+            transaction.add(R.id.homepage_secondary_fragment_container,
+                    DisplayUserProfileFragment.newInstance(currUser.getUid()),
+                    DISPLAY_PROFILE_PIC_TAG)
+                    .addToBackStack(null);
+        } else {
+            transaction.replace(R.id.homepage_secondary_fragment_container,
+                    fragment, DISPLAY_PROFILE_PIC_TAG);
+        }
+        transaction.commit();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

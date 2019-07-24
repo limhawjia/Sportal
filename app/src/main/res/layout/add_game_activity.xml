@@ -104,6 +104,8 @@
                         android:layout_marginEnd="16dp"
                         android:hint="@string/add_game_enter_game_name"
                         app:errorEnabled="true"
+                        app:counterEnabled="true"
+                        android:maxLength="40"
                         android:errorText="@{addGameViewModel.gameName.errMessage}">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -114,6 +116,7 @@
                             android:background="@color/white"
                             android:fontFamily="sans-serif-light"
                             android:inputType="text"
+                            android:maxLength="40"
                             android:maxLines="1"
                             android:text="@={addGameViewModel.gameName.input}"/>
 

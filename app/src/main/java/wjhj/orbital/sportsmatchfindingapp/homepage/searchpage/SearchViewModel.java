@@ -46,7 +46,7 @@ public class SearchViewModel extends ViewModel {
         repo = SportalRepo.getInstance();
 
         searchFilters = new MediatorLiveData<>();
-        searchFilters.setValue(GameSearchFilter.get());
+        searchFilters.setValue(new GameSearchFilter());
         liveGamesData = Transformations.map(
                 Transformations.switchMap(searchFilters, repo::getGamesWithFilters),
                 map -> new ArrayList<>(map.values()));
