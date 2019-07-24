@@ -31,6 +31,7 @@ import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalTime;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,81 +159,55 @@ public class SportalRepo implements ISportalRepo {
     public LiveData<Map<String, Game>> getGamesWithFilters(GameSearchFilter filter) {
         Log.d("hi", "Filtering started...");
         CollectionReference gamesRef = FirebaseFirestore.getInstance().collection("Games");
-        String nameQuery;
+        String nameQuery = null;
 
         HashMap<String, Game> allGames = new HashMap<>();
         List<Task<QuerySnapshot>> tasks = new ArrayList<>();
 
-        nameQuery = null;
-        if (filter.hasNameQuery()) {
-            if (filter.getNameQuery().length() >= 3) {
-                Log.d("hi", "Name query changed to " + filter.getNameQuery());
-                nameQuery = filter.getNameQuery();
-            }
+        if (filter.getNameQuery() != null && filter.getNameQuery().length() > 3) {
+            nameQuery = filter.getNameQuery();
         }
 
-
-        if (filter.hasSportQuery()) {
-            Log.d("hi", "Filtering by sports...");
-            for (Sport sport : filter.getSportQuery()) {
-                Log.d("hi", "Current sport: " + sport.toString());
-                Query query = gamesRef.whereEqualTo("sport", sport.toString().toUpperCase());
-                if (nameQuery != null) {
-                    query = query.whereArrayContains("nameSubstrings", nameQuery);
-                }
-                Task<QuerySnapshot> querySnapshotTask = query.get();
-                tasks.add(querySnapshotTask);
-                Log.d("hi", "Added task " + sport.toString());
-            }
+        List<Sport> sportsQuery = filter.getSportQuery();
+        List<TimeOfDay> timeOfDayQuery = filter.getTimeOfDayQuery();
+        if (timeOfDayQuery.isEmpty()) {
+            timeOfDayQuery = Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON, TimeOfDay.NIGHT);
         }
-
-        if (filter.hasSkillLevelQuery()) {
-            Log.d("hi", "Filtering by skill...");
-            for (Difficulty skill : filter.getSkillLevelQuery()) {
-                Log.d("hi", "Current skill: " + skill.toString());
-                Query query = gamesRef.whereEqualTo("skillLevel", skill.toString().toUpperCase());
-                if (nameQuery != null) {
-                    query = query.whereArrayContains("nameSubstrings", nameQuery);
-                }
-                Task<QuerySnapshot> querySnapshotTask = query.get();
-                tasks.add(querySnapshotTask);
-            }
+        List<Difficulty> skillLevelQuery = filter.getSkillLevelQuery();
+        if (skillLevelQuery.isEmpty()) {
+            skillLevelQuery =
+                    Arrays.asList(Difficulty.BEGINNER, Difficulty.INTERMEDIATE, Difficulty.ADVANCED);
         }
-
-        if (filter.hasTimeOfDayQuery()) {
-            Log.d("hi", "Filtering by time...");
-            for (TimeOfDay timeOfDay : filter.getTimeOfDayQuery()) {
-                Log.d("hi", "Current time: " + timeOfDay.toString());
-                Query query = FirebaseFirestore.getInstance().collection("Games")
-                        .orderBy("time")
-                        .startAt(timeOfDay.getStartTime())
-                        .endAt(timeOfDay.getEndTime());
-                if (nameQuery != null) {
-                    query = query.whereArrayContains("nameSubstrings", nameQuery);
-                }
-                Task<QuerySnapshot> querySnapshotTask = query.get();
-                tasks.add(querySnapshotTask);
-            }
-        }
-
-        Task<List<Task<?>>> mediator = Tasks.whenAllComplete(tasks)
-                .addOnSuccessListener(taskList -> {
-                    StreamSupport.stream(taskList).forEach(task -> {
-                        if (task.isSuccessful()) {
-                            QuerySnapshot snapshot = (QuerySnapshot) task.getResult();
-                            StreamSupport.stream(snapshot.getDocuments())
-                                    .map(documentSnapshot -> documentSnapshot.toObject(GameDataModel.class))
-                                    .map(this::toGame)
-                                    .forEach(game -> {
-                                        Log.d("hi", "Adding game " + game.toString());
-                                        allGames.put(game.getUid(), game);
-                                    });
-                        }
-                    });
-                });
 
         MutableLiveData<Map<String, Game>> data = new MutableLiveData<>();
-        mediator.addOnSuccessListener(result -> data.setValue(allGames));
+        for (Sport sport :sportsQuery) {
+            for (TimeOfDay timeOfDay : timeOfDayQuery) {
+                for (Difficulty skillLevel : skillLevelQuery) {
+                    Query query = gamesRef
+                            .orderBy("time")
+                            .startAt(timeOfDay.getStartTime().toString())
+                            .endAt(timeOfDay.getEndTime().toString())
+                            .whereEqualTo("sport", sport.toString().toUpperCase())
+                            .whereEqualTo("skillLevel", skillLevel.toString().toUpperCase())
+                            .limit(20);
+                    if (nameQuery != null) {
+                        query = query.whereArrayContains("nameSubstrings", nameQuery);
+                    }
+                    Task<QuerySnapshot> querySnapshotTask = query.get();
+                    querySnapshotTask.addOnSuccessListener(snapshots -> {
+                        StreamSupport.stream(snapshots.getDocuments())
+                                .map(documentSnapshot -> documentSnapshot.toObject(GameDataModel.class))
+                                .map(this::toGame)
+                                .forEach(game -> {
+                                    Log.d("hi", "Adding game " + game.toString());
+                                    allGames.put(game.getUid(), game);
+                                    data.setValue(allGames);
+                                });
+                    });
+                }
+            }
+        }
+
         return data;
     }
 

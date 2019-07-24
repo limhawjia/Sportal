@@ -47,4 +47,16 @@ public enum TimeOfDay {
     public String toString() {
         return this.name;
     }
+
+    public static TimeOfDay fromString(String str) {
+        if (str.equals("morning")) {
+            return MORNING;
+        } else if (str.equals("afternoon")) {
+            return AFTERNOON;
+        } else if (str.equals("night")) {
+            return NIGHT;
+        } else {
+            throw new IllegalArgumentException(str + " is not a valid time of day");
+        }
+    }
 }

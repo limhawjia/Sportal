@@ -16,6 +16,9 @@ import com.google.common.collect.ImmutableList;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import java.util.List;
@@ -37,19 +40,36 @@ public class SearchViewModel extends ViewModel {
     private LiveData<String> sportsSelectionText;
     private MutableLiveData<ImmutableList<Sport>> sportsSelection;
 
-    private LiveData<List<Game>> liveGamesData;
+    private MediatorLiveData<List<Game>> liveGamesData;
 
     private MutableLiveData<String> searchParameter;
     private MediatorLiveData<GameSearchFilter> searchFilters;
+    private MutableLiveData<Comparator<Game>> sortComparator;
 
     public SearchViewModel(ImmutableList<Sport> sportPreferences) {
         repo = SportalRepo.getInstance();
 
         searchFilters = new MediatorLiveData<>();
         searchFilters.setValue(GameSearchFilter.get());
-        liveGamesData = Transformations.map(
+        liveGamesData = new MediatorLiveData<>();
+        LiveData<List<Game>> source1 = Transformations.map(Transformations.map(
                 Transformations.switchMap(searchFilters, repo::getGamesWithFilters),
-                map -> new ArrayList<>(map.values()));
+                map -> new ArrayList<>(map.values())), list -> {
+            Collections.sort(list, sortComparator.getValue());
+            return list;
+        });
+        liveGamesData.addSource(source1, liveGamesData::setValue);
+
+        sortComparator = new MutableLiveData<>();
+        sortComparator.setValue((game1, game2) -> Integer
+                .compare(game1.getSport().ordinal(), game2.getSport().ordinal()));
+        liveGamesData.addSource(sortComparator, newComparator -> {
+            if (liveGamesData.getValue() != null) {
+                List<Game> currGames = new ArrayList<>(liveGamesData.getValue());
+                Collections.sort(currGames, newComparator);
+                liveGamesData.setValue(currGames);
+            }
+        });
 
         sportsSelection = new MutableLiveData<>();
         searchParameter = new MutableLiveData<>();
@@ -77,9 +97,18 @@ public class SearchViewModel extends ViewModel {
         return sportsSelectionText;
     }
 
+    public LiveData<GameSearchFilter> getSearchFilters() {
+        return searchFilters;
+    }
+
+    public void postNewFilters(GameSearchFilter filters) {
+        searchFilters.setValue(filters);
+    }
+
     public MutableLiveData<String> getSearchParameter() {
         return searchParameter;
     }
+
     public void setSearchParameter(String parameter) {
         if (!parameter.equals(searchParameter.getValue())) {
             searchParameter.setValue(parameter);
@@ -98,5 +127,9 @@ public class SearchViewModel extends ViewModel {
         } else {
             return sports.size() + " sports";
         }
+    }
+
+    public void sortGames(Comparator<Game> comparator) {
+        sortComparator.setValue(comparator);
     }
 }
