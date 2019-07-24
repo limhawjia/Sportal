@@ -1,31 +1,29 @@
 package wjhj.orbital.sportsmatchfindingapp.repo;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.common.base.Optional;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
-import com.mapbox.geojson.Point;
+import com.google.firebase.firestore.WriteBatch;
 
+import org.imperiumlabs.geofirestore.GeoFirestore;
 import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalTime;
@@ -35,9 +33,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
-import java9.util.stream.Stream;
 import java9.util.stream.StreamSupport;
 import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
@@ -48,6 +45,12 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
 public class SportalRepo implements ISportalRepo {
     private static final String DATA_DEBUG = "SportalRepo";
+    private static final String USERS_PATH = "Users";
+    private static final String GAMES_PATH = "Games";
+
+    private final FirebaseFirestore db;
+    private final LoadingCache<String, LiveData<UserProfile>> mUserProfilesCache;
+    private final LoadingCache<String, LiveData<Game>> mGamesCache;
 
     private static SportalRepo instance;
 
@@ -63,14 +66,36 @@ public class SportalRepo implements ISportalRepo {
     }
 
     private SportalRepo() {
+        db = FirebaseFirestore.getInstance();
+        mUserProfilesCache = CacheBuilder.newBuilder()
+                .maximumSize(100)
+                .expireAfterAccess(10, TimeUnit.MINUTES)
+                .build(new CacheLoader<String, LiveData<UserProfile>>() {
+                    @Override
+                    public LiveData<UserProfile> load(@NonNull String key) {
+                        DocumentReference ref = db.collection(USERS_PATH).document(key);
+                        return Transformations.map(convertToLiveData(ref, UserProfileDataModel.class),
+                                SportalRepo.this::toUserProfile);
+                    }
+                });
+        mGamesCache = CacheBuilder.newBuilder()
+                .maximumSize(200)
+                .expireAfterAccess(20, TimeUnit.MINUTES)
+                .build(new CacheLoader<String, LiveData<Game>>() {
+                    @Override
+                    public LiveData<Game> load(@NonNull String key) {
+                        DocumentReference ref = db.collection(GAMES_PATH).document(key);
+                        return Transformations.map(convertToLiveData(ref, GameDataModel.class),
+                                SportalRepo.this::toGame);
+                    }
+                });
     }
 
     @Override
     public Task<Void> addUser(String uid, UserProfile userProfile) {
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
         UserProfileDataModel dataModel = toUserProfileDataModel(userProfile);
 
-        return db.collection("Users")
+        return db.collection(USERS_PATH)
                 .document(uid)
                 .set(dataModel)
                 .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, uid + " added"))
@@ -80,79 +105,80 @@ public class SportalRepo implements ISportalRepo {
     @Override
     public Task<Void> updateUser(String uid, UserProfile userProfile) {
         UserProfileDataModel dataModel = toUserProfileDataModel(userProfile);
-        return updateDocument(uid, "Users", dataModel);
+        return db.collection(USERS_PATH)
+                .document(uid)
+                .set(dataModel, SetOptions.merge());
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public Task<Boolean> isProfileSetUp(String uid) {
+        return db.collection(USERS_PATH)
+                .document(uid)
+                .get()
+                .continueWith(task -> task.getResult().exists());
     }
 
     @Override
     public LiveData<UserProfile> getUser(String userUid) {
-        LiveData<UserProfileDataModel> dataModelLiveData = convertToLiveData(
-                getDocumentFromCollection(userUid, "Users"), UserProfileDataModel.class);
-
-        return Transformations.map(dataModelLiveData, this::toUserProfile);
+        return mUserProfilesCache.getUnchecked(userUid);
     }
 
     @Override
     public LiveData<List<UserProfile>> selectUsersStartingWith(String field, String queryText) {
         LiveData<List<UserProfileDataModel>> listLiveData = convertToLiveData(
-                queryStartingWith("Users", field, queryText), UserProfileDataModel.class);
-
-        return Transformations.map(listLiveData, this::toUserProfiles);
-    }
-
-    @Override
-    public LiveData<List<UserProfile>> selectUsersArrayContains(String field, String queryText) {
-        LiveData<List<UserProfileDataModel>> listLiveData = convertToLiveData(
-                queryArrayContains("Users", field, queryText), UserProfileDataModel.class);
+                queryStartingWith(USERS_PATH, field, queryText), UserProfileDataModel.class);
 
         return Transformations.map(listLiveData, this::toUserProfiles);
     }
 
     @Override
     public Task<Void> deleteUser(String userUid) {
-        return deleteDocument(userUid, "Users");
+        return deleteDocument(userUid, USERS_PATH);
     }
 
     // Should be called when building a game to get the uid for the game.
     @Override
     public String generateGameUid() {
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-        return db.collection("Games")
+        return db.collection(GAMES_PATH)
                 .document()
                 .getId();
     }
 
     @Override
     public Task<Void> addGame(String gameUid, Game game) {
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
         GameDataModel dataModel = toGameDataModel(game);
 
-        return db.collection("Games")
-                .document(gameUid)
-                .set(dataModel)
-                .addOnSuccessListener(documentReference -> {
-                    Log.d(DATA_DEBUG, "Add game complete.");
-                    // If game added successfully, also add game to all users participating
-                    addGameToUser(game.getCreatorUid(), gameUid);
-                    for (String user : game.getParticipatingUids()) {
-                        addGameToUser(user, gameUid);
-                    }
-                })
-                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game failed.", e));
+        WriteBatch batch = db.batch();
 
+        DocumentReference gameDocRef = db.collection(GAMES_PATH).document(gameUid);
+        batch.set(gameDocRef, dataModel);
+
+        CollectionReference users = db.collection(USERS_PATH);
+        DocumentReference creatorDocRef = users.document(game.getCreatorUid());
+        batch.update(creatorDocRef, "games.pending", FieldValue.arrayUnion(gameUid));
+
+        for (String participantUid : game.getParticipatingUids()) {
+            DocumentReference participantDocRef = users.document(participantUid);
+            batch.update(participantDocRef, "games.pending", FieldValue.arrayUnion(gameUid));
+        }
+
+        return batch.commit()
+                .addOnSuccessListener(docRef -> Log.d(DATA_DEBUG, "Add game complete."))
+                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game failed.", e));
     }
 
     @Override
     public Task<Void> updateGame(String gameId, Game game) {
         GameDataModel dataModel = toGameDataModel(game);
-        return updateDocument(gameId, "Games", dataModel);
+        return db.collection(GAMES_PATH)
+                .document(gameId)
+                .set(dataModel, SetOptions.merge());
     }
 
     @Override
     public LiveData<Game> getGame(String gameID) {
-        LiveData<GameDataModel> dataModelLiveData = convertToLiveData(
-                getDocumentFromCollection(gameID, "Games"), GameDataModel.class);
-
-        return Transformations.map(dataModelLiveData, this::toGame);
+        return mGamesCache.getUnchecked(gameID);
     }
 
     @Override
@@ -220,49 +246,13 @@ public class SportalRepo implements ISportalRepo {
     }
 
     @Override
-    public LiveData<List<Game>> selectGamesArrayContains(String field, String queryText) {
-        LiveData<List<GameDataModel>> listLiveData = convertToLiveData(
-                queryArrayContains("Games", field, queryText), GameDataModel.class);
-
-        return Transformations.map(listLiveData, this::toGames);
-    }
-
-    @Override
     public Task<Void> deleteGame(String gameId) {
         return deleteDocument(gameId, "Games");
     }
 
-    // HELPER METHODS
-    private void addGameToUser(String userUid, String gameID) {
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        db.collection("Users")
-                .document(userUid)
-                .update("games.pending", FieldValue.arrayUnion(gameID))
-                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, "Added game to " + userUid))
-                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game to " + userUid + " failed", e));
-    }
-
-    private Task<Void> updateDocument(String docId, String collectionPath, Object dataModel) {
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        return db.collection(collectionPath)
-                .document(docId)
-                .set(dataModel, SetOptions.merge())
-                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, docId + " updateDocument success"))
-                .addOnFailureListener(e -> Log.d(DATA_DEBUG, docId + "updateDocument failure", e));
-    }
-
-    private DocumentReference getDocumentFromCollection(String docID, String collectionPath) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        return db.collection(collectionPath)
-                .document(docID);
-    }
-
+    // HELPER METHOD
     private <T> LiveData<T> convertToLiveData(DocumentReference docRef, Class<T> valueType) {
         MutableLiveData<T> liveData = new MutableLiveData<>();
-
         docRef.addSnapshotListener((value, err) -> {
             if (err != null) {
                 Log.d(DATA_DEBUG, "database snapshot error", err);
@@ -288,26 +278,14 @@ public class SportalRepo implements ISportalRepo {
         return liveData;
     }
 
-
     private Query queryStartingWith(String collection, String field, String queryText) {
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         return db.collection(collection)
                 .orderBy(field)
                 .startAt(queryText)
                 .endAt(queryText + "\uf8ff"); // StackOverflow hacks...
     }
 
-    private Query queryArrayContains(String collection, String field, String queryText) {
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        return db.collection(collection)
-                .whereArrayContains(field, queryText);
-    }
-
     private Task<Void> deleteDocument(String docID, String collectionPath) {
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         return db.collection(collectionPath)
                 .document(docID)
                 .delete()
@@ -332,6 +310,14 @@ public class SportalRepo implements ISportalRepo {
             }
         }
 
+        List<String> friendUids = dataModel.getFriendUids() == null
+                ? new ArrayList<>()
+                : dataModel.getFriendUids();
+
+        List<Sport> preferences = dataModel.getPreferences() == null
+                ? new ArrayList<>()
+                : dataModel.getPreferences();
+
         return UserProfile.builder()
                 .withDisplayName(dataModel.getDisplayName())
                 .withGender(dataModel.getGender())
@@ -340,7 +326,8 @@ public class SportalRepo implements ISportalRepo {
                 .withUid(dataModel.getUid())
                 .withDisplayPicUri(Uri.parse(dataModel.getDisplayPicUri()))
                 .withBio(Optional.fromNullable(dataModel.getBio()))
-                .addAllPreferences(dataModel.getPreferences())
+                .addAllFriendUids(friendUids)
+                .addAllPreferences(preferences)
                 .putAllGames(newMap)
                 .build();
     }
@@ -358,13 +345,11 @@ public class SportalRepo implements ISportalRepo {
     }
 
     private Game toGame(GameDataModel dataModel) {
-        GeoPoint geoPoint = dataModel.getLocation();
-        Point location = Point.fromLngLat(geoPoint.getLongitude(), geoPoint.getLatitude());
 
         return Game.builder()
                 .withGameName(dataModel.getGameName())
                 .withSport(dataModel.getSport())
-                .withLocation(location)
+                .withLocation(dataModel.getLocation())
                 .withPlaceName(dataModel.getPlaceName())
                 .withMinPlayers(dataModel.getMinPlayers())
                 .withMaxPlayers(dataModel.getMaxPlayers())
@@ -385,5 +370,9 @@ public class SportalRepo implements ISportalRepo {
             newList.add(toGame(dataModel));
         }
         return newList;
+    }
+
+    private void test() {
+        GeoFirestore geoFirestore = new GeoFirestore(db.collection("lul"));
     }
 }

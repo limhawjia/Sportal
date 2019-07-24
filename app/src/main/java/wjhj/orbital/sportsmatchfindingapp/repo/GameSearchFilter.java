@@ -2,12 +2,7 @@ package wjhj.orbital.sportsmatchfindingapp.repo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
@@ -19,14 +14,10 @@ public class GameSearchFilter {
     private String nameQuery;
     private List<Difficulty> skillLevelQuery;
 
-    private GameSearchFilter() {
+    public GameSearchFilter() {
         this.sportQuery = new ArrayList<>();
         this.timeOfDayQuery = new ArrayList<>();
         this.skillLevelQuery = new ArrayList<>();
-    }
-
-    public static GameSearchFilter get() {
-        return new GameSearchFilter();
     }
 
     public void addSportQuery(Sport... sports) {
@@ -57,6 +48,8 @@ public class GameSearchFilter {
         skillLevelQuery = skills;
     }
 
+
+    // Sir most of these hasSomething() methods always return true cuz u initialized the list in the constructor :)
     public boolean hasSportQuery() {
         return sportQuery != null;
     }

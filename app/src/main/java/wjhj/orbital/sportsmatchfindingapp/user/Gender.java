@@ -1,8 +1,11 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
+
+import androidx.annotation.NonNull;
+
 public enum Gender {
-    MALE("male"),
-    FEMALE("female");
+    MALE("Male"),
+    FEMALE("Female");
 
     private String str;
 
@@ -10,6 +13,7 @@ public enum Gender {
         this.str = str;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return str;

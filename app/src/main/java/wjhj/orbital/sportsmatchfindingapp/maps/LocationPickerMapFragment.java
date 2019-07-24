@@ -133,7 +133,7 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
             mapboxMap.addOnCameraMoveStartedListener(reason -> {
                 if (reason == MapboxMap.OnCameraMoveStartedListener.REASON_API_GESTURE) {
 
-                    if (hoveringMarker.getVisibility() == View.INVISIBLE) {
+                    if (hoveringMarker.getVisibility() == View.INVISIBLE ) {
                         // Set hovering marker to visible again.
                         hoveringMarker.setVisibility(View.VISIBLE);
 
@@ -327,6 +327,7 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
                         }
 
                     } else {
+                        hoveringMarker.setVisibility(View.INVISIBLE);
                         selectLocationButton.setText(getActivity().getString(R.string.add_game_try_again));
                         selectLocationButton.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.gray));
                         selectLocationButton.setEnabled(false);
@@ -353,7 +354,7 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
     private void selectLocation(CarmenFeature feature, Point point, Style loadedMapStyle) {
         // Transform appearance of button to become confirm button.
         selectLocationButton.setText(requireActivity().getString(R.string.add_game_confirm));
-        selectLocationButton.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.green));
+        selectLocationButton.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.green));
 
         // Hide the red hovering marker.
         hoveringMarker.setVisibility(View.INVISIBLE);

@@ -44,6 +44,10 @@ public class ValidationInput<T> extends BaseObservable {
         return state;
     }
 
+    public void setState(State state) {
+        this.state = state;
+        notifyPropertyChanged(BR.errMessage);
+    }
 
     public void validate() {
         state = validation.test(input) ? State.VALIDATED : State.ERROR;
