@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+    <data>
+        <variable
+            name="gameFilters"
+            type="wjhj.orbital.sportsmatchfindingapp.dialogs.SearchFilterDialogViewModel" />
+        <import type="wjhj.orbital.sportsmatchfindingapp.game.TimeOfDay" />
+        <import type="wjhj.orbital.sportsmatchfindingapp.game.Difficulty" />
+        <import type="wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter" />
+    </data>
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/filters_form"
@@ -30,31 +38,91 @@
         <LinearLayout
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:layout_width="wrap_content">
+            android:layout_width="wrap_content"
+            android:baselineAligned="false">
 
-            <ImageButton
+            <LinearLayout
                 android:id="@+id/morning_button"
-                android:layout_height="wrap_content"
+                android:layout_width="90dp"
+                android:layout_height="100dp"
                 android:layout_weight="1"
-                android:layout_width="0dp"
                 android:padding="8dp"
-                android:src="@drawable/ic_launcher_foreground" />
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginRight="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:foreground="@drawable/border"
+                android:outlineAmbientShadowColor="@color/black"
+                android:alpha='@{gameFilters.filter.getTimeOfDayQuery().contains(TimeOfDay.MORNING) ? 1f : 0.2f}'
+                android:onClick="@{gameFilters.toggleMorning}">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/icons8_sunrise_64"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/morning"/>
+            </LinearLayout>
 
-            <ImageButton
+            <LinearLayout
                 android:id="@+id/afternoon_button"
-                android:layout_height="wrap_content"
+                android:layout_width="90dp"
+                android:layout_height="100dp"
                 android:layout_weight="1"
-                android:layout_width="0dp"
                 android:padding="8dp"
-                android:src="@drawable/ic_launcher_foreground" />
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:background="?attr/selectableItemBackground"
+                android:layout_marginRight="8dp"
+                android:foreground="@drawable/border"
+                android:outlineAmbientShadowColor="@color/black"
+                android:alpha='@{gameFilters.filter.getTimeOfDayQuery().contains(TimeOfDay.AFTERNOON) ? 1f : 0.2f}'
+                android:onClick="@{gameFilters.toggleAfternoon}">
+            <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/icons8_sun_100"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/afternoon"/>
+            </LinearLayout>
 
-            <ImageButton
+            <LinearLayout
                 android:id="@+id/evening_button"
-                android:layout_height="wrap_content"
+                android:layout_width="90dp"
+                android:layout_height="100dp"
                 android:layout_weight="1"
-                android:layout_width="0dp"
                 android:padding="8dp"
-                android:src="@drawable/ic_launcher_foreground" />
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:background="?attr/selectableItemBackground"
+                android:foreground="@drawable/border"
+                android:outlineAmbientShadowColor="@color/black"
+                android:alpha='@{gameFilters.filter.getTimeOfDayQuery().contains(TimeOfDay.NIGHT) ? 1f : 0.2f}'
+                android:onClick="@{gameFilters.toggleNight}">
+            <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/icons8_crescent_moon_100"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/night"/>
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -67,31 +135,91 @@
         <LinearLayout
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="8dp"
+            android:baselineAligned="false">
 
-            <ImageButton
+            <LinearLayout
                 android:id="@+id/beginner_button"
-                android:layout_height="wrap_content"
+                android:layout_width="90dp"
+                android:layout_height="100dp"
                 android:layout_weight="1"
-                android:layout_width="0dp"
                 android:padding="8dp"
-                android:src="@drawable/ic_launcher_foreground" />
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginRight="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:foreground="@drawable/border"
+                android:outlineAmbientShadowColor="@color/black"
+                android:alpha='@{gameFilters.filter.getSkillLevelQuery().contains(Difficulty.BEGINNER) ? 1f : 0.2f}'
+                android:onClick="@{gameFilters.toggleBeginner}">
+            <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/icons8_bronze_medal_48"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/beginner"/>
+            </LinearLayout>
 
-            <ImageButton
+            <LinearLayout
                 android:id="@+id/intermediate_button"
-                android:layout_height="wrap_content"
+                android:layout_width="90dp"
+                android:layout_height="100dp"
                 android:layout_weight="1"
-                android:layout_width="0dp"
                 android:padding="8dp"
-                android:src="@drawable/ic_launcher_foreground" />
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginRight="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:foreground="@drawable/border"
+                android:outlineAmbientShadowColor="@color/black"
+                android:alpha='@{gameFilters.filter.getSkillLevelQuery().contains(Difficulty.INTERMEDIATE) ? 1f : 0.2f}'
+                android:onClick="@{gameFilters.toggleIntermediate}">
+            <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/icons8_silver_medal_48"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/intermediate"/>
+            </LinearLayout>
 
-            <ImageButton
+            <LinearLayout
                 android:id="@+id/advanced_button"
-                android:layout_height="wrap_content"
+                android:layout_width="90dp"
+                android:layout_height="100dp"
                 android:layout_weight="1"
-                android:layout_width="0dp"
                 android:padding="8dp"
-                android:src="@drawable/ic_launcher_foreground" />
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:background="?attr/selectableItemBackground"
+                android:foreground="@drawable/border"
+                android:outlineAmbientShadowColor="@color/black"
+                android:alpha='@{gameFilters.filter.getSkillLevelQuery().contains(Difficulty.ADVANCED) ? 1f : 0.2f}'
+                android:onClick="@{gameFilters.toggleAdvanced}">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/icons8_gold_medal_48"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/advanced"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </layout>

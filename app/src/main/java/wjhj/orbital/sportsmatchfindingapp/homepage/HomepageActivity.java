@@ -23,14 +23,19 @@ import com.google.common.collect.ImmutableList;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.List;
+
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.Authentications;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.HomepageActivityBinding;
+import wjhj.orbital.sportsmatchfindingapp.dialogs.SearchFilterDialogFragment;
+import wjhj.orbital.sportsmatchfindingapp.dialogs.SportMultiSelectDialogFragment;
 import wjhj.orbital.sportsmatchfindingapp.game.AddGameActivity;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesSwipeViewFragment;
 import wjhj.orbital.sportsmatchfindingapp.homepage.searchpage.SearchFragment;
+import wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileFragment;
 import wjhj.orbital.sportsmatchfindingapp.user.UserPreferencesActivity;
@@ -39,7 +44,9 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
 
 @SuppressWarnings({"FieldCanBeLocal"})
-public class HomepageActivity extends AppCompatActivity {
+public class HomepageActivity extends AppCompatActivity implements
+        SearchFilterDialogFragment.SearchFilterDialogListener,
+        SportMultiSelectDialogFragment.SportMultiSelectDialogListener {
 
     public static final String CURR_USER_TAG = "current_user";
     public static final String DISPLAY_PROFILE_PIC_TAG = "display_profile_pic";
@@ -126,12 +133,15 @@ public class HomepageActivity extends AppCompatActivity {
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
         Fragment fragment = new Fragment();// IMPLEMENT PROPERLY
+        String tag = "";
         switch (item.getItemId()) {
             case R.id.nav_home:
                 //todo
+                tag = "Home";
                 break;
             case R.id.nav_games:
                 fragment = GamesSwipeViewFragment.newInstance();
+                tag = "Games";
                 break;
             case R.id.nav_search:
                 ImmutableList.Builder<Sport> builder = new ImmutableList.Builder<>();
@@ -145,15 +155,18 @@ public class HomepageActivity extends AppCompatActivity {
                             }
                         });
                 fragment = SearchFragment.newInstance(builder.build());
+                tag = "Search";
                 break;
             case R.id.nav_social:
+                //todo
+                tag = "Social";
                 fragment = DisplayUserProfileFragment.newInstance("ZHYMR6edHrX8unzM8gylUWzFlx82");
                 break;
         }
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.homepage_fragment_container, fragment)
+                .replace(R.id.homepage_fragment_container, fragment, tag)
                 .commit();
 
         return true;
@@ -192,5 +205,23 @@ public class HomepageActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.top_options_menu, menu);
         return true;
+    }
+
+    @Override
+    public void onSearchFilterDialogPositiveButtonClicked(GameSearchFilter filters) {
+        SearchFragment fragment =
+                (SearchFragment) getSupportFragmentManager().findFragmentByTag("Search");
+        if (fragment != null) {
+            fragment.updateFilterFromSearchFilterDialog(filters);
+        }
+    }
+
+    @Override
+    public void onSportMultiSelectDialogPositiveButtonSelected(List<Sport> selection) {
+        SearchFragment fragment =
+                (SearchFragment) getSupportFragmentManager().findFragmentByTag("Search");
+        if (fragment != null) {
+            fragment.updateSports(selection);
+        }
     }
 }

@@ -84,9 +84,16 @@
     <string name="search_title"><b>SEARCH FOR GAMES</b></string>
     <string name="apply">Apply</string>
     <string name="cancel">Cancel</string>
-    <string name="search_filter">SELECT FILTERS</string>
+    <string name="search_filter">Select Filters</string>
     <string name="search_time_of_day">Time of day:</string>
     <string name="search_skill_level">Skill level:</string>
+    <string name="morning">Morning</string>
+    <string name="afternoon">Afternoon</string>
+    <string name="night">Night</string>
+    <string name="beginner">Beginner</string>
+    <string name="intermediate">Intermediate</string>
+    <string name="advanced">Advanced</string>
+    <string name="select_sports">Select sports</string>
 
     <string name="preferences_pick_profile_pic">Pick a profile pic:</string>
     <string name="preferences_enter_details">Enter details:</string>
