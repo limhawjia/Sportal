@@ -22,11 +22,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.List;
+
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.Authentications;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.HomepageActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.SearchFilterDialogFragment;
+import wjhj.orbital.sportsmatchfindingapp.dialogs.SportMultiSelectDialogFragment;
 import wjhj.orbital.sportsmatchfindingapp.game.AddGameActivity;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesSwipeViewFragment;
@@ -40,7 +43,9 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
 
 @SuppressWarnings({"FieldCanBeLocal"})
-public class HomepageActivity extends AppCompatActivity implements SearchFilterDialogFragment.SearchFilterDialogListener {
+public class HomepageActivity extends AppCompatActivity implements
+        SearchFilterDialogFragment.SearchFilterDialogListener,
+        SportMultiSelectDialogFragment.SportMultiSelectDialogListener {
 
     public static final String CURR_USER_TAG = "current_user";
     public static final String DISPLAY_PROFILE_PIC_TAG = "display_profile_pic";
@@ -154,7 +159,7 @@ public class HomepageActivity extends AppCompatActivity implements SearchFilterD
             case R.id.nav_social:
                 //todo
                 tag = "Social";
-                fragment = DisplayUserProfileFragment.newInstance("9EdldWC2b3ZW0z13UwGBPJ6a5Vv1");
+                fragment = DisplayUserProfileFragment.newInstance("9EdldWsC2b3ZW0z13UwGBPJ6a5Vv1");
                 break;
         }
 
@@ -207,10 +212,20 @@ public class HomepageActivity extends AppCompatActivity implements SearchFilterD
     }
 
     @Override
-    public void onPositiveButtonClicked(GameSearchFilter filters) {
+    public void onSearchFilterDialogPositiveButtonClicked(GameSearchFilter filters) {
         SearchFragment fragment =
                 (SearchFragment) getSupportFragmentManager().findFragmentByTag("Search");
-        fragment.updateFilterFromSearchFilterDialog(filters);
+        if (fragment != null) {
+            fragment.updateFilterFromSearchFilterDialog(filters);
+        }
+    }
 
+    @Override
+    public void onSportMultiSelectDialogPositiveButtonSelected(List<Sport> selection) {
+        SearchFragment fragment =
+                (SearchFragment) getSupportFragmentManager().findFragmentByTag("Search");
+        if (fragment != null) {
+            fragment.updateSports(selection);
+        }
     }
 }

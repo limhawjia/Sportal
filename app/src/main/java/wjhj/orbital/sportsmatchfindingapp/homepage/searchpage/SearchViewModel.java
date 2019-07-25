@@ -132,4 +132,8 @@ public class SearchViewModel extends ViewModel {
     public void sortGames(Comparator<Game> comparator) {
         sortComparator.setValue(comparator);
     }
+
+    public void updateSports(List<Sport> sports) {
+        sportsSelection.setValue(new ImmutableList.Builder<Sport>().addAll(sports).build());
+    }
 }

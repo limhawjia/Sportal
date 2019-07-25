@@ -24,7 +24,7 @@ import wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter;
 
 public class SearchFilterDialogFragment extends DialogFragment {
     public interface SearchFilterDialogListener {
-        public void onPositiveButtonClicked(GameSearchFilter filter);
+        public void onSearchFilterDialogPositiveButtonClicked(GameSearchFilter filter);
     }
 
     GameSearchFilter mGameSearchFilter;
@@ -48,7 +48,7 @@ public class SearchFilterDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), R.style.PopupDialogTheme)
                 .setView(binding.getRoot())
                 .setPositiveButton(R.string.apply, (view, which) -> {
-                    listener.onPositiveButtonClicked(searchFilterDialogViewModel.getFilters());
+                    listener.onSearchFilterDialogPositiveButtonClicked(searchFilterDialogViewModel.getFilters());
                 }).setNeutralButton(R.string.cancel, (view, which) -> {});
 
         return builder.create();

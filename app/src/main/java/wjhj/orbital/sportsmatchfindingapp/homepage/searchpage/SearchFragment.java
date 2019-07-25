@@ -19,10 +19,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentSearchBinding;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.SearchFilterDialogFragment;
+import wjhj.orbital.sportsmatchfindingapp.dialogs.SportMultiSelectDialogFragment;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesCardAdapter;
 import wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter;
@@ -85,6 +87,12 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemSelect
             dialog.show(requireFragmentManager(), "filter");
         });
 
+        binding.sportFilterButton.setOnClickListener(view -> {
+            DialogFragment dialog = new SportMultiSelectDialogFragment(searchViewModel
+                    .getSearchFilters().getValue().getSportQuery());
+            dialog.show(requireFragmentManager(), "sport_filter");
+        });
+
         return binding.getRoot();
     }
 
@@ -112,6 +120,10 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemSelect
         oldFilters.setTimeOfDayQuery(filter.getTimeOfDayQuery());
         oldFilters.setSkillLevelQuery(filter.getSkillLevelQuery());
         searchViewModel.postNewFilters(oldFilters);
+    }
+
+    public void updateSports(List<Sport> sports) {
+        searchViewModel.updateSports(sports);
     }
 
     @Override
