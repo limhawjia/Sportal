@@ -40,6 +40,7 @@ public class UserPreferencesActivity extends AppCompatActivity implements DatePi
 
     public static String PREFERENCES_DEBUG = "preferences";
     public static final String DISPLAY_NAME_TAG = "display_name";
+    public static final String EDIT_PROFILE_TAG = "edit_profile";
     public static final int PICK_DISPLAY_IMAGE_RC = 1;
 
     private FirebaseUser currUser;
@@ -47,6 +48,7 @@ public class UserPreferencesActivity extends AppCompatActivity implements DatePi
     private UserPreferencesViewModel viewModel;
 
     private String displayName = "default_name";
+    private String editProfileUid;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,9 +59,14 @@ public class UserPreferencesActivity extends AppCompatActivity implements DatePi
         Bundle args = getIntent().getExtras();
         if (args != null) {
             displayName = args.getString(DISPLAY_NAME_TAG);
+            editProfileUid = args.getString(EDIT_PROFILE_TAG);
         }
 
         viewModel = ViewModelProviders.of(this).get(UserPreferencesViewModel.class);
+
+        if (editProfileUid != null) {
+            viewModel.linkWithExistingProfile(editProfileUid);
+        }
 
         binding = DataBindingUtil.setContentView(this, R.layout.user_preferences_activity);
         binding.setUserPreferences(viewModel);
@@ -79,8 +86,11 @@ public class UserPreferencesActivity extends AppCompatActivity implements DatePi
 
         viewModel.getSuccess().observe(this, success -> {
             if (success) {
-                Intent intent = new Intent(this, HomepageActivity.class);
-                startActivity(intent);
+                if (editProfileUid == null) {
+                    Intent intent = new Intent(this, HomepageActivity.class);
+                    startActivity(intent);
+                }
+                finish();
             }
         });
     }

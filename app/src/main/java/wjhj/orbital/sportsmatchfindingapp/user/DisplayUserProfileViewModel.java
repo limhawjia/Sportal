@@ -53,7 +53,6 @@ public class DisplayUserProfileViewModel extends ViewModel {
         currUserUid = currUser == null ? "" : currUser.getUid();
         isCurrentUser = (currUserUid.equals(userUid));
 
-
         allGameIds = Transformations.map(userProfile, UserProfile::getGames);
         numGamesPlayed = Transformations.map(allGameIds, games -> games.get(GameStatus.COMPLETED).size());
         allFriendUids = Transformations.map(userProfile, UserProfile::getFriendUids);
@@ -105,6 +104,7 @@ public class DisplayUserProfileViewModel extends ViewModel {
                     });
                 }
             }
+            mediatorLiveData.postValue(new ArrayList<>(games.values()));
             return mediatorLiveData;
         });
     }
@@ -123,6 +123,7 @@ public class DisplayUserProfileViewModel extends ViewModel {
                     mediatorLiveData.postValue(new ArrayList<>(friends.values()));
                 });
             }
+            mediatorLiveData.postValue(new ArrayList<>(friends.values()));
             return mediatorLiveData;
         });
     }

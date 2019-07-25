@@ -13,6 +13,7 @@
             name="activity"
             type="wjhj.orbital.sportsmatchfindingapp.user.UserPreferencesActivity" />
 
+        <import type="wjhj.orbital.sportsmatchfindingapp.user.Gender"/>
         <import type="android.view.View" />
     </data>
 
@@ -238,7 +239,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:checkedButton="@+id/gender"
+                    android:checkedButton="@{userPreferences.gender.input == Gender.MALE ? @id/male : @id/female}"
                     android:onCheckedChanged="@{userPreferences::onGenderChanged}"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"

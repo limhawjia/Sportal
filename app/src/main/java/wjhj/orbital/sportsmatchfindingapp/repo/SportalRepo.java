@@ -278,7 +278,11 @@ public class SportalRepo implements ISportalRepo {
             if (err != null) {
                 Log.d(DATA_DEBUG, "database snapshot error", err);
             } else if (value.exists()) {
-                liveData.postValue(value.toObject(valueType));
+                try {
+                    liveData.postValue(value.toObject(valueType));
+                } catch (RuntimeException e) {
+                    Log.d(DATA_DEBUG, "deserialization error", e);
+                }
             } else {
                 Log.d(DATA_DEBUG, "document does not exist");
             }

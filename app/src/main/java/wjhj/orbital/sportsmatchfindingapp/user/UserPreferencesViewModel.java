@@ -6,6 +6,7 @@ import android.widget.RadioGroup;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 
@@ -26,6 +27,7 @@ import wjhj.orbital.sportsmatchfindingapp.utils.ValidationInput;
 
 public class UserPreferencesViewModel extends ViewModel {
 
+    private UserProfile editProfile;
     private MutableLiveData<Uri> displayPicUri;
     private MutableLiveData<String> bio;
     private ValidationInput<LocalDate> birthday;
@@ -35,22 +37,24 @@ public class UserPreferencesViewModel extends ViewModel {
     private MutableLiveData<List<Sport>> sportPreferences;
 
     private List<ValidationInput<?>> validationsList;
+    private SportalRepo repo;
 
     public UserPreferencesViewModel() {
+        repo = SportalRepo.getInstance();
+
         displayPicUri = new MutableLiveData<>();
         bio = new MutableLiveData<>();
         birthday = new ValidationInput<>(date -> date != null && !date.isAfter(LocalDate.now()),
                 "Please enter a valid birthday");
         country = new ValidationInput<>(country -> country != null, "Please select a country");
         gender = new ValidationInput<>(gender -> gender != null, "");
-        success = new MutableLiveData<>();
         sportPreferences = new MutableLiveData<>();
+        success = new MutableLiveData<>();
         validationsList = new ArrayList<>();
         validationsList.add(birthday);
         validationsList.add(country);
         validationsList.add(gender);
     }
-
 
     public LiveData<Uri> getDisplayPicUri() {
         return displayPicUri;
@@ -139,6 +143,26 @@ public class UserPreferencesViewModel extends ViewModel {
         return success;
     }
 
+
+    public void linkWithExistingProfile(String uid) {
+        LiveData<UserProfile> existingProfile = repo.getUser(uid);
+
+        existingProfile.observeForever(new Observer<UserProfile>() {
+            @Override
+            public void onChanged(UserProfile profile) {
+                editProfile = profile;
+                displayPicUri.postValue(profile.getDisplayPicUri());
+                bio.postValue(profile.getBio().or(""));
+                birthday.setInput(profile.getBirthday());
+                country.setInput(profile.getCountry());
+                gender.setInput(profile.getGender());
+                sportPreferences.postValue(new ArrayList<>(profile.getPreferences()));
+
+                existingProfile.removeObserver(this);
+            }
+        });
+    }
+
     void updateProfile(String displayName, String currUserUid) {
         StreamSupport.stream(validationsList).forEach(ValidationInput::validate);
 
@@ -149,19 +173,27 @@ public class UserPreferencesViewModel extends ViewModel {
                     ? new ArrayList<>()
                     : sportPreferences.getValue();
 
-            UserProfile userProfile = UserProfile.builder()
-                    .withDisplayName(displayName)
-                    .withGender(gender.getInput())
-                    .withBirthday(birthday.getInput())
-                    .withCountry(country.getInput())
-                    .withUid(currUserUid)
-                    .withBio(Optional.fromNullable(bio.getValue()))
-                    .addAllPreferences(preferences)
-                    .build();
 
-            Log.d("preferences", userProfile.toString());
+            UserProfile userProfile;
 
-            SportalRepo repo = SportalRepo.getInstance();
+            if (editProfile != null) {
+                userProfile = editProfile.withGender(gender.getInput())
+                        .withBirthday(birthday.getInput())
+                        .withCountry(country.getInput())
+                        .withBio(Optional.fromNullable(bio.getValue()))
+                        .withPreferences(preferences);
+            } else {
+                userProfile = UserProfile.builder()
+                        .withDisplayName(displayName)
+                        .withGender(gender.getInput())
+                        .withBirthday(birthday.getInput())
+                        .withCountry(country.getInput())
+                        .withUid(currUserUid)
+                        .withBio(Optional.fromNullable(bio.getValue()))
+                        .addAllPreferences(preferences)
+                        .build();
+            }
+
             repo.addUser(currUserUid, userProfile);
 
             Uri selectedUri = displayPicUri.getValue();

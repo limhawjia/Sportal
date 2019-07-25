@@ -103,5 +103,6 @@
     <string name="display_user_no_friends_msg">No friends (yet)</string>
     <string name="display_user_upcoming_games_caps">UPCOMING GAMES</string>
     <string name="display_user_past_games_caps">PAST GAMES</string>
+    <string name="display_user_add_friend_to_see_more">Add friend to see more!</string>
 
 </resources>

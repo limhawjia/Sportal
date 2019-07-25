@@ -1,6 +1,7 @@
 package wjhj.orbital.sportsmatchfindingapp.user;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,7 +107,11 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
             updateButton(actionButton,
                     ContextCompat.getColor(requireActivity(), R.color.offWhite),
                     requireActivity().getString(R.string.user_profile_edit_profile),
-                    v -> {});
+                    v -> {
+                        Intent intent = new Intent(getContext(), UserPreferencesActivity.class);
+                        intent.putExtra(UserPreferencesActivity.EDIT_PROFILE_TAG, mUserUid);
+                        startActivity(intent);
+                    });
             actionButton.setTextColor(ContextCompat.getColor(requireActivity(), R.color.black));
         } else {
             viewModel.isFriend().observe(getViewLifecycleOwner(), isFriend -> {
@@ -146,7 +152,10 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
                 RecyclerView.HORIZONTAL, false);
 
         FriendProfilesAdapter adapter = new FriendProfilesAdapter(this);
-        viewModel.getFriends().observe(getViewLifecycleOwner(), adapter::updateFriends);
+        viewModel.getFriends().observe(getViewLifecycleOwner(), friends -> {
+            Log.d("TESTINGG", friends.toString());
+            adapter.updateFriends(friends);
+        });
 
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
