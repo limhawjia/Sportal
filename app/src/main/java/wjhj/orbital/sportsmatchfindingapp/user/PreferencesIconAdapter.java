@@ -14,7 +14,7 @@ import java.util.List;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 
-public class PreferencesIconAdapter extends RecyclerView.Adapter {
+public class PreferencesIconAdapter extends RecyclerView.Adapter<PreferencesIconAdapter.IconViewHolder> {
 
     private List<Sport> sportPreferences;
 
@@ -29,14 +29,14 @@ public class PreferencesIconAdapter extends RecyclerView.Adapter {
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public IconViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         return new IconViewHolder(inflater.inflate(R.layout.preferences_icon, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ((IconViewHolder) holder).setIconDrawable(sportPreferences.get(position).getIconResourceId());
+    public void onBindViewHolder(@NonNull IconViewHolder holder, int position) {
+        holder.setIconDrawable(sportPreferences.get(position).getIconResourceId());
     }
 
     @Override

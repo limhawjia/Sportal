@@ -3,13 +3,14 @@ package wjhj.orbital.sportsmatchfindingapp.user;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,20 +19,23 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.Collections;
+
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.DisplayUserProfileFragmentBinding;
+import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesCardAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class DisplayUserProfileFragment extends Fragment {
+public class DisplayUserProfileFragment extends Fragment implements FriendProfilesAdapter.UserProfileClickListener {
 
     private static String USER_UID_TAG = "user_uid";
 
     private DisplayUserProfileFragmentBinding binding;
     private DisplayUserProfileViewModel viewModel;
+    private BottomNavigationView bottomNav;
     private String mUserUid;
-    private UserProfile profile;
 
     public DisplayUserProfileFragment() {
         // Required empty public constructor
@@ -65,10 +69,10 @@ public class DisplayUserProfileFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        BottomNavigationView bottomNav = requireActivity().findViewById(R.id.bottom_nav);
+        bottomNav = requireActivity().findViewById(R.id.bottom_nav);
         if (bottomNav != null) {
             bottomNav.setVisibility(View.INVISIBLE);
         }
@@ -81,14 +85,19 @@ public class DisplayUserProfileFragment extends Fragment {
 
         initPreferencesRecyclerView(binding.displayUserProfilePreferences);
 
+        initFriendProfilesRecyclerView(binding.displayUserFriendProfiles);
+
+        initGamesCardRecyclerView(binding.displayUserGamesRecyclerView);
+
         return binding.getRoot();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        BottomNavigationView bottomNav = requireActivity().findViewById(R.id.bottom_nav);
-        bottomNav.setVisibility(View.VISIBLE);
+        if (bottomNav != null) {
+            bottomNav.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initActionButton(Button actionButton) {
@@ -132,4 +141,43 @@ public class DisplayUserProfileFragment extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
+    private void initFriendProfilesRecyclerView(RecyclerView recyclerView) {
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity(),
+                RecyclerView.HORIZONTAL, false);
+
+        FriendProfilesAdapter adapter = new FriendProfilesAdapter(this);
+        viewModel.getFriends().observe(getViewLifecycleOwner(), adapter::updateFriends);
+
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void initGamesCardRecyclerView(RecyclerView recyclerView) {
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+        GamesCardAdapter adapter = new GamesCardAdapter();
+
+        if (viewModel.isCurrentUser()) {
+            viewModel.getPastGames().observe(getViewLifecycleOwner(), games -> {
+                Collections.sort(games, (game1, game2) -> game2.getStartDateTime().compareTo(game1.getStartDateTime()));
+                adapter.updateGames(games);
+            });
+        } else {
+            viewModel.getUpcomingGames().observe(getViewLifecycleOwner(), games -> {
+                Collections.sort(games, (game1, game2) -> game1.getStartDateTime().compareTo(game2.getStartDateTime()));
+                adapter.updateGames(games);
+            });
+        }
+
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onUserProfileClick(String uid) {
+        FragmentManager manager = requireActivity().getSupportFragmentManager();
+        manager.beginTransaction()
+                .replace(((ViewGroup) requireView().getParent()).getId(), DisplayUserProfileFragment.newInstance(uid))
+                .addToBackStack(null)
+                .commit();
+    }
 }

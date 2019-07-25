@@ -92,9 +92,16 @@
     <string name="preferences_enter_details">Enter details:</string>
     <string name="preferences_bio_text">Bio (Optional)</string>
     <string name="preferences_select_country_text">Country</string>
+
     <string name="display_user_looking_to_play">Looking to play:</string>
     <string name="user_profile_edit_profile">Edit Profile</string>
     <string name="display_profile_friends">Friends</string>
     <string name="display_user_add_friend">Add Friend</string>
+    <string name="display_user_games_played">Games Played</string>
+    <string name="display_user_friends">Friends</string>
+    <string name="display_user_friends_caps">FRIENDS</string>
+    <string name="display_user_no_friends_msg">No friends (yet)</string>
+    <string name="display_user_upcoming_games_caps">UPCOMING GAMES</string>
+    <string name="display_user_past_games_caps">PAST GAMES</string>
 
 </resources>

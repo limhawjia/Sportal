@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -146,7 +147,7 @@ public class HomepageActivity extends AppCompatActivity {
                 fragment = SearchFragment.newInstance(builder.build());
                 break;
             case R.id.nav_social:
-                fragment = DisplayUserProfileFragment.newInstance("9EdldWC2b3ZW0z13UwGBPJ6a5Vv1");
+                fragment = DisplayUserProfileFragment.newInstance("ZHYMR6edHrX8unzM8gylUWzFlx82");
                 break;
         }
 
