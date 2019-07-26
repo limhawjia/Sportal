@@ -126,6 +126,23 @@ public class SportalRepo implements ISportalRepo {
                 .addOnFailureListener(e -> Timber.d(e, "Friend request failed"));
     }
 
+    @Override
+    public Task<Void> acceptFriendRequest(String senderUid, String receiverUid) {
+        WriteBatch batch = db.batch();
+
+        DocumentReference senderDocRef = db.collection(USERS_PATH).document(senderUid);
+        batch.update(senderDocRef, "sentFriendRequests", FieldValue.arrayRemove(receiverUid));
+        batch.update(senderDocRef, "friendUids", FieldValue.arrayUnion(receiverUid));
+
+        DocumentReference receiverDocRef = db.collection(USERS_PATH).document(receiverUid);
+        batch.update(receiverDocRef, "receivedFriendRequests", FieldValue.arrayRemove(senderUid));
+        batch.update(receiverDocRef, "friendUid", FieldValue.arrayUnion(senderUid));
+
+        return batch.commit()
+                .addOnSuccessListener(aVoid -> Timber.d("Friend request accept success"))
+                .addOnFailureListener(e -> Timber.d(e, "Friend request accept failed"));
+    }
+
     @SuppressWarnings("ConstantConditions")
     @Override
     public Task<Boolean> isProfileSetUp(String uid) {

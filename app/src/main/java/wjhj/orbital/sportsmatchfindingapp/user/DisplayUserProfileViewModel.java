@@ -37,6 +37,10 @@ public class DisplayUserProfileViewModel extends ViewModel {
     private LiveData<List<String>> allFriendUids;
     private LiveData<List<UserProfile>> allFriends;
     private LiveData<Integer> numFriends;
+    private LiveData<List<String>> receivedFriendRequests;
+    private LiveData<List<String>> sentFriendRequests;
+    private LiveData<Boolean> isReceivedFriendRequest;
+    private LiveData<Boolean> isSentFriendRequest;
 
     private LiveData<Uri> displayPicUri;
     private LiveData<String> displayName;
@@ -55,12 +59,27 @@ public class DisplayUserProfileViewModel extends ViewModel {
         currUserUid = currUser == null ? "" : currUser.getUid();
         isCurrentUser = (currUserUid.equals(displayedUserUid));
 
+        setUpGameTransformations(userProfile);
+        setUpFriendTransformations(userProfile);
+        setUpAttributeTransformations(userProfile);
+    }
+
+    private void setUpGameTransformations(LiveData<UserProfile> userProfile) {
         allGameIds = Transformations.map(userProfile, UserProfile::getGames);
         numGamesPlayed = Transformations.map(allGameIds, games -> games.get(GameStatus.COMPLETED).size());
+    }
+
+    private void setUpFriendTransformations(LiveData<UserProfile> userProfile) {
         allFriendUids = Transformations.map(userProfile, UserProfile::getFriendUids);
         allFriends = loadFriends();
         numFriends = Transformations.map(allFriendUids, List::size);
+        receivedFriendRequests = Transformations.map(userProfile, UserProfile::getReceivedFriendRequests);
+        sentFriendRequests = Transformations.map(userProfile, UserProfile::getSentFriendRequests);
+        isReceivedFriendRequest = Transformations.map(sentFriendRequests, requests -> requests.contains(currUserUid));
+        isSentFriendRequest = Transformations.map(receivedFriendRequests, requests -> requests.contains(currUserUid));
+    }
 
+    private void setUpAttributeTransformations(LiveData<UserProfile> userProfile) {
         displayPicUri = Transformations.map(userProfile, UserProfile::getDisplayPicUri);
         displayName = Transformations.map(userProfile, UserProfile::getDisplayName);
         bio = Transformations.map(userProfile, profile -> profile.getBio().or("No bio"));
@@ -69,6 +88,7 @@ public class DisplayUserProfileViewModel extends ViewModel {
         preferences = Transformations.map(userProfile, UserProfile::getPreferences);
         isFriend = Transformations.map(userProfile, profile -> profile.getFriendUids().contains(currUserUid));
     }
+
 
     public boolean isCurrentUser() {
         return isCurrentUser;
@@ -138,6 +158,23 @@ public class DisplayUserProfileViewModel extends ViewModel {
         return numFriends;
     }
 
+    public LiveData<List<String>> getReceivedFriendRequests() {
+        return receivedFriendRequests;
+    }
+
+    public LiveData<List<String>> getSentFriendRequests() {
+        return sentFriendRequests;
+    }
+
+    public LiveData<Boolean> isReceivedFriendRequest() {
+        return isReceivedFriendRequest;
+    }
+
+    public LiveData<Boolean> isSentFriendRequest() {
+        return isSentFriendRequest;
+    }
+
+
     public LiveData<String> getDisplayName() {
         return displayName;
     }
@@ -162,7 +199,7 @@ public class DisplayUserProfileViewModel extends ViewModel {
         return isFriend;
     }
 
-    public void addFriend(String senderUid) {
-        repo.makeFriendRequest(senderUid, mDisplayedUserUid);
+    public void addFriend() {
+        repo.makeFriendRequest(currUserUid, mDisplayedUserUid);
     }
 }

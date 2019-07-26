@@ -118,5 +118,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="preferences_edit_profile">Edit Profile:</string>
+    <string name="display_profile_friend_request_pending">Friend request pending</string>
+    <string name="display_user_accept_friend_request">Accept friend request</string>
 
 </resources>
