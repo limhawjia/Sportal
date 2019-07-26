@@ -1,7 +1,11 @@
 package wjhj.orbital.sportsmatchfindingapp.homepage.gamespage;
 
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -13,13 +17,20 @@ import java.util.List;
 
 import wjhj.orbital.sportsmatchfindingapp.databinding.GamesCardViewBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
+import wjhj.orbital.sportsmatchfindingapp.game.GameActivity;
 
-public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.CardViewHolder> {
+public class GamesCardAdapter extends RecyclerView.Adapter<CardViewHolder> {
+
+    public interface GameCardClickedListener {
+        public void onGameSelected(Game game);
+    }
 
     private List<Game> games;
+    private GameCardClickedListener listener;
 
-    public GamesCardAdapter() {
+    public GamesCardAdapter(GameCardClickedListener listener) {
         this.games = new ArrayList<>();
+        this.listener = listener;
     }
 
     public void updateGames(List<Game> newGames) {
@@ -31,7 +42,7 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
 
     @NonNull
     @Override
-    public GamesCardAdapter.CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // create view for each data in the set
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         GamesCardViewBinding binding = GamesCardViewBinding.inflate(inflater, parent, false);
@@ -42,6 +53,9 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
         holder.setGame(games.get(position));
+        holder.itemView.setOnClickListener(view -> {
+            listener.onGameSelected(games.get(position));
+        });
     }
 
     @Override

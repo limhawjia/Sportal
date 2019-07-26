@@ -1,5 +1,6 @@
 package wjhj.orbital.sportsmatchfindingapp.homepage.gamespage;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.widget.ArrayAdapter;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGamesTabBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
+import wjhj.orbital.sportsmatchfindingapp.game.GameActivity;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
@@ -91,11 +93,16 @@ public class GamesTabFragment extends Fragment implements AdapterView.OnItemSele
     private void setUpRecyclerView(RecyclerView recyclerView) {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        GamesCardAdapter mGamesCardAdapter = new GamesCardAdapter();
+        GamesCardAdapter mGamesCardAdapter = new GamesCardAdapter(game -> {
+            Intent intent = new Intent(requireContext(), GameActivity.class);
+            intent.putExtra(GameActivity.GAME_UID, game.getUid());
+            startActivity(intent);
+        });
         recyclerView.setAdapter(mGamesCardAdapter);
 
         gamesTabViewModel.getGamesLiveData().observe(getViewLifecycleOwner(), mGamesCardAdapter::updateGames);
         gamesTabViewModel.getFilteredGames().observe(getViewLifecycleOwner(), mGamesCardAdapter::updateGames);
+
     }
 
     private void setUpMainSpinner(AppCompatSpinner spinner) {

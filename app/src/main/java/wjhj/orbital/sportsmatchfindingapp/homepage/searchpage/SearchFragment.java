@@ -1,5 +1,6 @@
 package wjhj.orbital.sportsmatchfindingapp.homepage.searchpage;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentSearchBinding;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.SearchFilterDialogFragment;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.SportMultiSelectDialogFragment;
+import wjhj.orbital.sportsmatchfindingapp.game.GameActivity;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesCardAdapter;
 import wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter;
@@ -108,7 +110,11 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemSelect
     private void setUpRecyclerView(RecyclerView recyclerView) {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        GamesCardAdapter mGamesCardAdapter = new GamesCardAdapter();
+        GamesCardAdapter mGamesCardAdapter = new GamesCardAdapter(game -> {
+            Intent intent = new Intent(requireContext(), GameActivity.class);
+            intent.putExtra(GameActivity.GAME_UID, game.getUid());
+            startActivity(intent);
+        });
         recyclerView.setAdapter(mGamesCardAdapter);
 
         searchViewModel.getGamesData()

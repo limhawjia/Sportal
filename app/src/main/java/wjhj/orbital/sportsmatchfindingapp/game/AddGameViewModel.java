@@ -40,6 +40,8 @@ public class AddGameViewModel extends ViewModel {
     private List<ValidationInput<?>> validations;
     private SportalRepo repo;
 
+    private boolean editing;
+
     public AddGameViewModel() {
         sportSelection = new ObservableInt();
         gameName = new ValidationInput<>(text -> text != null && !text.equals(""), "Name cannot be blank.");
@@ -171,10 +173,34 @@ public class AddGameViewModel extends ViewModel {
                     .withDescription(Optional.fromNullable(gameDescription.getInput()))
                     .build();
 
-            repo.addGame(gameUid, game)
-                    .addOnSuccessListener(aVoid -> newGameResult.postValue(new Result<>(game)))
-                    .addOnFailureListener(e -> newGameResult.postValue(new Result<>(e)));
+            if (!editing) {
+                repo.addGame(gameUid, game)
+                        .addOnSuccessListener(aVoid -> newGameResult.postValue(new Result<>(game)))
+                        .addOnFailureListener(e -> newGameResult.postValue(new Result<>(e)));
+            } else {
+//                repo.editGame(gameUid, game)
+//                        .addOnSuccessListener(aVoid -> newGameResult.postValue(new Result<>(game)))
+//                        .addOnFailureListener(e -> newGameResult.postValue(new Result<>(e)));
+            }
         }
+    }
+
+    public void setEditMode(boolean bool) {
+        editing = bool;
+    }
+
+    public void setExistingGame(Game gameData) {
+        sportSelection.set(gameData.getSport().ordinal());
+        gameName.setInput(gameData.getGameName());
+        date.setInput(gameData.getDate());
+        time.setInput(gameData.getTime());
+        duration.setInput(gameData.getDuration());
+        locationPoint = gameData.getLocation();
+        placeName.setInput(gameData.getPlaceName());
+        minPlayersInput.setInput(String.valueOf(gameData.getMinPlayers()));
+        maxPlayersInput.setInput(String.valueOf(gameData.getMinPlayers()));
+        skillLevel.setInput(gameData.getSkillLevel());
+        gameDescription.setInput(gameData.getDescription().orNull());
     }
 
 }
