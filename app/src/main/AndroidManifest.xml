@@ -38,6 +38,9 @@
         <activity
             android:name=".game.AddGameActivity"
             android:parentActivityName=".homepage.HomepageActivity"/>
+
+        <activity android:name=".game.GameActivity"
+            android:parentActivityName=".homepage.HomepageActivity"/>
     </application>
 
 </manifest>

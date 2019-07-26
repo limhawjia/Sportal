@@ -8,6 +8,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ import wjhj.orbital.sportsmatchfindingapp.dialogs.DurationPickerFragment;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.SkillLevelPickerFragment;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.TimePickerFragment;
 import wjhj.orbital.sportsmatchfindingapp.maps.LocationPickerMapFragment;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 
 public class AddGameActivity extends AppCompatActivity implements
         DatePickerFragment.DatePickerListener,
@@ -55,8 +57,16 @@ public class AddGameActivity extends AppCompatActivity implements
         getSupportActionBar().setTitle(R.string.add_game_toolbar_text);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         viewModel = ViewModelProviders.of(this).get(AddGameViewModel.class);
+        if (getIntent().getExtras() != null) {
+            String gameUid = getIntent().getStringExtra(GameActivity.GAME_UID);
+            SportalRepo.getInstance().getGame(gameUid)
+                    .observe(this, viewModel::setExistingGame);
+            viewModel.setEditMode(true);
+            getSupportActionBar().setTitle(R.string.edit_game);
+            binding.addGameButton.setText(R.string.make_changes);
+        }
+
         binding.setAddGameViewModel(viewModel);
         binding.setActivity(this);
         binding.setLifecycleOwner(this);

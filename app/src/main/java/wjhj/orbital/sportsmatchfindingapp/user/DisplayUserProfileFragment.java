@@ -25,6 +25,9 @@ import java.util.Collections;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.DisplayUserProfileFragmentBinding;
+import wjhj.orbital.sportsmatchfindingapp.databinding.GameActionbarBinding;
+import wjhj.orbital.sportsmatchfindingapp.game.Game;
+import wjhj.orbital.sportsmatchfindingapp.game.GameActivity;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesCardAdapter;
 
 /**
@@ -163,7 +166,11 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
 
     private void initGamesCardRecyclerView(RecyclerView recyclerView) {
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-        GamesCardAdapter adapter = new GamesCardAdapter();
+        GamesCardAdapter adapter = new GamesCardAdapter(game -> {
+            Intent intent = new Intent(requireContext(), GameActivity.class);
+            intent.putExtra(GameActivity.GAME_UID, game.getUid());
+            startActivity(intent);
+        });
 
         if (viewModel.isCurrentUser()) {
             viewModel.getPastGames().observe(getViewLifecycleOwner(), games -> {

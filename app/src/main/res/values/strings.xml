@@ -112,4 +112,9 @@
     <string name="display_user_past_games_caps">PAST GAMES</string>
     <string name="display_user_add_friend_to_see_more">Add friend to see more!</string>
 
+    <string name="edit">edit</string>
+    <string name="join">join</string>
+    <string name="leave">leave</string>
+    <string name="edit_game">Edit game</string>
+    <string name="make_changes">Make changes!</string>
 </resources>
