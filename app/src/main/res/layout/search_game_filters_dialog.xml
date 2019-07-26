@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
             name="gameFilters"
@@ -9,7 +9,6 @@
         <import type="wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter" />
     </data>
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/filters_form"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
@@ -51,16 +50,17 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="?attr/selectableItemBackground"
                 android:foreground="@drawable/border"
                 android:outlineAmbientShadowColor="@color/black"
                 android:alpha='@{gameFilters.filter.getTimeOfDayQuery().contains(TimeOfDay.MORNING) ? 1f : 0.2f}'
-                android:onClick="@{gameFilters.toggleMorning}">
+                android:onClick="@{gameFilters::toggleMorning}">
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/icons8_sunrise_64"/>
+                    android:src="@drawable/icons8_sunrise_64"
+                    android:contentDescription="@string/image" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -80,15 +80,16 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:background="?attr/selectableItemBackground"
-                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
                 android:foreground="@drawable/border"
                 android:outlineAmbientShadowColor="@color/black"
                 android:alpha='@{gameFilters.filter.getTimeOfDayQuery().contains(TimeOfDay.AFTERNOON) ? 1f : 0.2f}'
-                android:onClick="@{gameFilters.toggleAfternoon}">
+                android:onClick="@{gameFilters::toggleAfternoon}">
             <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/icons8_sun_100"/>
+                    android:src="@drawable/icons8_sun_100"
+                android:contentDescription="@string/image" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -111,11 +112,12 @@
                 android:foreground="@drawable/border"
                 android:outlineAmbientShadowColor="@color/black"
                 android:alpha='@{gameFilters.filter.getTimeOfDayQuery().contains(TimeOfDay.NIGHT) ? 1f : 0.2f}'
-                android:onClick="@{gameFilters.toggleNight}">
+                android:onClick="@{gameFilters::toggleNight}">
             <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/icons8_crescent_moon_100"/>
+                    android:src="@drawable/icons8_crescent_moon_100"
+                android:contentDescription="@string/image" />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -148,12 +150,12 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="?attr/selectableItemBackground"
                 android:foreground="@drawable/border"
                 android:outlineAmbientShadowColor="@color/black"
                 android:alpha='@{gameFilters.filter.getSkillLevelQuery().contains(Difficulty.BEGINNER) ? 1f : 0.2f}'
-                android:onClick="@{gameFilters.toggleBeginner}">
+                android:onClick="@{gameFilters::toggleBeginner}">
             <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
@@ -176,12 +178,12 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="?attr/selectableItemBackground"
                 android:foreground="@drawable/border"
                 android:outlineAmbientShadowColor="@color/black"
                 android:alpha='@{gameFilters.filter.getSkillLevelQuery().contains(Difficulty.INTERMEDIATE) ? 1f : 0.2f}'
-                android:onClick="@{gameFilters.toggleIntermediate}">
+                android:onClick="@{gameFilters::toggleIntermediate}">
             <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
@@ -208,7 +210,7 @@
                 android:foreground="@drawable/border"
                 android:outlineAmbientShadowColor="@color/black"
                 android:alpha='@{gameFilters.filter.getSkillLevelQuery().contains(Difficulty.ADVANCED) ? 1f : 0.2f}'
-                android:onClick="@{gameFilters.toggleAdvanced}">
+                android:onClick="@{gameFilters::toggleAdvanced}">
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"

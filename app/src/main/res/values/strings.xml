@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- login page -->
     <string name="app_name">Sportal</string>
     <string name="email">Email</string>
@@ -54,6 +54,9 @@
 
     <!-- MapBox access token -->
     <string name="mapbox_access_token">pk.eyJ1IjoiZmVpbnN0ZXIiLCJhIjoiY2p4bGo1cHV3MDZzNzN4b2FxYTFjaWdtaCJ9.B5gBlRa8pB0wRhkx-IN2aw</string>
+
+    <!-- SendBird App ID -->
+    <string name="sendbird_app_id" tools:ignore="TypographyDashes">1BEE8A22-3A86-43E0-BFE1-4D2F6114EA8E</string>
 
     <!-- Add Games Page -->
     <string name="add_game_select_sport">SELECT SPORT</string>
@@ -111,5 +114,9 @@
     <string name="display_user_upcoming_games_caps">UPCOMING GAMES</string>
     <string name="display_user_past_games_caps">PAST GAMES</string>
     <string name="display_user_add_friend_to_see_more">Add friend to see more!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="preferences_edit_profile">Edit Profile:</string>
 
 </resources>

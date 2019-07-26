@@ -63,6 +63,7 @@ public class SearchViewModel extends ViewModel {
         sortComparator = new MutableLiveData<>();
         sortComparator.setValue((game1, game2) -> Integer
                 .compare(game1.getSport().ordinal(), game2.getSport().ordinal()));
+
         liveGamesData.addSource(sortComparator, newComparator -> {
             if (liveGamesData.getValue() != null) {
                 List<Game> currGames = new ArrayList<>(liveGamesData.getValue());

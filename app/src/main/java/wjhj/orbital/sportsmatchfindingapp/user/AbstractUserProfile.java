@@ -41,9 +41,13 @@ public abstract class AbstractUserProfile {
         return Uri.parse("https://firebasestorage.googleapis.com/v0/b/orbital2019-8cd87.appspot.com/o/display-images%2Fdefault_display_pic.png?alt=media&token=7275d878-8ccc-4e46-9c37-3d26ec533a05");
     }
 
+    public abstract List<Sport> getPreferences();
+
     public abstract List<String> getFriendUids();
 
-    public abstract List<Sport> getPreferences();
+    public abstract List<String> getSentFriendRequests();
+
+    public abstract List<String> getReceivedFriendRequests();
 
     public abstract Map<GameStatus, List<String>> getGames();
 }

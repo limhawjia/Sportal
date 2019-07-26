@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -35,6 +36,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import java9.util.stream.StreamSupport;
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
@@ -109,6 +111,21 @@ public class SportalRepo implements ISportalRepo {
                 .set(dataModel, SetOptions.merge());
     }
 
+    @Override
+    public Task<Void> makeFriendRequest(String senderUid, String receiverUid) {
+        WriteBatch batch = db.batch();
+
+        DocumentReference senderDocRef = db.collection(USERS_PATH).document(senderUid);
+        batch.update(senderDocRef, "sentFriendRequests", FieldValue.arrayUnion(receiverUid));
+
+        DocumentReference receiverDocRef = db.collection(USERS_PATH).document(receiverUid);
+        batch.update(receiverDocRef, "receivedFriendRequests", FieldValue.arrayUnion(senderUid));
+
+        return batch.commit()
+                .addOnSuccessListener(aVoid -> Timber.d("Friend request success"))
+                .addOnFailureListener(e -> Timber.d(e, "Friend request failed"));
+    }
+
     @SuppressWarnings("ConstantConditions")
     @Override
     public Task<Boolean> isProfileSetUp(String uid) {
@@ -122,6 +139,8 @@ public class SportalRepo implements ISportalRepo {
     public LiveData<UserProfile> getUser(String userUid) {
         return mUserProfilesCache.getUnchecked(userUid);
     }
+
+
 
     @Override
     public LiveData<List<UserProfile>> selectUsersStartingWith(String field, String queryText) {
@@ -313,13 +332,10 @@ public class SportalRepo implements ISportalRepo {
             }
         }
 
-        List<String> friendUids = dataModel.getFriendUids() == null
-                ? new ArrayList<>()
-                : dataModel.getFriendUids();
-
-        List<Sport> preferences = dataModel.getPreferences() == null
-                ? new ArrayList<>()
-                : dataModel.getPreferences();
+        List<Sport> preferences = orEmptyList(dataModel.getPreferences());
+        List<String> friendUids = orEmptyList(dataModel.getFriendUids());
+        List<String> sentFriendRequests = orEmptyList(dataModel.getSentFriendRequests());
+        List<String> receivedFriendRequests = orEmptyList(dataModel.getReceivedFriendRequests());
 
         return UserProfile.builder()
                 .withDisplayName(dataModel.getDisplayName())
@@ -329,8 +345,10 @@ public class SportalRepo implements ISportalRepo {
                 .withUid(dataModel.getUid())
                 .withDisplayPicUri(Uri.parse(dataModel.getDisplayPicUri()))
                 .withBio(Optional.fromNullable(dataModel.getBio()))
-                .addAllFriendUids(friendUids)
                 .addAllPreferences(preferences)
+                .addAllFriendUids(friendUids)
+                .addAllSentFriendRequests(sentFriendRequests)
+                .addAllReceivedFriendRequests(receivedFriendRequests)
                 .putAllGames(newMap)
                 .build();
     }
@@ -373,6 +391,14 @@ public class SportalRepo implements ISportalRepo {
             newList.add(toGame(dataModel));
         }
         return newList;
+    }
+
+    private <T> List<T> orEmptyList(@Nullable List<T> list) {
+        if (list == null) {
+            return new ArrayList<>();
+        } else {
+            return list;
+        }
     }
 
     private void test() {

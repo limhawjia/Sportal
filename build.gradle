@@ -5,6 +5,7 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
+        maven { url "https://raw.githubusercontent.com/sendbird/SendBird-SDK-Android/master/"}
     }
 
     dependencies {

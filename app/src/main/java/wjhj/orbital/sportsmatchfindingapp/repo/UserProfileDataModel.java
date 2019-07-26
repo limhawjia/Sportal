@@ -19,10 +19,11 @@ class UserProfileDataModel {
     private String uid;
     private String bio;
     private String displayPicUri;
-    private List<String> friendUids;
     private List<Sport> preferences;
+    private List<String> friendUids;
+    private List<String> sentFriendRequests;
+    private List<String> receivedFriendRequests;
     private Map<String, List<String>> games;
-    private boolean profileSetup;
 
     // Mandatory no args constructor
     public UserProfileDataModel() {
@@ -36,8 +37,10 @@ class UserProfileDataModel {
         uid = userProfile.getUid();
         bio = userProfile.getBio().orNull();
         displayPicUri = userProfile.getDisplayPicUri().toString();
-        friendUids = userProfile.getFriendUids();
         preferences = userProfile.getPreferences();
+        friendUids = userProfile.getFriendUids();
+        sentFriendRequests = userProfile.getSentFriendRequests();
+        receivedFriendRequests = userProfile.getReceivedFriendRequests();
         games = convertGames(userProfile.getGames());
     }
 
@@ -69,12 +72,20 @@ class UserProfileDataModel {
         return displayPicUri;
     }
 
+    public List<Sport> getPreferences() {
+        return preferences;
+    }
+
     public List<String> getFriendUids() {
         return friendUids;
     }
 
-    public List<Sport> getPreferences() {
-        return preferences;
+    public List<String> getSentFriendRequests() {
+        return sentFriendRequests;
+    }
+
+    public List<String> getReceivedFriendRequests() {
+        return receivedFriendRequests;
     }
 
     public Map<String, List<String>> getGames() {

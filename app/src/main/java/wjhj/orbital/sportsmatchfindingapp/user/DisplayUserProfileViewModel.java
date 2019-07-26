@@ -24,6 +24,7 @@ import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 public class DisplayUserProfileViewModel extends ViewModel {
 
     private final SportalRepo repo;
+    private final String mDisplayedUserUid;
 
     private String currUserUid;
     private boolean isCurrentUser;
@@ -45,13 +46,14 @@ public class DisplayUserProfileViewModel extends ViewModel {
     private LiveData<List<Sport>> preferences;
 
 
-    public DisplayUserProfileViewModel(String userUid) {
+    public DisplayUserProfileViewModel(String displayedUserUid) {
+        mDisplayedUserUid = displayedUserUid;
         repo = SportalRepo.getInstance();
-        LiveData<UserProfile> userProfile = repo.getUser(userUid);
+        LiveData<UserProfile> userProfile = repo.getUser(displayedUserUid);
 
         FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
         currUserUid = currUser == null ? "" : currUser.getUid();
-        isCurrentUser = (currUserUid.equals(userUid));
+        isCurrentUser = (currUserUid.equals(displayedUserUid));
 
         allGameIds = Transformations.map(userProfile, UserProfile::getGames);
         numGamesPlayed = Transformations.map(allGameIds, games -> games.get(GameStatus.COMPLETED).size());
@@ -160,4 +162,7 @@ public class DisplayUserProfileViewModel extends ViewModel {
         return isFriend;
     }
 
+    public void addFriend(String senderUid) {
+        repo.makeFriendRequest(senderUid, mDisplayedUserUid);
+    }
 }
