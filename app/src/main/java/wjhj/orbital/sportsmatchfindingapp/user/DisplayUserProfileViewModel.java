@@ -15,11 +15,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
+import wjhj.orbital.sportsmatchfindingapp.utils.BatchTransformations;
 
 public class DisplayUserProfileViewModel extends ViewModel {
 
@@ -136,18 +138,7 @@ public class DisplayUserProfileViewModel extends ViewModel {
     }
 
     private LiveData<List<UserProfile>> loadFriends() {
-        return Transformations.switchMap(allFriendUids, uids -> {
-            MediatorLiveData<List<UserProfile>> mediatorLiveData = new MediatorLiveData<>();
-            Map<String, UserProfile> friends = new HashMap<>();
-            for (String id : uids) {
-                mediatorLiveData.addSource(repo.getUser(id), profile -> {
-                    friends.put(profile.getUid(), profile);
-                    mediatorLiveData.postValue(new ArrayList<>(friends.values()));
-                });
-            }
-            mediatorLiveData.postValue(new ArrayList<>(friends.values()));
-            return mediatorLiveData;
-        });
+        return BatchTransformations.switchMapList(allFriendUids, repo::getUser, UserProfile::getUid);
     }
 
     public LiveData<List<UserProfile>> getFriends() {
@@ -199,7 +190,11 @@ public class DisplayUserProfileViewModel extends ViewModel {
         return isFriend;
     }
 
-    public void addFriend() {
+    void addFriend() {
         repo.makeFriendRequest(currUserUid, mDisplayedUserUid);
+    }
+
+    void acceptFriendRequest() {
+        repo.acceptFriendRequest(mDisplayedUserUid, currUserUid);
     }
 }

@@ -120,5 +120,8 @@
     <string name="preferences_edit_profile">Edit Profile:</string>
     <string name="display_profile_friend_request_pending">Friend request pending</string>
     <string name="display_user_accept_friend_request">Accept friend request</string>
+    <string name="friend_request_accept">Accept</string>
+    <string name="friend_request_decline">Decline</string>
+    <string name="social_requests_no_requests_text">No friend requests</string>
 
 </resources>

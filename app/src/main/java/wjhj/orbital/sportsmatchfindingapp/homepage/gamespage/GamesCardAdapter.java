@@ -49,6 +49,7 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
         return games.size();
     }
 
+
     static class CardViewHolder extends RecyclerView.ViewHolder {
 
         CardView cardView;
@@ -62,6 +63,7 @@ public class GamesCardAdapter extends RecyclerView.Adapter<GamesCardAdapter.Card
 
         private void setGame(Game game) {
             cardBinding.setGame(game);
+            cardBinding.executePendingBindings();
         }
     }
 }

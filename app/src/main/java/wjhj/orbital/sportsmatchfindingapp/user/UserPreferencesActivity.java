@@ -39,7 +39,6 @@ import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 
 public class UserPreferencesActivity extends AppCompatActivity implements DatePickerFragment.DatePickerListener {
 
-    public static String PREFERENCES_DEBUG = "preferences";
     public static final String DISPLAY_NAME_TAG = "display_name";
     public static final String EDIT_PROFILE_TAG = "edit_profile";
     public static final int PICK_DISPLAY_IMAGE_RC = 1;

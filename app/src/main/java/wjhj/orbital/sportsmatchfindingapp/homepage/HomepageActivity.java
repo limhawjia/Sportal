@@ -49,9 +49,7 @@ public class HomepageActivity extends AppCompatActivity implements
         SearchFilterDialogFragment.SearchFilterDialogListener,
         SportMultiSelectDialogFragment.SportMultiSelectDialogListener {
 
-    public static final String CURR_USER_TAG = "current_user";
     public static final String DISPLAY_PROFILE_PIC_TAG = "display_profile_pic";
-    public static final String HOMEPAGE_DEBUG = "homepage";
     private static final int ADD_GAME_RC = 1;
 
     private FirebaseUser currUser;
@@ -62,7 +60,7 @@ public class HomepageActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(HOMEPAGE_DEBUG, "homepage activity created");
+        Timber.d("Homepage activity created");
 
         currUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -129,6 +127,7 @@ public class HomepageActivity extends AppCompatActivity implements
         Authentications auths = new Authentications();
         auths.logOutFirebase();
         auths.logOutGoogle(this);
+        SportalRepo.getInstance().refreshCache();
         Intent logoutIntent = new Intent(this, LoginActivity.class);
         startActivity(logoutIntent);
         finish();

@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.databinding.BindingAdapter;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class BindingAdapters {
@@ -31,6 +32,14 @@ public class BindingAdapters {
     @BindingAdapter("android:imageUri")
     public static void setImageUri(ImageView view, Uri uri) {
         Glide.with(view).load(uri).into(view);
+    }
+
+    @BindingAdapter("android:circularImageUri")
+    public static void setCircularImageResources(ImageView view, Uri uri) {
+        Glide.with(view)
+                .load(uri)
+                .apply(RequestOptions.circleCropTransform())
+                .into(view);
     }
 
     @BindingAdapter("android:drawableStartResource")

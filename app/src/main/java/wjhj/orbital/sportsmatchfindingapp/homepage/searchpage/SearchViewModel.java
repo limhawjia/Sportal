@@ -2,36 +2,25 @@ package wjhj.orbital.sportsmatchfindingapp.homepage.searchpage;
 
 import android.util.Log;
 
-import androidx.databinding.BaseObservable;
-import androidx.databinding.Bindable;
-import androidx.databinding.InverseMethod;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
-import androidx.recyclerview.widget.DiffUtil;
 
 import com.google.common.collect.ImmutableList;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import java9.util.stream.StreamSupport;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
-import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesDiffCallback;
 import wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
-import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
 
 public class SearchViewModel extends ViewModel {
@@ -126,7 +115,7 @@ public class SearchViewModel extends ViewModel {
         } else if (sports.size() == 1) {
             return sports.toArray(new Sport[1])[0].toString();
         } else {
-            return sports.size() + " sports";
+            return sports.size() + " Sports";
         }
     }
 

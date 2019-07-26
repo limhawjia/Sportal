@@ -22,7 +22,7 @@ import wjhj.orbital.sportsmatchfindingapp.R;
 
 public class Authentications {
 
-    final FirebaseAuth firebaseAuth;
+    private final FirebaseAuth firebaseAuth;
 
     public Authentications() {
         firebaseAuth = FirebaseAuth.getInstance();

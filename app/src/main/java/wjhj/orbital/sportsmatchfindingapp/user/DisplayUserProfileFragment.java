@@ -120,7 +120,7 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
                     updateButton(actionButton,
                             ContextCompat.getColor(requireActivity(), R.color.green),
                             requireActivity().getString(R.string.display_user_accept_friend_request),
-                            v -> {},
+                            v -> viewModel.acceptFriendRequest(),
                             true);
 
                 }
@@ -178,10 +178,7 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
                 RecyclerView.HORIZONTAL, false);
 
         FriendProfilesAdapter adapter = new FriendProfilesAdapter(this);
-        viewModel.getFriends().observe(getViewLifecycleOwner(), friends -> {
-            Log.d("TESTINGG", friends.toString());
-            adapter.updateFriends(friends);
-        });
+        viewModel.getFriends().observe(getViewLifecycleOwner(), adapter::updateFriends);
 
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
@@ -211,7 +208,7 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
     public void onUserProfileClick(String uid) {
         FragmentManager manager = requireActivity().getSupportFragmentManager();
         manager.beginTransaction()
-                .replace(((ViewGroup) requireView().getParent()).getId(), DisplayUserProfileFragment.newInstance(uid))
+                .replace(R.id.homepage_secondary_fragment_container, DisplayUserProfileFragment.newInstance(uid))
                 .addToBackStack(null)
                 .commit();
     }

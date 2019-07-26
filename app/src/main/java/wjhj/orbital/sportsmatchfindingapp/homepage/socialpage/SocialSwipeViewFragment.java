@@ -59,7 +59,7 @@ public class SocialSwipeViewFragment extends Fragment {
     }
 
     static class SocialSwipeViewPagerAdapter extends FragmentPagerAdapter {
-        private static final String[] pageTitles = new String[] { "FRIENDS", "CHATS" };
+        private static final String[] pageTitles = new String[] { "FRIENDS", "REQUESTS", "CHATS" };
 
         SocialSwipeViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
             super(fm, behavior);
@@ -74,6 +74,9 @@ public class SocialSwipeViewFragment extends Fragment {
                     fragment = new SocialFriendsFragment();
                     break;
                 case 1:
+                    fragment = SocialRequestsFragment.newInstance(mUserUid);
+                    break;
+                case 2:
                     fragment = SocialChatsFragment.newInstance(mUserUid);
                     break;
                 default:

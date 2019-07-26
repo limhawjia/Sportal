@@ -136,11 +136,27 @@ public class SportalRepo implements ISportalRepo {
 
         DocumentReference receiverDocRef = db.collection(USERS_PATH).document(receiverUid);
         batch.update(receiverDocRef, "receivedFriendRequests", FieldValue.arrayRemove(senderUid));
-        batch.update(receiverDocRef, "friendUid", FieldValue.arrayUnion(senderUid));
+        batch.update(receiverDocRef, "friendUids", FieldValue.arrayUnion(senderUid));
 
         return batch.commit()
                 .addOnSuccessListener(aVoid -> Timber.d("Friend request accept success"))
                 .addOnFailureListener(e -> Timber.d(e, "Friend request accept failed"));
+    }
+
+    @Override
+    public Task<Void> declineFriendRequest(String senderUid, String receiverUid) {
+        WriteBatch batch = db.batch();
+
+        DocumentReference senderDocRef = db.collection(USERS_PATH).document(senderUid);
+        batch.update(senderDocRef, "sentFriendRequests", FieldValue.arrayRemove(receiverUid));
+
+        DocumentReference receiverDocRef = db.collection(USERS_PATH).document(receiverUid);
+        batch.update(receiverDocRef, "receivedFriendRequests", FieldValue.arrayRemove(senderUid));
+
+        return batch.commit()
+                .addOnSuccessListener(aVoid -> Timber.d("Friend request decline success"))
+                .addOnFailureListener(e -> Timber.d(e, "Friend request decline failed"));
+
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -286,6 +302,11 @@ public class SportalRepo implements ISportalRepo {
     }
 
     // HELPER METHOD
+    public void refreshCache() {
+        mUserProfilesCache.invalidateAll();
+        mGamesCache.invalidateAll();
+    }
+
     private <T> LiveData<T> convertToLiveData(DocumentReference docRef, Class<T> valueType) {
         MutableLiveData<T> liveData = new MutableLiveData<>();
         docRef.addSnapshotListener((value, err) -> {
