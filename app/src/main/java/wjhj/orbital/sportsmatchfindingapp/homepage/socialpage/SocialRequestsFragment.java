@@ -75,17 +75,7 @@ public class SocialRequestsFragment extends Fragment {
 
     private void initRecyclerView(RecyclerView recyclerView, TextView textView) {
         LinearLayoutManager manager = new LinearLayoutManager(requireActivity());
-        FriendRequestAdapter adapter = new FriendRequestAdapter(new DiffUtil.ItemCallback<UserProfile>() {
-            @Override
-            public boolean areItemsTheSame(@NonNull UserProfile oldItem, @NonNull UserProfile newItem) {
-                return oldItem.getUid().equals(newItem.getUid());
-            }
-
-            @Override
-            public boolean areContentsTheSame(@NonNull UserProfile oldItem, @NonNull UserProfile newItem) {
-                return oldItem.equals(newItem);
-            }
-        }, this);
+        FriendRequestAdapter adapter = new FriendRequestAdapter(new UserProfileItemCallback(), this);
 
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);

@@ -45,7 +45,6 @@
 
         <activity android:name=".game.GameActivity"
             android:parentActivityName=".homepage.HomepageActivity"/>
-            android:parentActivityName=".homepage.HomepageActivity" />
 
         <service
             android:name=".services.SportalFirebaseMessagingService"

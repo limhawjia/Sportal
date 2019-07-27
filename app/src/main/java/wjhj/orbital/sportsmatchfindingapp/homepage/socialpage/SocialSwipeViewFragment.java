@@ -71,7 +71,7 @@ public class SocialSwipeViewFragment extends Fragment {
             Fragment fragment;
             switch (position) {
                 case 0:
-                    fragment = new SocialFriendsFragment();
+                    fragment = SocialFriendsFragment.newInstance(mUserUid);
                     break;
                 case 1:
                     fragment = SocialRequestsFragment.newInstance(mUserUid);
@@ -80,7 +80,7 @@ public class SocialSwipeViewFragment extends Fragment {
                     fragment = SocialChatsFragment.newInstance(mUserUid);
                     break;
                 default:
-                    fragment = new SocialFriendsFragment();
+                    fragment = SocialFriendsFragment.newInstance(mUserUid); // should not happen
             }
             return fragment;
         }

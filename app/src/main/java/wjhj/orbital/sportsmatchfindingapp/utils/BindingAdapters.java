@@ -7,10 +7,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.List;
 
 public class BindingAdapters {
 
@@ -46,5 +49,4 @@ public class BindingAdapters {
     public static void setDrawableStart(TextView view, int resource) {
         view.setCompoundDrawablesRelativeWithIntrinsicBounds(resource, 0, 0, 0);
     }
-
 }

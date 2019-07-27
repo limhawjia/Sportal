@@ -14,13 +14,6 @@ import android.widget.TextView;
 
 import com.sendbird.android.GroupChannel;
 import com.sendbird.android.GroupChannelParams;
-import com.sendbird.android.OpenChannel;
-import com.sendbird.android.SendBird;
-import com.sendbird.android.SendBirdException;
-import com.sendbird.android.User;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
@@ -29,7 +22,7 @@ import wjhj.orbital.sportsmatchfindingapp.R;
  * A simple {@link Fragment} subclass.
  */
 public class SocialChatsFragment extends Fragment {
-    private static final String USER_UID_TAG = "user_uid";
+    private static final String CURR_USER_UID_TAG = "curr_user_uid";
 
     private String mUserUid;
 
@@ -41,7 +34,7 @@ public class SocialChatsFragment extends Fragment {
     public static SocialChatsFragment newInstance(String userUid) {
         SocialChatsFragment fragment = new SocialChatsFragment();
         Bundle args = new Bundle();
-        args.putString(USER_UID_TAG, userUid);
+        args.putString(CURR_USER_UID_TAG, userUid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -51,7 +44,7 @@ public class SocialChatsFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mUserUid = getArguments().getString(USER_UID_TAG);
+            mUserUid = getArguments().getString(CURR_USER_UID_TAG);
         }
     }
 

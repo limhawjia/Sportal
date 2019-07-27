@@ -129,5 +129,6 @@
     <string name="friend_request_accept">Accept</string>
     <string name="friend_request_decline">Decline</string>
     <string name="social_requests_no_requests_text">No friend requests</string>
+    <string name="friend_card_sports_you_have_in_common">SPORTS IN COMMON:</string>
 
 </resources>

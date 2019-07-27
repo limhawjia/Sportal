@@ -32,10 +32,10 @@ public abstract class DataBindingAdapter<T> extends ListAdapter<T, DataBindingAd
 
     /**
      * Since viewType is the layoutId used by the adapter to inflate the layout, any child Adapter
-     * needs to override getItemViewType() to return the appropriate layout ID.
+     * needs to override getItemViewType(int position) to return the appropriate layout ID.
      * @param parent parent
      * @param viewType layoutId used by the adapter
-     * @return
+     * @return viewHolder
      */
 
     @NonNull
@@ -51,6 +51,8 @@ public abstract class DataBindingAdapter<T> extends ListAdapter<T, DataBindingAd
         holder.bind(getItem(position));
     }
 
+    @Override
+    public abstract int getItemViewType(int position);
 
 
     static class DataBindingViewHolder<T> extends RecyclerView.ViewHolder {
