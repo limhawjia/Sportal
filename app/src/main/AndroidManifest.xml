@@ -33,14 +33,16 @@
         <activity
             android:name=".homepage.HomepageActivity"
             android:windowSoftInputMode="adjustPan"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTask"/>
 
         <activity
             android:name=".game.AddGameActivity"
-            android:parentActivityName=".homepage.HomepageActivity"/>
+            android:parentActivityName=".homepage.HomepageActivity"
+            android:noHistory="true"/>
 
         <activity android:name=".game.GameActivity"
-            android:parentActivityName=".homepage.HomepageActivity"/>
+            android:parentActivityName=".homepage.HomepageActivity"
+            android:launchMode="singleTask"/>
     </application>
 
 </manifest>

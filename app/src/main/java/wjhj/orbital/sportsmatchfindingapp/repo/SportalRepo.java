@@ -1,20 +1,24 @@
 package wjhj.orbital.sportsmatchfindingapp.repo;
 
 import android.net.Uri;
+import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -178,6 +182,40 @@ public class SportalRepo implements ISportalRepo {
     @Override
     public LiveData<Game> getGame(String gameID) {
         return mGamesCache.getUnchecked(gameID);
+    }
+
+    public LiveData<List<UserProfile>> getParticipatingUsers(String gameId) {
+        LiveData<List<String>> listOfUserIds =
+                Transformations.map(getGame(gameId), Game::getParticipatingUids);
+        MediatorLiveData<HashMap<String, UserProfile>> participants = new MediatorLiveData<>();
+        HashMap<String, UserProfile> profiles = new HashMap<>();
+        participants.setValue(profiles);
+
+        participants.addSource(listOfUserIds, list -> {
+            for (String existingUser : profiles.keySet()) {
+                if (!list.contains(existingUser)) {
+                    profiles.remove(existingUser);
+                }
+            }
+            List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
+            for (String uid: list) {
+                Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection("Users")
+                        .document(uid).get();
+                task.addOnSuccessListener(snapshot -> {
+                    UserProfileDataModel profile = snapshot.toObject(UserProfileDataModel.class);
+                    if (profile != null) {
+                        profiles.put(uid, toUserProfile(profile));
+                    } else {
+                        Log.d("hi", snapshot.toString());
+                    }
+                });
+                tasks.add(task);
+            }
+
+            Tasks.whenAllSuccess(tasks).addOnSuccessListener(results -> participants.setValue(profiles));
+        });
+
+        return Transformations.map(participants, x -> new ArrayList<>(x.values()));
     }
 
     @Override

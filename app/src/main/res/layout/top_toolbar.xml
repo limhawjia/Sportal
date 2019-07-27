@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:background="@color/colorPrimary"
     android:elevation="8dp"
-    android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
-    app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light">
+    android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+    app:popupTheme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
 </com.google.android.material.appbar.MaterialToolbar>

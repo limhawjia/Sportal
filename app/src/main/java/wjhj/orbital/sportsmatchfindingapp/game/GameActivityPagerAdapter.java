@@ -5,13 +5,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.lifecycle.LiveData;
 
 import com.google.common.collect.ImmutableList;
 
 import wjhj.orbital.sportsmatchfindingapp.homepage.searchpage.SearchFragment;
 
 public class GameActivityPagerAdapter extends FragmentPagerAdapter {
-    private Game mGame;
+    private String gameUid;
 
     public GameActivityPagerAdapter(FragmentManager fm) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
@@ -22,7 +23,9 @@ public class GameActivityPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return SearchFragment.newInstance(ImmutableList.<Sport>builder().build());
+//                return GameDetailsFragment.newInstance(gameUid);
+                return GameDetailsFragment.newInstance(gameUid);
+
             case 1:
                 return SearchFragment.newInstance(ImmutableList.<Sport>builder().build());
         }
@@ -47,7 +50,7 @@ public class GameActivityPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    public void setGame(Game game) {
-        this.mGame = game;
+    public void setGame(String uid) {
+        this.gameUid = uid;
     }
 }

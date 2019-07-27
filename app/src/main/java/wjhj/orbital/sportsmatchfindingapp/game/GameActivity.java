@@ -1,12 +1,18 @@
 package wjhj.orbital.sportsmatchfindingapp.game;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.ActionBar;
@@ -33,6 +39,7 @@ public class GameActivity extends AppCompatActivity {
     private int ADD_GAME_RC = 2;
     private GameActivityBinding binding;
     private GameActivityPagerAdapter mPagerAdapter;
+    private String gameUid;
     private LiveData<Game> mGameLiveData;
 
     public GameActivity() {
@@ -42,17 +49,27 @@ public class GameActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mGameLiveData = SportalRepo.getInstance().getGame(getIntent().getStringExtra(GAME_UID));
+        gameUid = getIntent().getStringExtra(GAME_UID);
+        mGameLiveData = SportalRepo.getInstance().getGame(gameUid);
 
         binding = DataBindingUtil.setContentView(this, R.layout.game_activity);
-        mPagerAdapter = new GameActivityPagerAdapter(getSupportFragmentManager());
-        binding.gameActivityViewPager.setAdapter(mPagerAdapter);
-        binding.gameActivityTabLayout.setupWithViewPager(binding.gameActivityViewPager);
+        setUpPageAdapter();
+        setUpActionBar();
 
         setContentView(binding.getRoot());
+    }
+
+    private void setUpActionBar() {
         setSupportActionBar((Toolbar) binding.topToolbar);
         Transformations.map(mGameLiveData, Game::getGameName)
                 .observe(this, getSupportActionBar()::setTitle);
+    }
+
+    private void setUpPageAdapter() {
+        mPagerAdapter = new GameActivityPagerAdapter(getSupportFragmentManager());
+        mPagerAdapter.setGame(gameUid);
+        binding.gameActivityViewPager.setAdapter(mPagerAdapter);
+        binding.gameActivityTabLayout.setupWithViewPager(binding.gameActivityViewPager);
     }
 
     @Override
@@ -69,7 +86,7 @@ public class GameActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_edit) {
             Intent addGameIntent = new Intent(this, AddGameActivity.class);
-            addGameIntent.putExtra(GAME_UID, mGameLiveData.getValue().getUid());
+            addGameIntent.putExtra(GAME_UID, gameUid);
             startActivityForResult(addGameIntent, ADD_GAME_RC);
         }
         return true;
