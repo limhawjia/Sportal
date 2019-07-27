@@ -6,6 +6,7 @@
         <variable
             name="viewModel"
             type="wjhj.orbital.sportsmatchfindingapp.game.GameDetailsViewModel" />
+
         <import type="android.view.View" />
     </data>
 
@@ -34,40 +35,131 @@
                     android:src="@drawable/football" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/Sport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/picture"
+                android:layout_marginTop="16dp"
+                android:background="@color/colorPrimary"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingLeft="8dp"
+                    android:text="@{viewModel.sport.toString().toUpperCase()}"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:bindingSrcWhiteOverlay="@{viewModel.sport.iconResourceId}"
+                    android:scaleType="centerInside" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/days_left"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/Sport"
+                android:background="@color/white"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingLeft="8dp"
+                    android:text="@{viewModel.dayOfWeek.toUpperCase()}"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:paddingRight="8dp"
+                    android:text="@{viewModel.daysLeft}"
+                    android:textAlignment="viewEnd"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/participants"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/picture"
-                android:layout_marginTop="8dp"
+                android:layout_below="@id/days_left"
+                android:layout_marginTop="16dp"
                 android:background="@color/white"
-                android:orientation="vertical"
-                android:padding="8dp">
+                android:orientation="vertical">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@{viewModel.ready ? @color/green : @color/red}"
+                    android:orientation="vertical"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="8dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewModel.minPlayers - viewModel.participating + ` MORE PLAYERS NEEDED`}"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:visibility="@{viewModel.ready ? View.GONE : View.VISIBLE}" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/game_ready"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:visibility="@{!viewModel.ready ? View.GONE : View.VISIBLE}" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/participants_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
                     android:text="@string/game_details_title"
                     android:textColor="@color/black" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/participants_recycler"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp" />
+                    android:layout_marginTop="8dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/participants_recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:visibility="@{viewModel.participating == 0 ? View.VISIBLE : View.GONE}"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="8dp"
+                    android:text="@string/no_players"
                     android:textColor="@color/red"
-                    android:text="@string/no_players"/>
+                    android:visibility="@{viewModel.participating == 0 ? View.VISIBLE : View.GONE}" />
 
                 <LinearLayout
                     android:id="@+id/participants_details"
@@ -81,120 +173,98 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
                         android:text="@{@string/game_details_participating(viewModel.participating, viewModel.maxPlayers)}"
                         android:textSize="12sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
                         android:text="@{@string/game_details_min_players(viewModel.minPlayers)}"
                         android:textColor="@{viewModel.ready ? @color/green : @color/red}"
                         android:textSize="12sp" />
                 </LinearLayout>
 
-                <ProgressBar
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_marginTop="8dp"
-                    android:progress="@{viewModel.progress}"/>
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textColor="@color/white"
-                    android:background="@color/red"
-                    android:padding="8dp"
-                    android:visibility="@{viewModel.ready ? View.GONE : View.VISIBLE}"
-                    android:text="@{viewModel.minPlayers - viewModel.participating + ` MORE PLAYERS NEEDED`}"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:padding="8dp"
-                    android:textColor="@color/white"
-                    android:background="@color/green"
-                    android:visibility="@{!viewModel.ready ? View.GONE : View.VISIBLE}"
-                    android:text="@string/game_ready"/>
+                    <ProgressBar
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:progress="@{viewModel.progress}" />
+                </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/Sport"
+
+            <TextView
+                android:id="@+id/details_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:padding="8dp"
-                android:background="@color/white"
-                android:layout_below="@id/participants">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:text="@{viewModel.sport.toString().toUpperCase()}"/>
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerInside"
-                    android:bindingSrc="@{viewModel.sport.iconResourceId}"/>
-            </LinearLayout>
-
+                android:layout_below="@+id/participants"
+                android:background="@color/gray"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/details"/>
             <LinearLayout
                 android:id="@+id/details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_below="@id/Sport"
-                android:layout_marginTop="8dp"
+                android:layout_below="@id/details_title"
                 android:background="@color/white"
-                android:padding="8dp">
+                android:orientation="vertical"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
                     android:drawableStart="@drawable/ic_date_range_black_24dp"
                     android:drawablePadding="16dp"
                     android:gravity="center_vertical"
-                    android:text="@{viewModel.date}"/>
+                    android:padding="8dp"
+                    android:text="@{viewModel.date}" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
                     android:drawableStart="@drawable/ic_access_time_black_24dp"
                     android:drawablePadding="16dp"
                     android:gravity="center_vertical"
-                    android:text="@{viewModel.time}"/>
+                    android:padding="8dp"
+                    android:text="@{viewModel.time}" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
                     android:drawableStart="@drawable/ic_hourglass_empty_black_24dp"
                     android:drawablePadding="16dp"
                     android:gravity="center_vertical"
-                    android:text="@{viewModel.duration}"/>
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="@{viewModel.duration}" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
                     android:drawableStart="@drawable/ic_levels_black_24dp"
                     android:drawablePadding="16dp"
                     android:gravity="center_vertical"
-                    android:text="@{viewModel.skillLevel}"/>
+                    android:padding="8dp"
+                    android:text="@{viewModel.skillLevel}" />
 
 
             </LinearLayout>
@@ -204,39 +274,69 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/details"
-                android:layout_marginTop="8dp"
-                android:padding="8dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/white"
                 android:orientation="vertical"
-                android:background="@color/white">
+                android:padding="8dp">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="@string/more_info"
                     android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:text="@string/more_info"/>
+                    android:textStyle="bold" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:text="@{viewModel.description}"/>
+                    android:text="@{viewModel.description}" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/owner_information"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="vertical"
-                android:layout_below="@id/description">
+                android:layout_below="@id/description"
+                android:layout_marginTop="16dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingBottom="8dp"
+                android:layout_marginBottom="16dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
+                    android:text="@string/about_owner"
                     android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:text="@string/about_owner"/>
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:textSize="24sp"
+                        android:text="@{viewModel.ownerName}"/>
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:scaleType="centerCrop"
+                        android:imageUri="@{viewModel.ownerDisplayUri}"/>
+                </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
     </ScrollView>
