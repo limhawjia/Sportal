@@ -8,11 +8,12 @@
             name="item"
             type="wjhj.orbital.sportsmatchfindingapp.user.AbstractUserProfile" />
         <variable
-            name="controller"
-            type="wjhj.orbital.sportsmatchfindingapp.homepage.socialpage.SocialRequestsFragment" />
+            name="listener"
+            type="wjhj.orbital.sportsmatchfindingapp.utils.DataBindingAdapter.ItemClickListener" />
     </data>
 
     <RelativeLayout
+        android:id="@+id/friend_request_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -20,7 +21,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp"
         android:gravity="center_vertical"
-        android:onClick="@{v -> controller.openProfile(item.uid)}">
+        android:onClick="@{v -> listener.onItemClick(v, item)}">
 
         <ImageView
             android:id="@+id/friend_request_profile_pic"
@@ -46,13 +47,14 @@
             android:layout_centerVertical="true"/>
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/friend_request_accept_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
             android:text="@string/friend_request_accept"
             android:textSize="12sp"
             android:background="@color/colorPrimary"
-            android:onClick="@{v -> controller.acceptFriendRequest(item.uid)}"
+            android:onClick="@{v -> listener.onItemClick(v, item)}"
             android:layout_toStartOf="@id/friend_request_decline_button"
             tools:ignore="RelativeOverlap"
             android:layout_centerVertical="true"/>
@@ -65,7 +67,7 @@
             android:layout_margin="8dp"
             android:text="@string/friend_request_decline"
             android:textSize="12sp"
-            android:onClick="@{v -> controller.declineFriendRequest(item.uid)}"
+            android:onClick="@{v -> listener.onItemClick(v, item)}"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"/>
 

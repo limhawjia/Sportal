@@ -47,7 +47,7 @@
             android:parentActivityName=".homepage.HomepageActivity"/>
 
         <service
-            android:name=".services.SportalFirebaseMessagingService"
+            android:name=".messaging.SportalFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

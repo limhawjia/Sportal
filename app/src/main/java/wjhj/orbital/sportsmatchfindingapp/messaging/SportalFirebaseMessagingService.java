@@ -1,4 +1,4 @@
-package wjhj.orbital.sportsmatchfindingapp.services;
+package wjhj.orbital.sportsmatchfindingapp.messaging;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 

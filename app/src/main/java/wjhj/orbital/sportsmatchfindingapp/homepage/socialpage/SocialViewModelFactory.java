@@ -6,18 +6,20 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class SocialFriendsViewModelFactory implements ViewModelProvider.Factory {
+public class SocialViewModelFactory implements ViewModelProvider.Factory {
 
     private final String userUid;
 
-    public SocialFriendsViewModelFactory(String userUid) {
+    SocialViewModelFactory(String userUid) {
         this.userUid = userUid;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (SocialFriendsViewModel.class.isAssignableFrom(modelClass)) {
+        if (SocialFriendsViewModel.class.isAssignableFrom(modelClass) ||
+                SocialChatsViewModel.class.isAssignableFrom(modelClass)) {
+
             try {
                 return modelClass.getConstructor(String.class).newInstance(userUid);
 
