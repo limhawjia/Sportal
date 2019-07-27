@@ -13,6 +13,7 @@ import com.google.firebase.firestore.auth.User;
 import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import java.util.List;
 import java.util.Optional;
@@ -169,7 +170,7 @@ public class GameDetailsViewModel extends ViewModel {
     }
 
     private String getDaysLeft(LocalDate date) {
-        int daysLeft = LocalDate.now().until(date).getDays();
+        long daysLeft = LocalDate.now().until(date, ChronoUnit.DAYS);
         if (daysLeft == 0) {
             return "TODAY";
         } else {
