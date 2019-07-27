@@ -6,8 +6,7 @@
         <variable
             name="viewModel"
             type="wjhj.orbital.sportsmatchfindingapp.game.GameDetailsViewModel" />
-        <import type="wjhj.orbital.sportsmatchfindingapp.game.Game" />
-        <import type="wjhj.orbital.sportsmatchfindingapp.game.Sport" />
+        <import type="android.view.View" />
     </data>
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -37,6 +36,7 @@
 
 
             <LinearLayout
+                android:id="@+id/participants"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/picture"
@@ -61,6 +61,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp" />
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:visibility="@{viewModel.participating == 0 ? View.VISIBLE : View.GONE}"
+                    android:textColor="@color/red"
+                    android:text="@string/no_players"/>
+
                 <LinearLayout
                     android:id="@+id/participants_details"
                     android:layout_width="match_parent"
@@ -76,7 +84,6 @@
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
                         android:text="@{@string/game_details_participating(viewModel.participating, viewModel.maxPlayers)}"
-                        android:textFontWeight="700"
                         android:textSize="12sp" />
 
                     <TextView
@@ -88,20 +95,148 @@
                         android:textColor="@{viewModel.ready ? @color/green : @color/red}"
                         android:textSize="12sp" />
                 </LinearLayout>
+
+                <ProgressBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_marginTop="8dp"
+                    android:progress="@{viewModel.progress}"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:background="@color/red"
+                    android:padding="8dp"
+                    android:visibility="@{viewModel.ready ? View.GONE : View.VISIBLE}"
+                    android:text="@{viewModel.minPlayers - viewModel.participating + ` MORE PLAYERS NEEDED`}"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:padding="8dp"
+                    android:textColor="@color/white"
+                    android:background="@color/green"
+                    android:visibility="@{!viewModel.ready ? View.GONE : View.VISIBLE}"
+                    android:text="@string/game_ready"/>
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/Sport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:padding="8dp">
+                android:padding="8dp"
+                android:background="@color/white"
+                android:layout_below="@id/participants">
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="8dp"
-                    android:textSize="16sp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:textSize="24sp"
                     android:textStyle="bold"
-                    android:text="@{viewModel.game.sport.toString}"/>
+                    android:text="@{viewModel.sport.toString().toUpperCase()}"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerInside"
+                    android:bindingSrc="@{viewModel.sport.iconResourceId}"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@id/Sport"
+                android:layout_marginTop="8dp"
+                android:background="@color/white"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:drawableStart="@drawable/ic_date_range_black_24dp"
+                    android:drawablePadding="16dp"
+                    android:gravity="center_vertical"
+                    android:text="@{viewModel.date}"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:drawableStart="@drawable/ic_access_time_black_24dp"
+                    android:drawablePadding="16dp"
+                    android:gravity="center_vertical"
+                    android:text="@{viewModel.time}"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:drawableStart="@drawable/ic_hourglass_empty_black_24dp"
+                    android:drawablePadding="16dp"
+                    android:gravity="center_vertical"
+                    android:text="@{viewModel.duration}"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:drawableStart="@drawable/ic_levels_black_24dp"
+                    android:drawablePadding="16dp"
+                    android:gravity="center_vertical"
+                    android:text="@{viewModel.skillLevel}"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/details"
+                android:layout_marginTop="8dp"
+                android:padding="8dp"
+                android:orientation="vertical"
+                android:background="@color/white">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:text="@string/more_info"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="@{viewModel.description}"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/owner_information"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                android:layout_below="@id/description">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:text="@string/about_owner"/>
             </LinearLayout>
         </RelativeLayout>
     </ScrollView>

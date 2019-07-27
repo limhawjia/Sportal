@@ -7,14 +7,18 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import org.threeten.bp.Duration;
+import org.threeten.bp.format.DateTimeFormatter;
+
 import java.util.List;
+import java.util.Optional;
 
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
+import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
 public class GameDetailsViewModel extends ViewModel {
-    public LiveData<List<String>> getmParticipants() {
-        return mParticipants;
-    }
+    private DateTimeFormatter dateformatter = DateTimeFormatter.ofPattern("dd LLLL yyyy");
+    private DateTimeFormatter timeformatter = DateTimeFormatter.ofPattern("HH:mm");
 
     private LiveData<Game> mGame;
     private LiveData<List<String>> mParticipants;
@@ -22,6 +26,14 @@ public class GameDetailsViewModel extends ViewModel {
     private LiveData<Integer> mMaxPlayers;
     private LiveData<Integer> mMinPlayers;
     private MediatorLiveData<Boolean> mReady;
+    private LiveData<Sport> mSport;
+    private LiveData<String> mDate;
+    private LiveData<String> mTime;
+    private LiveData<String> mSkillLevel;
+    private LiveData<String> mDuration;
+    private MediatorLiveData<Integer> mProgress;
+    private LiveData<UserProfile> mOwner;
+    private LiveData<String> mDescription;
 
     public GameDetailsViewModel(String gameUid) {
         mGame = SportalRepo.getInstance().getGame(gameUid);
@@ -46,6 +58,33 @@ public class GameDetailsViewModel extends ViewModel {
                 mReady.setValue(false);
             }
         });
+        mSport = Transformations.map(mGame, Game::getSport);
+        mDate = Transformations.map(mGame, game -> dateformatter.format(game.getDate()));
+        mTime = Transformations.map(mGame, game -> timeformatter.format(game.getTime()));
+        mDuration = Transformations.map(mGame, game -> toDurationString(game.getDuration()));
+        mSkillLevel = Transformations.map(mGame, game -> game.getSkillLevel().toString());
+        mProgress = new MediatorLiveData<>();
+        mProgress.addSource(mNumParticipating, num -> {
+            Integer min = mMinPlayers.getValue();
+            if (min != null) {
+                int progress = num * 100 / min;
+                mProgress.setValue(progress);
+            } else {
+                mProgress.setValue(0);
+            }
+        });
+        mProgress.addSource(mMinPlayers, min -> {
+            Integer num = mNumParticipating.getValue();
+            if (num != null) {
+                int progress = num * 100 / min;
+                mProgress.setValue(progress);
+            } else {
+                mProgress.setValue(0);
+            }
+        });
+        mOwner = Transformations
+                .switchMap(mGame, game -> SportalRepo.getInstance().getUser(game.getCreatorUid()));
+        mDescription = Transformations.map(mGame, game -> game.getDescription().or(""));
     }
 
     public LiveData<Game> getGame() {
@@ -71,4 +110,36 @@ public class GameDetailsViewModel extends ViewModel {
     public LiveData<Boolean> getReady() {
         return mReady;
     }
+
+    public LiveData<Sport> getSport() { return mSport; }
+
+    public LiveData<String> getDate() { return mDate; }
+
+    public LiveData<String> getTime() { return mTime ;}
+
+    public LiveData<String> getDuration() { return mDuration; }
+
+    public LiveData<String> getSkillLevel() { return mSkillLevel; }
+
+    public LiveData<Integer> getProgress() {
+        return mProgress;
+    }
+
+    public LiveData<UserProfile> getOwner() {
+        return mOwner;
+    }
+
+    public LiveData<String> getDescription() {
+        return mDescription;
+    }
+
+    private String toDurationString(Duration duration) {
+        if (duration == null) {
+            return null;
+        }
+        long hours = duration.getSeconds() / 3600;
+        long minutes = (duration.getSeconds() % 3600) / 60;
+        return hours + " h  " + minutes + " m";
+    }
+
 }

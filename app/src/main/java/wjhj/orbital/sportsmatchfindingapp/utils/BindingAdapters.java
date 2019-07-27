@@ -1,6 +1,7 @@
 package wjhj.orbital.sportsmatchfindingapp.utils;
 
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -37,5 +38,4 @@ public class BindingAdapters {
     public static void setDrawableStart(TextView view, int resource) {
         view.setCompoundDrawablesRelativeWithIntrinsicBounds(resource, 0, 0, 0);
     }
-
 }
