@@ -22,12 +22,12 @@ public class BindingAdapters {
         view.setImageResource(resource);
     }
 
-    @BindingAdapter("android:bindingSrcWhiteOverlay")
-    public static void setImageResourceWhite(ImageView view, int resource) {
-        Drawable drawable = DrawableCompat.wrap(view.getContext().getResources().getDrawable(resource));
-        DrawableCompat.setTint(drawable, Color.WHITE);
-        view.setImageDrawable(drawable);
-    }
+//    @BindingAdapter("android:bindingSrcWhiteOverlay")
+//    public static void setImageResourceWhite(ImageView view, int resource) {
+//        Drawable drawable = DrawableCompat.wrap(view.getContext().getResources().getDrawable(resource));
+//        DrawableCompat.setTint(drawable, Color.WHITE);
+//        view.setImageDrawable(drawable);
+//    }
 
     @BindingAdapter("android:errorText")
     public static void setErrorMessage(TextInputLayout view, String errorMessage) {

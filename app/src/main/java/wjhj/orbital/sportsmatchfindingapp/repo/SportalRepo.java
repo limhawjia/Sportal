@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -16,14 +17,17 @@ import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
 
 import org.imperiumlabs.geofirestore.GeoFirestore;
@@ -36,6 +40,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import java9.util.stream.StreamSupport;
@@ -173,10 +178,65 @@ public class SportalRepo implements ISportalRepo {
 
     @Override
     public Task<Void> updateGame(String gameId, Game game) {
-        GameDataModel dataModel = toGameDataModel(game);
-        return db.collection(GAMES_PATH)
-                .document(gameId)
-                .set(dataModel, SetOptions.merge());
+        DocumentReference docRef = db.collection(GAMES_PATH).document(gameId);
+        return db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                GameDataModel oldRecord = transaction.get(docRef).toObject(GameDataModel.class);
+                if (oldRecord != null && oldRecord.getParticipatingUids() != null) {
+                    Game newGame = game.withParticipatingUids(oldRecord.getParticipatingUids());
+                    GameDataModel newRocrd = toGameDataModel(newGame);
+                    transaction.set(docRef, newRocrd);
+                } else {
+                    GameDataModel newRecord = toGameDataModel(game);
+                    transaction.set(docRef, newRecord);
+                }
+                return null;
+            }
+        });
+    }
+
+    public Task<Void> addUserToGame(String userId, String gameId) {
+        DocumentReference docRef = db.collection(GAMES_PATH).document(gameId);
+        return db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                GameDataModel oldRecord = transaction.get(docRef).toObject(GameDataModel.class);
+                if (oldRecord != null && oldRecord.getParticipatingUids() != null) {
+                    List<String> participants = oldRecord.getParticipatingUids();
+                    participants.add(userId);
+                    Game newGame = toGame(oldRecord).withParticipatingUids(participants);
+                    GameDataModel newRocrd = toGameDataModel(newGame);
+                    transaction.set(docRef, newRocrd);
+                } else if (oldRecord != null){
+                    Game newGame = toGame(oldRecord).withParticipatingUids(userId);
+                    GameDataModel newRecord = toGameDataModel(newGame);
+                    transaction.set(docRef, newRecord);
+                }
+                return null;
+            }
+        });
+    }
+
+    public Task<Void> removeUserFromGame(String userId, String gameId) {
+        DocumentReference docRef = db.collection(GAMES_PATH).document(gameId);
+        return db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                GameDataModel oldRecord = transaction.get(docRef).toObject(GameDataModel.class);
+                if (oldRecord != null && oldRecord.getParticipatingUids() != null) {
+                    List<String> participants = oldRecord.getParticipatingUids();
+                    participants.remove(userId);
+                    Game newGame = toGame(oldRecord).withParticipatingUids(participants);
+                    GameDataModel newRocrd = toGameDataModel(newGame);
+                    transaction.set(docRef, newRocrd);
+                }
+                return null;
+            }
+        });
     }
 
     @Override
@@ -187,8 +247,8 @@ public class SportalRepo implements ISportalRepo {
     public LiveData<List<UserProfile>> getParticipatingUsers(String gameId) {
         LiveData<List<String>> listOfUserIds =
                 Transformations.map(getGame(gameId), Game::getParticipatingUids);
-        MediatorLiveData<HashMap<String, UserProfile>> participants = new MediatorLiveData<>();
-        HashMap<String, UserProfile> profiles = new HashMap<>();
+        MediatorLiveData<ConcurrentHashMap<String, UserProfile>> participants = new MediatorLiveData<>();
+        ConcurrentHashMap<String, UserProfile> profiles = new ConcurrentHashMap<>();
         participants.setValue(profiles);
 
         participants.addSource(listOfUserIds, list -> {
@@ -224,7 +284,7 @@ public class SportalRepo implements ISportalRepo {
         CollectionReference gamesRef = FirebaseFirestore.getInstance().collection("Games");
         String nameQuery = null;
 
-        HashMap<String, Game> allGames = new HashMap<>();
+        ConcurrentHashMap<String, Game> allGames = new ConcurrentHashMap<>();
         List<Task<QuerySnapshot>> tasks = new ArrayList<>();
 
         if (filter.getNameQuery() != null && filter.getNameQuery().length() > 3) {
@@ -246,6 +306,8 @@ public class SportalRepo implements ISportalRepo {
         for (Sport sport :sportsQuery) {
             for (TimeOfDay timeOfDay : timeOfDayQuery) {
                 for (Difficulty skillLevel : skillLevelQuery) {
+                    Log.d("hi", sport.toString() + " " + timeOfDay.toString() + " " + skillLevel.toString() + " " + nameQuery + "!");
+                    Log.d("hi", timeOfDay.getStartTime().toString() + " " + timeOfDay.getEndTime().toString() + " " + nameQuery +"!");
                     Query query = gamesRef
                             .orderBy("time")
                             .startAt(timeOfDay.getStartTime().toString())
@@ -262,11 +324,12 @@ public class SportalRepo implements ISportalRepo {
                                 .map(documentSnapshot -> documentSnapshot.toObject(GameDataModel.class))
                                 .map(this::toGame)
                                 .forEach(game -> {
-                                    Log.d("hi", "Adding game " + game.toString());
+                                    Log.d("hi", "1");
                                     allGames.put(game.getUid(), game);
                                     data.setValue(allGames);
                                 });
                     });
+                    data.setValue(allGames);
                 }
             }
         }

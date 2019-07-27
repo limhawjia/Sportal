@@ -52,13 +52,14 @@ public class SearchViewModel extends ViewModel {
         searchFilters = new MediatorLiveData<>();
         searchFilters.setValue(new GameSearchFilter());
         liveGamesData = new MediatorLiveData<>();
-        LiveData<List<Game>> source1 = Transformations.map(Transformations.map(
-                Transformations.switchMap(searchFilters, repo::getGamesWithFilters),
-                map -> new ArrayList<>(map.values())), list -> {
-            Collections.sort(list, sortComparator.getValue());
-            return list;
+        LiveData<Map<String, Game>> source1 = Transformations
+                .switchMap(searchFilters, filters -> repo.getGamesWithFilters(filters));
+        liveGamesData.addSource(source1, map -> {
+            Log.d("hi", "received");
+            List<Game> games = new ArrayList<>(map.values());
+            Collections.sort(games, sortComparator.getValue());
+            liveGamesData.setValue(games);
         });
-        liveGamesData.addSource(source1, liveGamesData::setValue);
 
         sortComparator = new MutableLiveData<>();
         sortComparator.setValue((game1, game2) -> Integer

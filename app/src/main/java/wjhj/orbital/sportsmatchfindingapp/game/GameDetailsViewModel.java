@@ -2,12 +2,16 @@ package wjhj.orbital.sportsmatchfindingapp.game;
 
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.auth.User;
 
 import org.threeten.bp.Duration;
@@ -43,6 +47,9 @@ public class GameDetailsViewModel extends ViewModel {
     private LiveData<String> mDaysLeft;
     private LiveData<String> mOwnerName;
     private LiveData<Uri> mOwnerDisplayUri;
+    private LiveData<Boolean> mIsOwner;
+    private LiveData<Boolean> mIsParticpant;
+    private MutableLiveData<Boolean> mIsDisabled;
 
     public GameDetailsViewModel(String gameUid) {
         mGame = SportalRepo.getInstance().getGame(gameUid);
@@ -98,6 +105,14 @@ public class GameDetailsViewModel extends ViewModel {
         mDaysLeft = Transformations.map(mGame, game -> getDaysLeft(game.getDate()));
         mOwnerName = Transformations.map(mOwner, UserProfile::getDisplayName);
         mOwnerDisplayUri = Transformations.map(mOwner, UserProfile::getDisplayPicUri);
+        mIsOwner = Transformations.map(mOwner, owner -> {
+            return FirebaseAuth.getInstance().getUid().equals(owner.getUid());
+        });
+        mIsParticpant = Transformations.map(mParticipants, participants -> {
+            return participants.contains(FirebaseAuth.getInstance().getUid());
+        });
+        mIsDisabled = new MutableLiveData<>();
+        mIsDisabled.setValue(false);
     }
 
     public LiveData<Game> getGame() {
@@ -160,6 +175,14 @@ public class GameDetailsViewModel extends ViewModel {
         return mOwnerDisplayUri;
     }
 
+    public LiveData<Boolean> getIsOwner() {
+        return mIsOwner;
+    }
+
+    public LiveData<Boolean> getIsParticipant() {
+        return mIsParticpant;
+    }
+
     private String toDurationString(Duration duration) {
         if (duration == null) {
             return null;
@@ -178,4 +201,17 @@ public class GameDetailsViewModel extends ViewModel {
         }
     }
 
+    private void onButtonClicked() {
+        Boolean isParticipant = mIsParticpant.getValue();
+        String gameUid = mGame.getValue().getUid();
+        if (gameUid != null) {
+            if (isParticipant != null) {
+                mIsDisabled.setValue(true);
+                SportalRepo.getInstance().addUserToGame(FirebaseAuth.getInstance().getUid(), gameUid)
+                        .addOnCompleteListener(x -> mIsDisabled.setValue(false));
+            } else {
+                mIsDisabled.setValue(true);
+            }
+        }
+    }
 }
