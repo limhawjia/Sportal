@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.galaxyofandroid.spinerdialog.SpinnerDialog;
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.UserPreferencesActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.DatePickerFragment;
@@ -38,7 +39,6 @@ import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 
 public class UserPreferencesActivity extends AppCompatActivity implements DatePickerFragment.DatePickerListener {
 
-    public static String PREFERENCES_DEBUG = "preferences";
     public static final String DISPLAY_NAME_TAG = "display_name";
     public static final String EDIT_PROFILE_TAG = "edit_profile";
     public static final int PICK_DISPLAY_IMAGE_RC = 1;
@@ -52,7 +52,7 @@ public class UserPreferencesActivity extends AppCompatActivity implements DatePi
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(PREFERENCES_DEBUG, "Preferences created");
+        Timber.d("Preferences created");
 
         currUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -64,14 +64,17 @@ public class UserPreferencesActivity extends AppCompatActivity implements DatePi
 
         viewModel = ViewModelProviders.of(this).get(UserPreferencesViewModel.class);
 
-        if (editProfileUid != null) {
-            viewModel.linkWithExistingProfile(editProfileUid);
-        }
-
         binding = DataBindingUtil.setContentView(this, R.layout.user_preferences_activity);
         binding.setUserPreferences(viewModel);
         binding.setActivity(this);
         binding.setLifecycleOwner(this);
+
+
+        if (editProfileUid != null) {
+            viewModel.linkWithExistingProfile(editProfileUid);
+            binding.setupAccountMessage.setVisibility(View.INVISIBLE);
+            binding.preferencesWelcomeText.setText(getString(R.string.preferences_edit_profile));
+        }
 
         binding.addDisplayPicButton.setOnClickListener(view -> {
             Intent pickImageIntent = new Intent();

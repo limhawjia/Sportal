@@ -114,29 +114,55 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
                         Intent intent = new Intent(getContext(), UserPreferencesActivity.class);
                         intent.putExtra(UserPreferencesActivity.EDIT_PROFILE_TAG, mUserUid);
                         startActivity(intent);
-                    });
+                    },
+                    true);
             actionButton.setTextColor(ContextCompat.getColor(requireActivity(), R.color.black));
         } else {
+            viewModel.isReceivedFriendRequest().observe(getViewLifecycleOwner(), received -> {
+                if (received) {
+                    updateButton(actionButton,
+                            ContextCompat.getColor(requireActivity(), R.color.green),
+                            requireActivity().getString(R.string.display_user_accept_friend_request),
+                            v -> viewModel.acceptFriendRequest(),
+                            true);
+
+                }
+            });
+
+            viewModel.isSentFriendRequest().observe(getViewLifecycleOwner(), sent -> {
+                if (sent) {
+                    updateButton(actionButton,
+                            ContextCompat.getColor(requireActivity(), R.color.gray),
+                            requireActivity().getString(R.string.display_profile_friend_request_pending),
+                            v -> {},
+                            false);
+                }
+            });
+
             viewModel.isFriend().observe(getViewLifecycleOwner(), isFriend -> {
                 if (isFriend) {
                     updateButton(actionButton,
                             ContextCompat.getColor(requireActivity(), R.color.colorPrimary),
                             requireActivity().getString(R.string.display_profile_friends),
-                            v -> {});
+                            v -> {},
+                            false);
                 } else {
                     updateButton(actionButton,
                             ContextCompat.getColor(requireActivity(), R.color.green),
                             requireActivity().getString(R.string.display_user_add_friend),
-                            v-> {});
+                            v-> viewModel.addFriend(),
+                            true);
                 }
             });
         }
     }
 
-    private void updateButton(Button button, int color, CharSequence text, View.OnClickListener onClickListener) {
+    private void updateButton(Button button, int color, CharSequence text,
+                              View.OnClickListener onClickListener, boolean enabled) {
         button.setBackgroundColor(color);
         button.setText(text);
         button.setOnClickListener(onClickListener);
+        button.setEnabled(enabled);
     }
 
     private void initPreferencesRecyclerView(RecyclerView recyclerView) {
@@ -155,10 +181,7 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
                 RecyclerView.HORIZONTAL, false);
 
         FriendProfilesAdapter adapter = new FriendProfilesAdapter(this);
-        viewModel.getFriends().observe(getViewLifecycleOwner(), friends -> {
-            Log.d("TESTINGG", friends.toString());
-            adapter.updateFriends(friends);
-        });
+        viewModel.getFriends().observe(getViewLifecycleOwner(), adapter::updateFriends);
 
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
@@ -192,7 +215,7 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
     public void onUserProfileClick(String uid) {
         FragmentManager manager = requireActivity().getSupportFragmentManager();
         manager.beginTransaction()
-                .replace(((ViewGroup) requireView().getParent()).getId(), DisplayUserProfileFragment.newInstance(uid))
+                .replace(R.id.homepage_secondary_fragment_container, DisplayUserProfileFragment.newInstance(uid))
                 .addToBackStack(null)
                 .commit();
     }

@@ -18,6 +18,12 @@ public interface ISportalRepo {
 
     Task<Boolean> isProfileSetUp(String uid);
 
+    Task<Void> makeFriendRequest(String senderUid, String receiverUid);
+
+    Task<Void> acceptFriendRequest(String senderUid, String receiverUid);
+
+    Task<Void> declineFriendRequest(String senderUid, String receiverUid);
+
     LiveData<UserProfile> getUser(String userUid);
 
     LiveData<List<UserProfile>> selectUsersStartingWith(String field, String queryText);

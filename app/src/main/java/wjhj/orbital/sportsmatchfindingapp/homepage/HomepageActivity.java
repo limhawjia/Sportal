@@ -15,16 +15,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.common.collect.ImmutableList;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.sendbird.android.SendBird;
 
 import java.util.List;
 
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.Authentications;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
@@ -35,11 +36,11 @@ import wjhj.orbital.sportsmatchfindingapp.game.AddGameActivity;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesSwipeViewFragment;
 import wjhj.orbital.sportsmatchfindingapp.homepage.searchpage.SearchFragment;
+import wjhj.orbital.sportsmatchfindingapp.homepage.socialpage.SocialSwipeViewFragment;
 import wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileFragment;
 import wjhj.orbital.sportsmatchfindingapp.user.UserPreferencesActivity;
-import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
 
@@ -48,26 +49,24 @@ public class HomepageActivity extends AppCompatActivity implements
         SearchFilterDialogFragment.SearchFilterDialogListener,
         SportMultiSelectDialogFragment.SportMultiSelectDialogListener {
 
-    public static final String CURR_USER_TAG = "current_user";
     public static final String DISPLAY_PROFILE_PIC_TAG = "display_profile_pic";
-    public static final String HOMEPAGE_DEBUG = "homepage";
     private static final int ADD_GAME_RC = 1;
 
     private FirebaseUser currUser;
     @SuppressWarnings({"unused"})
     private UserProfileViewModel userProfileViewModel;
     private HomepageActivityBinding binding;
-    private UserProfile profile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(HOMEPAGE_DEBUG, "homepage activity created");
+        Timber.d("Homepage activity created");
 
         currUser = FirebaseAuth.getInstance().getCurrentUser();
 
         checkLoggedIn();
         checkProfileSetup();
+        connectToChatClient();
 
         UserProfileViewModelFactory factory = new UserProfileViewModelFactory(currUser.getUid());
         userProfileViewModel = ViewModelProviders.of(this, factory)
@@ -84,18 +83,20 @@ public class HomepageActivity extends AppCompatActivity implements
             Intent addGameIntent = new Intent(this, AddGameActivity.class);
             startActivityForResult(addGameIntent, ADD_GAME_RC);
         });
-
-        userProfileViewModel.getCurrUser().observe(this, userProfile -> {
-            if (userProfile != null) {
-                profile = userProfile;
-            }
-        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
         checkLoggedIn();
+        checkProfileSetup();
+        connectToChatClient();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disconnectFromChatClient();
     }
 
     private void checkLoggedIn() {
@@ -126,9 +127,24 @@ public class HomepageActivity extends AppCompatActivity implements
         Authentications auths = new Authentications();
         auths.logOutFirebase();
         auths.logOutGoogle(this);
+        SportalRepo.getInstance().refreshCache();
         Intent logoutIntent = new Intent(this, LoginActivity.class);
         startActivity(logoutIntent);
         finish();
+    }
+
+    private void connectToChatClient() {
+        SendBird.connect(currUser.getUid(), (user, e) -> {
+            if (e != null) {
+                Timber.d(e,"Connection error");
+            } else {
+                Timber.d("Connected to chat client");
+            }
+        });
+    }
+
+    private void disconnectFromChatClient() {
+        SendBird.disconnect(() -> Timber.d("Disconnected from chat client"));
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
@@ -158,9 +174,8 @@ public class HomepageActivity extends AppCompatActivity implements
                 tag = "Search";
                 break;
             case R.id.nav_social:
-                //todo
                 tag = "Social";
-                fragment = DisplayUserProfileFragment.newInstance("ZHYMR6edHrX8unzM8gylUWzFlx82");
+                fragment = SocialSwipeViewFragment.newInstance(currUser.getUid());
                 break;
         }
 

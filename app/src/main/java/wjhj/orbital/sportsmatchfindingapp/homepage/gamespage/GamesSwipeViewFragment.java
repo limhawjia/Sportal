@@ -3,14 +3,15 @@ package wjhj.orbital.sportsmatchfindingapp.homepage.gamespage;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGamesSwipeViewBinding;
 
 /**
@@ -19,7 +20,6 @@ import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGamesSwipeViewBind
  * create an instance of this fragment.
  */
 public class GamesSwipeViewFragment extends Fragment {
-    private static String GAMES_PAGE_DEBUG = "games_swipe_view";
 
     private FragmentGamesSwipeViewBinding binding;
 
@@ -37,16 +37,10 @@ public class GamesSwipeViewFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d(GAMES_PAGE_DEBUG, "Created fragment");
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.d(GAMES_PAGE_DEBUG, "Created view");
+        Timber.d("Created games swipe view");
         binding = FragmentGamesSwipeViewBinding.inflate(inflater, container, false);
 
         GamesSwipeViewPagerAdapter adapter = new GamesSwipeViewPagerAdapter(getChildFragmentManager(),

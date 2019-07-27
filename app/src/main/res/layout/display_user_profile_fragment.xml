@@ -234,7 +234,7 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="240dp"
+                    android:layout_height="260dp"
                     android:gravity="center"
                     android:textSize="20sp"
                     android:text="@string/display_user_add_friend_to_see_more"

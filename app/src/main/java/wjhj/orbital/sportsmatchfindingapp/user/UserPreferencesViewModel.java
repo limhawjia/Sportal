@@ -182,6 +182,7 @@ public class UserPreferencesViewModel extends ViewModel {
                         .withCountry(country.getInput())
                         .withBio(Optional.fromNullable(bio.getValue()))
                         .withPreferences(preferences);
+                repo.updateUser(currUserUid, userProfile);
             } else {
                 userProfile = UserProfile.builder()
                         .withDisplayName(displayName)
@@ -192,9 +193,9 @@ public class UserPreferencesViewModel extends ViewModel {
                         .withBio(Optional.fromNullable(bio.getValue()))
                         .addAllPreferences(preferences)
                         .build();
+                repo.addUser(currUserUid, userProfile);
             }
 
-            repo.addUser(currUserUid, userProfile);
 
             Uri selectedUri = displayPicUri.getValue();
             if (selectedUri != null) {

@@ -2,7 +2,6 @@
 <layout>
 
     <data>
-
         <variable
             name="game_title"
             type="java.lang.String" />
@@ -24,14 +23,14 @@
             android:id="@+id/back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:src="@drawable/ic_arrow_back_white_24dp" />
 
         <TextView
             android:id="@+id/game_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:text="@{game_title}" />
 
@@ -40,6 +39,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Join"
-            android:visibility="@{is_owner ? View.GONE : View.VISIBLE}" />
+            android:visibility="@{safeUnbox(is_owner) ? View.GONE : View.VISIBLE}" />
     </LinearLayout>
 </layout>

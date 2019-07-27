@@ -15,15 +15,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
+import wjhj.orbital.sportsmatchfindingapp.utils.BatchTransformations;
 
 public class DisplayUserProfileViewModel extends ViewModel {
 
     private final SportalRepo repo;
+    private final String mDisplayedUserUid;
 
     private String currUserUid;
     private boolean isCurrentUser;
@@ -36,6 +39,10 @@ public class DisplayUserProfileViewModel extends ViewModel {
     private LiveData<List<String>> allFriendUids;
     private LiveData<List<UserProfile>> allFriends;
     private LiveData<Integer> numFriends;
+    private LiveData<List<String>> receivedFriendRequests;
+    private LiveData<List<String>> sentFriendRequests;
+    private LiveData<Boolean> isReceivedFriendRequest;
+    private LiveData<Boolean> isSentFriendRequest;
 
     private LiveData<Uri> displayPicUri;
     private LiveData<String> displayName;
@@ -45,20 +52,36 @@ public class DisplayUserProfileViewModel extends ViewModel {
     private LiveData<List<Sport>> preferences;
 
 
-    public DisplayUserProfileViewModel(String userUid) {
+    public DisplayUserProfileViewModel(String displayedUserUid) {
+        mDisplayedUserUid = displayedUserUid;
         repo = SportalRepo.getInstance();
-        LiveData<UserProfile> userProfile = repo.getUser(userUid);
+        LiveData<UserProfile> userProfile = repo.getUser(displayedUserUid);
 
         FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
         currUserUid = currUser == null ? "" : currUser.getUid();
-        isCurrentUser = (currUserUid.equals(userUid));
+        isCurrentUser = (currUserUid.equals(displayedUserUid));
 
+        setUpGameTransformations(userProfile);
+        setUpFriendTransformations(userProfile);
+        setUpAttributeTransformations(userProfile);
+    }
+
+    private void setUpGameTransformations(LiveData<UserProfile> userProfile) {
         allGameIds = Transformations.map(userProfile, UserProfile::getGames);
         numGamesPlayed = Transformations.map(allGameIds, games -> games.get(GameStatus.COMPLETED).size());
+    }
+
+    private void setUpFriendTransformations(LiveData<UserProfile> userProfile) {
         allFriendUids = Transformations.map(userProfile, UserProfile::getFriendUids);
         allFriends = loadFriends();
         numFriends = Transformations.map(allFriendUids, List::size);
+        receivedFriendRequests = Transformations.map(userProfile, UserProfile::getReceivedFriendRequests);
+        sentFriendRequests = Transformations.map(userProfile, UserProfile::getSentFriendRequests);
+        isReceivedFriendRequest = Transformations.map(sentFriendRequests, requests -> requests.contains(currUserUid));
+        isSentFriendRequest = Transformations.map(receivedFriendRequests, requests -> requests.contains(currUserUid));
+    }
 
+    private void setUpAttributeTransformations(LiveData<UserProfile> userProfile) {
         displayPicUri = Transformations.map(userProfile, UserProfile::getDisplayPicUri);
         displayName = Transformations.map(userProfile, UserProfile::getDisplayName);
         bio = Transformations.map(userProfile, profile -> profile.getBio().or("No bio"));
@@ -67,6 +90,7 @@ public class DisplayUserProfileViewModel extends ViewModel {
         preferences = Transformations.map(userProfile, UserProfile::getPreferences);
         isFriend = Transformations.map(userProfile, profile -> profile.getFriendUids().contains(currUserUid));
     }
+
 
     public boolean isCurrentUser() {
         return isCurrentUser;
@@ -114,18 +138,7 @@ public class DisplayUserProfileViewModel extends ViewModel {
     }
 
     private LiveData<List<UserProfile>> loadFriends() {
-        return Transformations.switchMap(allFriendUids, uids -> {
-            MediatorLiveData<List<UserProfile>> mediatorLiveData = new MediatorLiveData<>();
-            Map<String, UserProfile> friends = new HashMap<>();
-            for (String id : uids) {
-                mediatorLiveData.addSource(repo.getUser(id), profile -> {
-                    friends.put(profile.getUid(), profile);
-                    mediatorLiveData.postValue(new ArrayList<>(friends.values()));
-                });
-            }
-            mediatorLiveData.postValue(new ArrayList<>(friends.values()));
-            return mediatorLiveData;
-        });
+        return BatchTransformations.switchMapList(allFriendUids, repo::getUser, UserProfile::getUid);
     }
 
     public LiveData<List<UserProfile>> getFriends() {
@@ -135,6 +148,23 @@ public class DisplayUserProfileViewModel extends ViewModel {
     public LiveData<Integer> getNumFriends() {
         return numFriends;
     }
+
+    public LiveData<List<String>> getReceivedFriendRequests() {
+        return receivedFriendRequests;
+    }
+
+    public LiveData<List<String>> getSentFriendRequests() {
+        return sentFriendRequests;
+    }
+
+    public LiveData<Boolean> isReceivedFriendRequest() {
+        return isReceivedFriendRequest;
+    }
+
+    public LiveData<Boolean> isSentFriendRequest() {
+        return isSentFriendRequest;
+    }
+
 
     public LiveData<String> getDisplayName() {
         return displayName;
@@ -160,4 +190,11 @@ public class DisplayUserProfileViewModel extends ViewModel {
         return isFriend;
     }
 
+    void addFriend() {
+        repo.makeFriendRequest(currUserUid, mDisplayedUserUid);
+    }
+
+    void acceptFriendRequest() {
+        repo.acceptFriendRequest(mDisplayedUserUid, currUserUid);
+    }
 }
