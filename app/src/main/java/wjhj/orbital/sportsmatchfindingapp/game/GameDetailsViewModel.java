@@ -2,6 +2,7 @@ package wjhj.orbital.sportsmatchfindingapp.game;
 
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
@@ -50,6 +51,7 @@ public class GameDetailsViewModel extends ViewModel {
     private LiveData<Boolean> mIsOwner;
     private LiveData<Boolean> mIsParticpant;
     private MutableLiveData<Boolean> mIsDisabled;
+    private MutableLiveData<Boolean> mResult;
 
     public GameDetailsViewModel(String gameUid) {
         mGame = SportalRepo.getInstance().getGame(gameUid);
@@ -109,10 +111,13 @@ public class GameDetailsViewModel extends ViewModel {
             return FirebaseAuth.getInstance().getUid().equals(owner.getUid());
         });
         mIsParticpant = Transformations.map(mParticipants, participants -> {
+            Log.d("hi", "changed");
+            Log.d("hi", String.valueOf(participants.contains(FirebaseAuth.getInstance().getUid())));
             return participants.contains(FirebaseAuth.getInstance().getUid());
         });
         mIsDisabled = new MutableLiveData<>();
         mIsDisabled.setValue(false);
+        mResult = new MutableLiveData<>();
     }
 
     public LiveData<Game> getGame() {
@@ -183,6 +188,14 @@ public class GameDetailsViewModel extends ViewModel {
         return mIsParticpant;
     }
 
+    public LiveData<Boolean> getResult() {
+        return mResult;
+    }
+
+    public LiveData<Boolean> getDisabled() {
+        return mIsDisabled;
+    }
+
     private String toDurationString(Duration duration) {
         if (duration == null) {
             return null;
@@ -201,16 +214,23 @@ public class GameDetailsViewModel extends ViewModel {
         }
     }
 
-    private void onButtonClicked() {
+    public void onButtonClicked(View view) {
         Boolean isParticipant = mIsParticpant.getValue();
         String gameUid = mGame.getValue().getUid();
         if (gameUid != null) {
-            if (isParticipant != null) {
+            if (isParticipant) {
+                Log.d("hi", "is participant");
                 mIsDisabled.setValue(true);
-                SportalRepo.getInstance().addUserToGame(FirebaseAuth.getInstance().getUid(), gameUid)
-                        .addOnCompleteListener(x -> mIsDisabled.setValue(false));
+                SportalRepo.getInstance().removeUserFromGame(FirebaseAuth.getInstance().getUid(), gameUid)
+                        .addOnCompleteListener(x -> mIsDisabled.setValue(false))
+                        .addOnSuccessListener(x -> mResult.postValue(true))
+                        .addOnFailureListener(x -> mResult.postValue(false));
             } else {
                 mIsDisabled.setValue(true);
+                SportalRepo.getInstance().addUserToGame(FirebaseAuth.getInstance().getUid(), gameUid)
+                        .addOnCompleteListener(x -> mIsDisabled.setValue((false)))
+                        .addOnSuccessListener(x -> mResult.postValue(true))
+                        .addOnFailureListener(x -> mResult.postValue(false));
             }
         }
     }

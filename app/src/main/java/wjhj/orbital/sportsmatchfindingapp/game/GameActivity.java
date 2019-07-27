@@ -74,12 +74,26 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        String creatorUid = mGameLiveData.getValue().getCreatorUid();
-        String curUserid = FirebaseAuth.getInstance().getUid();
-        if (creatorUid != null && creatorUid.equals(curUserid)) {
-            getMenuInflater().inflate(R.menu.game_owner_menu, menu);
+        if (mGameLiveData.getValue() != null) {
+            String creatorUid = mGameLiveData.getValue().getCreatorUid();
+            String curUserid = FirebaseAuth.getInstance().getUid();
+            if (creatorUid != null && creatorUid.equals(curUserid)) {
+                getMenuInflater().inflate(R.menu.game_owner_menu, menu);
+            }
+            return true;
+        } else {
+            mGameLiveData.observe(this, game -> {
+                if (game != null) {
+                    String creatorUid = mGameLiveData.getValue().getCreatorUid();
+                    String curUserid = FirebaseAuth.getInstance().getUid();
+                    if (creatorUid != null && creatorUid.equals(curUserid)) {
+                        getMenuInflater().inflate(R.menu.game_owner_menu, menu);
+                    }
+                    invalidateOptionsMenu();
+                }
+            });
+            return false;
         }
-        return true;
     }
 
     @Override

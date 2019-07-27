@@ -363,7 +363,9 @@
                 android:background="@{viewModel.isParticipant ? @color/red : @color/colorPrimary}"
                 android:text="@{viewModel.isParticipant ? `Leave` : `Join`}"
                 android:textColor="@color/white"
-                android:visibility="@{viewModel.isOwner ? View.GONE : View.VISIBLE}" />
+                android:visibility="@{viewModel.isOwner ? View.GONE : View.VISIBLE}"
+                android:clickable="@{!viewModel.disabled}"
+                android:onClick="@{viewModel.onButtonClicked}"/>
 
         </LinearLayout>
     </LinearLayout>

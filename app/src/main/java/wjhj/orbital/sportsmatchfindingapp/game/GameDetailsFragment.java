@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -132,6 +133,11 @@ public class GameDetailsFragment extends Fragment implements FriendProfilesAdapt
         GameDetailsViewModelFactory factory = new GameDetailsViewModelFactory(mGameuId);
 
         viewModel = ViewModelProviders.of(this, factory).get(GameDetailsViewModel.class);
+        viewModel.getResult().observe(this, bool -> {
+            if (!bool) {
+                Toast.makeText(requireContext(), "Process failed, please try again later", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setUpParticipantsRecyclerView(RecyclerView recyclerView) {
