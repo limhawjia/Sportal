@@ -95,6 +95,16 @@ public class HomepageActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        checkLoggedIn();
+        checkProfileSetup();
+        connectToChatClient();
+    }
+
+
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         disconnectFromChatClient();

@@ -4,23 +4,30 @@ import android.net.Uri;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.sendbird.android.GroupChannel;
+import com.sendbird.android.GroupChannelParams;
+import com.sendbird.android.SendBirdException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.GameStatus;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.maps.Country;
+import wjhj.orbital.sportsmatchfindingapp.messaging.SendBirdConstants;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.utils.BatchTransformations;
+import wjhj.orbital.sportsmatchfindingapp.utils.Result;
 
 public class DisplayUserProfileViewModel extends ViewModel {
 
@@ -50,6 +57,8 @@ public class DisplayUserProfileViewModel extends ViewModel {
     private LiveData<Country> country;
     private LiveData<List<Sport>> preferences;
 
+    private MutableLiveData<Result<GroupChannel>> sendMessageResult;
+
 
     public DisplayUserProfileViewModel(String displayedUserUid) {
         mDisplayedUserUid = displayedUserUid;
@@ -63,6 +72,8 @@ public class DisplayUserProfileViewModel extends ViewModel {
         setUpGameTransformations(userProfile);
         setUpFriendTransformations(userProfile);
         setUpAttributeTransformations(userProfile);
+
+        sendMessageResult = new MutableLiveData<>();
     }
 
     private void setUpGameTransformations(LiveData<UserProfile> userProfile) {
@@ -93,6 +104,10 @@ public class DisplayUserProfileViewModel extends ViewModel {
 
     public boolean isCurrentUser() {
         return isCurrentUser;
+    }
+
+    String getCurrUserUid() {
+        return currUserUid;
     }
 
     public LiveData<Uri> getDisplayPicUri() {
@@ -195,5 +210,24 @@ public class DisplayUserProfileViewModel extends ViewModel {
 
     void acceptFriendRequest() {
         repo.acceptFriendRequest(mDisplayedUserUid, currUserUid);
+    }
+
+    public void sendMessage() {
+        GroupChannelParams params = new GroupChannelParams();
+        params.addUserId(mDisplayedUserUid)
+                .setDistinct(true)
+                .setCustomType(SendBirdConstants.PRIVATE_CHAT_CUSTOM_TYPE);
+
+        GroupChannel.createChannel(params, (groupChannel, e) -> {
+            if (e != null) {
+                sendMessageResult.postValue(new Result<>(e));
+                return;
+            }
+            sendMessageResult.postValue(new Result<>(groupChannel));
+        });
+    }
+
+    LiveData<Result<GroupChannel>> getSendMessageResult() {
+        return sendMessageResult;
     }
 }
