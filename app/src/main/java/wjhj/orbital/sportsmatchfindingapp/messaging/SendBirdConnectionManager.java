@@ -1,5 +1,7 @@
 package wjhj.orbital.sportsmatchfindingapp.messaging;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.sendbird.android.SendBird;
@@ -22,7 +24,7 @@ public class SendBirdConnectionManager {
         });
     }
 
-    public static void addConnectionManagementHandler(String handlerId, final ConnectionManagementHandler handler) {
+    public static void addConnectionManagementHandler(String handlerId, @NonNull final ConnectionManagementHandler handler) {
         SendBird.addConnectionHandler(handlerId, new SendBird.ConnectionHandler() {
             @Override
             public void onReconnectStarted() {
@@ -30,9 +32,7 @@ public class SendBirdConnectionManager {
 
             @Override
             public void onReconnectSucceeded() {
-                if (handler != null) {
-                    handler.onConnected(true);
-                }
+                handler.onConnected(true);
             }
 
             @Override
@@ -41,9 +41,7 @@ public class SendBirdConnectionManager {
         });
 
         if (SendBird.getConnectionState() == SendBird.ConnectionState.OPEN) {
-            if (handler != null) {
-                handler.onConnected(false);
-            }
+            handler.onConnected(false);
 
         } else if (SendBird.getConnectionState() == SendBird.ConnectionState.CLOSED) { // push notification or system kill
             FirebaseUser currUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -52,9 +50,7 @@ public class SendBirdConnectionManager {
                     if (e != null) {
                         return;
                     }
-                    if (handler != null) {
-                        handler.onConnected(false);
-                    }
+                    handler.onConnected(false);
                 });
             }
         }

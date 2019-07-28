@@ -19,7 +19,6 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.auth.api.signin.internal.SignInHubActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -41,6 +40,7 @@ import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 public class UserPreferencesActivity extends AppCompatActivity implements DatePickerFragment.DatePickerListener {
 
     public static final String EDIT_PROFILE_TAG = "edit_profile";
+    public static final String DISPLAY_NAME_TAG = "display_name";
     public static final int PICK_DISPLAY_IMAGE_RC = 1;
 
     private FirebaseUser currUser;
@@ -58,8 +58,8 @@ public class UserPreferencesActivity extends AppCompatActivity implements DatePi
 
         Bundle args = getIntent().getExtras();
         if (args != null) {
-            if (args.getString(SignUpActivity.DISPLAY_NAME_TAG) != null) {
-                displayName = args.getString(SignUpActivity.DISPLAY_NAME_TAG);
+            if (args.getString(DISPLAY_NAME_TAG) != null) {
+                displayName = args.getString(DISPLAY_NAME_TAG);
             }
             editProfileUid = args.getString(EDIT_PROFILE_TAG);
         }
