@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="viewModel"
             type="wjhj.orbital.sportsmatchfindingapp.homepage.socialpage.ChatPageViewModel" />
@@ -13,7 +12,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_gray">
+        android:background="@color/light_gray"
+        android:fitsSystemWindows="true">
 
         <include
             android:id="@+id/top_toolbar"

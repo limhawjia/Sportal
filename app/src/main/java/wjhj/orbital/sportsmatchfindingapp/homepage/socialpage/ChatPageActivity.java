@@ -23,6 +23,8 @@ import com.sendbird.android.BaseMessage;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.UserMessage;
 
+import java.util.List;
+
 import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.ChatPageActivityBinding;
@@ -104,7 +106,8 @@ public class ChatPageActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView(RecyclerView recyclerView) {
-        LinearLayoutManager manager = new LinearLayoutManager(this);
+        LinearLayoutManager manager = new LinearLayoutManager(this, RecyclerView.VERTICAL,
+                true);
 
         MessageAdapter adapter = new MessageAdapter(new DiffUtil.ItemCallback<BaseMessage>() {
             @Override
@@ -133,8 +136,12 @@ public class ChatPageActivity extends AppCompatActivity {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+                List<BaseMessage> messages = viewModel.getMessagesLiveData().getValue();
 
-                // TODO
+                Timber.d("bein scrolled and conditions correct: %d", manager.findFirstVisibleItemPosition());
+                if (messages != null && (manager.findFirstVisibleItemPosition() == messages.size() - 1)) {
+                    viewModel.loadPreviousMessages();
+                }
             }
         });
 
