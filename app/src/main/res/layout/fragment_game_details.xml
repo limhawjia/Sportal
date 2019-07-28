@@ -102,7 +102,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@{viewModel.ready ? @color/green : @color/red}"
+                        android:background="@{safeUnbox(viewModel.ready) ? @color/green : @color/red}"
                         android:orientation="vertical"
                         android:paddingLeft="16dp"
                         android:paddingTop="8dp"
@@ -112,11 +112,11 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@{viewModel.minPlayers - viewModel.participating + ` MORE PLAYERS NEEDED`}"
+                            android:text="@{safeUnbox(viewModel.minPlayers) - safeUnbox(viewModel.participating) + ` MORE PLAYERS NEEDED`}"
                             android:textColor="@color/white"
                             android:textSize="16sp"
                             android:textStyle="bold"
-                            android:visibility="@{viewModel.ready ? View.GONE : View.VISIBLE}" />
+                            android:visibility="@{safeUnbox(viewModel.ready) ? View.GONE : View.VISIBLE}" />
 
                         <TextView
                             android:layout_width="match_parent"
@@ -124,7 +124,7 @@
                             android:text="@string/game_ready"
                             android:textColor="@color/white"
                             android:textSize="16sp"
-                            android:visibility="@{!viewModel.ready ? View.GONE : View.VISIBLE}" />
+                            android:visibility="@{!safeUnbox(viewModel.ready) ? View.GONE : View.VISIBLE}" />
                     </LinearLayout>
 
                     <TextView
@@ -159,7 +159,7 @@
                         android:paddingBottom="8dp"
                         android:text="@string/no_players"
                         android:textColor="@color/red"
-                        android:visibility="@{viewModel.participating == 0 ? View.VISIBLE : View.GONE}" />
+                        android:visibility="@{safeUnbox(viewModel.participating) == 0 ? View.VISIBLE : View.GONE}" />
 
                     <LinearLayout
                         android:id="@+id/participants_details"
@@ -175,7 +175,7 @@
                             android:layout_weight="1"
                             android:paddingLeft="16dp"
                             android:paddingRight="16dp"
-                            android:text="@{@string/game_details_participating(viewModel.participating, viewModel.maxPlayers)}"
+                            android:text="@{@string/game_details_participating(safeUnbox(viewModel.participating), safeUnbox(viewModel.maxPlayers))}"
                             android:textSize="12sp" />
 
                         <TextView
@@ -183,8 +183,8 @@
                             android:layout_height="wrap_content"
                             android:paddingLeft="16dp"
                             android:paddingRight="16dp"
-                            android:text="@{@string/game_details_min_players(viewModel.minPlayers)}"
-                            android:textColor="@{viewModel.ready ? @color/green : @color/red}"
+                            android:text="@{@string/game_details_min_players(safeUnbox(viewModel.minPlayers))}"
+                            android:textColor="@{safeUnbox(viewModel.ready) ? @color/green : @color/red}"
                             android:textSize="12sp" />
                     </LinearLayout>
 
@@ -199,7 +199,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:progress="@{viewModel.progress}" />
+                            android:progress="@{safeUnbox(viewModel.progress)}" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -360,12 +360,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:background="@{viewModel.isParticipant ? @color/red : @color/colorPrimary}"
-                android:text="@{viewModel.isParticipant ? `Leave` : `Join`}"
+                android:background="@{safeUnbox(viewModel.isParticipant) ? @color/red : @color/colorPrimary}"
+                android:text="@{safeUnbox(viewModel.isParticipant) ? `Leave` : `Join`}"
                 android:textColor="@color/white"
-                android:visibility="@{viewModel.isOwner ? View.GONE : View.VISIBLE}"
-                android:clickable="@{!viewModel.disabled}"
-                android:onClick="@{viewModel.onButtonClicked}"/>
+                android:visibility="@{safeUnbox(viewModel.isOwner) ? View.GONE : View.VISIBLE}"
+                android:clickable="@{!safeUnbox(viewModel.disabled)}"
+                android:onClick="@{viewModel::onButtonClicked}"/>
 
         </LinearLayout>
     </LinearLayout>
