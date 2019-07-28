@@ -23,6 +23,7 @@ import com.sendbird.android.BaseMessage;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.UserMessage;
 
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.ChatPageActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.messaging.PrivateChat;
@@ -124,6 +125,7 @@ public class ChatPageActivity extends AppCompatActivity {
                 manager.scrollToPositionWithOffset(positionStart, 0);
             }
         });
+        adapter.setLifecycleOwner(this);
 
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
@@ -136,7 +138,10 @@ public class ChatPageActivity extends AppCompatActivity {
             }
         });
 
-        viewModel.getMessagesLiveData().observe(this, adapter::submitList);
+        viewModel.getMessagesLiveData().observe(this, list -> {
+            Timber.d("receiving updates monkaHmm" + list.toString());
+            adapter.submitList(list);
+        });
     }
 
 

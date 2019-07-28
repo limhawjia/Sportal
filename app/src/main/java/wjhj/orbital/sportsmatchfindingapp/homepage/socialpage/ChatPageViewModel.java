@@ -11,7 +11,9 @@ import androidx.lifecycle.ViewModel;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.GroupChannel;
+import com.sendbird.android.UserMessage;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -87,23 +89,55 @@ public class ChatPageViewModel extends ViewModel {
             return;
         }
 
-        chat.getChannel().sendUserMessage(messageText,
+        UserMessage tempUserMessage = chat.getChannel().sendUserMessage(messageText,
                 (userMessage, e) -> {
             if (e != null) {
                 Timber.d(e, "Send message failed");
+                removeFailedMessage(userMessage);
                 return;
             }
 
-            if (messagesLiveData.getValue() == null) {
-                messagesLiveData.postValue(Collections.singletonList(userMessage));
-            } else {
-                List<BaseMessage> messages = messagesLiveData.getValue();
-                messages.add(userMessage);
-                messagesLiveData.postValue(messages);
-            }
+            markMessageSent(userMessage);
 
         });
         messageTextLiveData.setValue("");
+        addMessage(tempUserMessage);
+    }
+
+    private void addMessage(BaseMessage message) {
+        if (messagesLiveData.getValue() == null) {
+            messagesLiveData.postValue(Collections.singletonList(message));
+        } else {
+            List<BaseMessage> messages = new ArrayList<>(messagesLiveData.getValue());
+            messages.add(message);
+            messagesLiveData.postValue(messages);
+            Timber.d("posting vew values monkahmm");
+        }
+    }
+
+    private void markMessageSent(BaseMessage message) {
+        List<BaseMessage> messages = messagesLiveData.getValue();
+        if (messages != null) {
+            for (int i = messages.size() - 1; i >= 0; i--) {
+                BaseMessage msg = messages.get(i);
+                if (message instanceof UserMessage && msg instanceof UserMessage) {
+
+                    if (((UserMessage) msg).getRequestId().equals(((UserMessage) message).getRequestId())) {
+                        messages.set(i, message);
+                        messagesLiveData.postValue(messages);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    private void removeFailedMessage(BaseMessage message) {
+        List<BaseMessage> messages = messagesLiveData.getValue();
+        if (messages != null && message instanceof UserMessage) {
+            messages.remove(message);
+            messagesLiveData.postValue(messages);
+        }
     }
 
     public MutableLiveData<String> getMessageTextLiveData() {
