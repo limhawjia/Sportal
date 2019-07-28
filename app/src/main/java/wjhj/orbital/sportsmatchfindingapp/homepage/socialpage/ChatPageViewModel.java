@@ -25,10 +25,11 @@ import wjhj.orbital.sportsmatchfindingapp.messaging.SendBirdConnectionManager;
 public class ChatPageViewModel extends ViewModel {
     private static final String CONNECTION_HANDLER = "connection_handler";
     private static final String PRIVATE_CHAT_HANDLER_ID = "private_chat_handler";
-    private static final int CHAT_LIST_LIMIT = 30;
+    private static final int CHAT_MESSAGES_LIMIT = 30;
 
     private String mCurrUserUid;
     private String mChannelUrl;
+    private boolean mIsMessageListLoading;
     private InputMethodManager mIMM;
     private MutableLiveData<PrivateChat> chatLiveData;
     private MutableLiveData<String> messageTextLiveData;
@@ -92,9 +93,15 @@ public class ChatPageViewModel extends ViewModel {
     }
 
     private void loadLatestMessages(PrivateChat chat) {
-        chat.getChannel().getPreviousMessagesByTimestamp(Long.MAX_VALUE, true, CHAT_LIST_LIMIT,
+        if(isMessageListLoading()) {
+            return;
+        }
+
+        setMessageListLoading(true);
+        chat.getChannel().getPreviousMessagesByTimestamp(Long.MAX_VALUE, true, CHAT_MESSAGES_LIMIT,
                 true, BaseChannel.MessageTypeFilter.ALL, null,
                 (list, e) -> {
+                    setMessageListLoading(false);
                     if (e != null) {
                         Timber.d(e, "Get messages error");
                         return;
@@ -106,34 +113,32 @@ public class ChatPageViewModel extends ViewModel {
     }
 
     void loadPreviousMessages() {
+        if(isMessageListLoading()) {
+            return;
+        }
+
         if (chatLiveData.getValue() != null) {
             GroupChannel channel = chatLiveData.getValue().getChannel();
 
             long oldestMessageCreatedAt = Long.MAX_VALUE;
-            if (messagesLiveData.getValue() != null && messagesLiveData.getValue().size() > 0) {
-                oldestMessageCreatedAt = messagesLiveData.getValue().get(0).getCreatedAt();
+            List<BaseMessage> messages = messagesLiveData.getValue();
+            if (messages != null && messages.size() > 0) {
+                oldestMessageCreatedAt = messages.get(messages.size() - 1).getCreatedAt();
             }
 
-            channel.getPreviousMessagesByTimestamp(oldestMessageCreatedAt, false, CHAT_LIST_LIMIT,
+            setMessageListLoading(true);
+            channel.getPreviousMessagesByTimestamp(oldestMessageCreatedAt, false, CHAT_MESSAGES_LIMIT,
                     true, BaseChannel.MessageTypeFilter.ALL, null,
                     (list, e) -> {
+                        setMessageListLoading(false);
                         if (e != null) {
                             Timber.d(e, "Get messages error");
                             return;
                         }
 
                         appendMessagesEnd(list);
-
                     });
         }
-    }
-
-    LiveData<PrivateChat> getChatLiveData() {
-        return chatLiveData;
-    }
-
-    LiveData<List<BaseMessage>> getMessagesLiveData() {
-        return messagesLiveData;
     }
 
     public void sendMessage(String messageText) {
@@ -202,11 +207,27 @@ public class ChatPageViewModel extends ViewModel {
         }
     }
 
+    LiveData<PrivateChat> getChatLiveData() {
+        return chatLiveData;
+    }
+
+    LiveData<List<BaseMessage>> getMessagesLiveData() {
+        return messagesLiveData;
+    }
+
     public MutableLiveData<String> getMessageTextLiveData() {
         return messageTextLiveData;
     }
 
     public LiveData<Boolean> getSendButtonEnabled() {
         return sendButtonEnabled;
+    }
+
+    private synchronized boolean isMessageListLoading() {
+        return mIsMessageListLoading;
+    }
+
+    private synchronized void setMessageListLoading(boolean isMessageListLoading) {
+        mIsMessageListLoading = isMessageListLoading;
     }
 }

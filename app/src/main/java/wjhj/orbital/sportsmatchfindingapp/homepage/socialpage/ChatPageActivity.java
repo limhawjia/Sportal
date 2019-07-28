@@ -108,6 +108,7 @@ public class ChatPageActivity extends AppCompatActivity {
     private void initRecyclerView(RecyclerView recyclerView) {
         LinearLayoutManager manager = new LinearLayoutManager(this, RecyclerView.VERTICAL,
                 true);
+        manager.setSmoothScrollbarEnabled(true);
 
         MessageAdapter adapter = new MessageAdapter(new DiffUtil.ItemCallback<BaseMessage>() {
             @Override
@@ -136,10 +137,8 @@ public class ChatPageActivity extends AppCompatActivity {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                List<BaseMessage> messages = viewModel.getMessagesLiveData().getValue();
 
-                Timber.d("bein scrolled and conditions correct: %d", manager.findFirstVisibleItemPosition());
-                if (messages != null && (manager.findFirstVisibleItemPosition() == messages.size() - 1)) {
+                if (manager.findLastVisibleItemPosition() == adapter.getItemCount() - 1) {
                     viewModel.loadPreviousMessages();
                 }
             }

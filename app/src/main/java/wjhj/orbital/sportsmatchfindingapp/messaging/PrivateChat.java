@@ -15,6 +15,7 @@ import com.sendbird.android.UserMessage;
 
 import java.util.List;
 
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 import wjhj.orbital.sportsmatchfindingapp.utils.DateUtils;
@@ -25,6 +26,7 @@ public class PrivateChat {
     private final String currUserUid;
     private LiveData<UserProfile> friendProfile;
     private MutableLiveData<UserMessage> lastSentUserMessage;
+    private MutableLiveData<Integer> unreadMessageCount;
 
     private PrivateChat(GroupChannel groupChannel, String currUserUid, String friendUserUid) {
         SportalRepo repo = SportalRepo.getInstance();
@@ -101,16 +103,34 @@ public class PrivateChat {
 
 
     public LiveData<Integer> getUnreadMessageCount() {
-        MutableLiveData<Integer> countLiveData = new MutableLiveData<>();
-        countLiveData.setValue(groupChannel.getUnreadMessageCount());
-        SendBird.addChannelHandler(currUserUid, new SendBird.ChannelHandler() {
-            @Override
-            public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
-                if (baseChannel.getUrl().equals(groupChannel.getUrl())) {
-                    countLiveData.postValue(((GroupChannel) baseChannel).getUnreadMessageCount());
+        if (unreadMessageCount == null) {
+            MutableLiveData<Integer> countLiveData = new MutableLiveData<>();
+            countLiveData.setValue(groupChannel.getUnreadMessageCount());
+            SendBird.addChannelHandler(currUserUid, new SendBird.ChannelHandler() {
+                @Override
+                public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
+                    if (baseChannel.getUrl().equals(groupChannel.getUrl())) {
+                        countLiveData.postValue(((GroupChannel) baseChannel).getUnreadMessageCount());
+                    }
                 }
-            }
-        });
-        return countLiveData;
+
+                @Override
+                public void onChannelChanged(BaseChannel baseChannel) {
+                    if (baseChannel.getUrl().equals(groupChannel.getUrl())) {
+                        countLiveData.postValue(((GroupChannel) baseChannel).getUnreadMessageCount());
+                    }
+                }
+            });
+            unreadMessageCount = countLiveData;
+        }
+
+        return unreadMessageCount;
+    }
+
+    public void updateUnreadMessages() {
+        Timber.d("IS IT NULL?: %s", (unreadMessageCount == null));
+        if (unreadMessageCount != null) {
+            unreadMessageCount.setValue(groupChannel.getUnreadMessageCount());
+        }
     }
 }

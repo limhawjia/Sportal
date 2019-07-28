@@ -66,6 +66,12 @@ public class SocialChatsFragment extends Fragment implements DataBindingAdapter.
         return binding.getRoot();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        viewModel.refreshChats();
+    }
+
     private void initRecyclerView(RecyclerView recyclerView) {
         LinearLayoutManager manager = new LinearLayoutManager(requireContext());
         FriendChatChannelAdapter adapter = new FriendChatChannelAdapter(new GroupChannelItemCallback());
@@ -75,7 +81,15 @@ public class SocialChatsFragment extends Fragment implements DataBindingAdapter.
 
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
-
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (manager.findLastVisibleItemPosition() == adapter.getItemCount() - 1) {
+                    viewModel.loadNextChannels();
+                }
+            }
+        });
 
 
         viewModel.getPrivateChats().observe(getViewLifecycleOwner(), adapter::submitList);
