@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.auth.api.signin.internal.SignInHubActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -31,6 +31,7 @@ import java.util.List;
 import in.galaxyofandroid.spinerdialog.SpinnerDialog;
 import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
+import wjhj.orbital.sportsmatchfindingapp.auth.SignUpActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.UserPreferencesActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.dialogs.DatePickerFragment;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
@@ -39,7 +40,6 @@ import wjhj.orbital.sportsmatchfindingapp.maps.Country;
 
 public class UserPreferencesActivity extends AppCompatActivity implements DatePickerFragment.DatePickerListener {
 
-    public static final String DISPLAY_NAME_TAG = "display_name";
     public static final String EDIT_PROFILE_TAG = "edit_profile";
     public static final int PICK_DISPLAY_IMAGE_RC = 1;
 
@@ -58,7 +58,9 @@ public class UserPreferencesActivity extends AppCompatActivity implements DatePi
 
         Bundle args = getIntent().getExtras();
         if (args != null) {
-            displayName = args.getString(DISPLAY_NAME_TAG);
+            if (args.getString(SignUpActivity.DISPLAY_NAME_TAG) != null) {
+                displayName = args.getString(SignUpActivity.DISPLAY_NAME_TAG);
+            }
             editProfileUid = args.getString(EDIT_PROFILE_TAG);
         }
 

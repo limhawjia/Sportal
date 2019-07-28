@@ -138,10 +138,7 @@ public class ChatPageActivity extends AppCompatActivity {
             }
         });
 
-        viewModel.getMessagesLiveData().observe(this, list -> {
-            Timber.d("receiving updates monkaHmm" + list.toString());
-            adapter.submitList(list);
-        });
+        viewModel.getMessagesLiveData().observe(this, adapter::submitList);
     }
 
 

@@ -111,7 +111,6 @@ public class ChatPageViewModel extends ViewModel {
             List<BaseMessage> messages = new ArrayList<>(messagesLiveData.getValue());
             messages.add(message);
             messagesLiveData.postValue(messages);
-            Timber.d("posting vew values monkahmm");
         }
     }
 
