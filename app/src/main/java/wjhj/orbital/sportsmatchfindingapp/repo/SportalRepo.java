@@ -1,27 +1,35 @@
 package wjhj.orbital.sportsmatchfindingapp.repo;
 
 import android.net.Uri;
+import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.firestore.auth.User;
 
 import org.imperiumlabs.geofirestore.GeoFirestore;
 import org.threeten.bp.Duration;
@@ -30,9 +38,11 @@ import org.threeten.bp.LocalTime;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import java9.util.stream.StreamSupport;
@@ -221,15 +231,190 @@ public class SportalRepo implements ISportalRepo {
 
     @Override
     public Task<Void> updateGame(String gameId, Game game) {
-        GameDataModel dataModel = toGameDataModel(game);
-        return db.collection(GAMES_PATH)
-                .document(gameId)
-                .set(dataModel, SetOptions.merge());
+        DocumentReference docRef = db.collection(GAMES_PATH).document(gameId);
+        return db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                GameDataModel oldRecord = transaction.get(docRef).toObject(GameDataModel.class);
+                if (oldRecord != null && oldRecord.getParticipatingUids() != null) {
+                    Game newGame = game.withParticipatingUids(oldRecord.getParticipatingUids());
+                    GameDataModel newRocrd = toGameDataModel(newGame);
+                    transaction.set(docRef, newRocrd);
+                } else {
+                    GameDataModel newRecord = toGameDataModel(game);
+                    transaction.set(docRef, newRecord);
+                }
+                return null;
+            }
+        });
+    }
+
+    public Task<Void> addUserToGame(String userId, String gameId) {
+        DocumentReference gameDocRef = db.collection(GAMES_PATH).document(gameId);
+        DocumentReference userDocRef = db.collection(USERS_PATH).document(userId);
+        return db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                boolean joinedGameSuccessfully = false;
+                GameDataModel oldRecord = transaction.get(gameDocRef).toObject(GameDataModel.class);
+                UserProfileDataModel user = transaction.get(userDocRef).toObject(UserProfileDataModel.class);
+
+                if (oldRecord != null && oldRecord.getParticipatingUids() != null) {
+                    List<String> participants = oldRecord.getParticipatingUids();
+                    participants.add(userId);
+                    Game newGame = toGame(oldRecord).withParticipatingUids(participants);
+                    GameDataModel newRocrd = toGameDataModel(newGame);
+                    transaction.set(gameDocRef, newRocrd);
+                    joinedGameSuccessfully = true;
+                } else if (oldRecord != null) {
+                    Game newGame = toGame(oldRecord).withParticipatingUids(userId);
+                    GameDataModel newRecord = toGameDataModel(newGame);
+                    transaction.set(gameDocRef, newRecord);
+                    joinedGameSuccessfully = true;
+                }
+
+                if (joinedGameSuccessfully && user != null && user.getGames() != null) {
+                    Log.d("hi", "hihi");
+                    Map<String, List<String>> oldGamesList = user.getGames();
+                    Map<GameStatus, List<String>> newGamesList = new EnumMap<GameStatus, List<String>>(GameStatus.class);
+
+                    if (oldGamesList.get("confirmed") != null) {
+                        newGamesList.put(GameStatus.CONFIRMED, oldGamesList.get("confirmed"));
+                    } else {
+                        newGamesList.put(GameStatus.CONFIRMED, new ArrayList<>());
+                    }
+
+                    if (oldGamesList.get("completed") != null) {
+                        newGamesList.put(GameStatus.COMPLETED, oldGamesList.get("completed"));
+                    } else {
+                        newGamesList.put(GameStatus.COMPLETED, new ArrayList<>());
+                    }
+
+                    if (oldGamesList.get("pending") != null) {
+                        List<String> pending = oldGamesList.get("pending");
+                        pending.add(gameId);
+                        newGamesList.put(GameStatus.PENDING, pending);
+                    } else {
+                        List<String> pending = new ArrayList<>();
+                        pending.add(gameId);
+                        newGamesList.put(GameStatus.PENDING, pending);
+                    }
+                    UserProfile updatedUser = toUserProfile(user).withGames(newGamesList);
+                    transaction.set(userDocRef, toUserProfileDataModel(updatedUser));
+                }
+                return null;
+            }
+        });
+    }
+
+    public Task<Void> removeUserFromGame(String userId, String gameId) {
+        DocumentReference gameDocRef = db.collection(GAMES_PATH).document(gameId);
+        DocumentReference userDocRef = db.collection(USERS_PATH).document(userId);
+
+        return db.runTransaction(new Transaction.Function<Void>() {
+            @Nullable
+            @Override
+            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                boolean removedSuccessfully = false;
+                GameDataModel oldRecord = transaction.get(gameDocRef).toObject(GameDataModel.class);
+                UserProfileDataModel user = transaction.get(userDocRef).toObject(UserProfileDataModel.class);
+
+                if (oldRecord != null && oldRecord.getParticipatingUids() != null) {
+                    List<String> participants = oldRecord.getParticipatingUids();
+                    participants.remove(userId);
+                    Game newGame = toGame(oldRecord).withParticipatingUids(participants);
+                    GameDataModel newRocrd = toGameDataModel(newGame);
+                    transaction.set(gameDocRef, newRocrd);
+                    removedSuccessfully = true;
+                }
+
+                if (removedSuccessfully && user != null) {
+                    Map<String, List<String>> oldGamesList = user.getGames();
+                    Map<GameStatus, List<String>> newGamesList = new EnumMap<GameStatus, List<String>>(GameStatus.class);
+
+                    if (oldGamesList.get("confirmed") != null) {
+                        List<String> confirmed = oldGamesList.get("confirmed");
+                        if (confirmed.contains(gameId)) {
+                            confirmed.remove(gameId);
+                            newGamesList.put(GameStatus.CONFIRMED, confirmed);
+                        } else {
+                            newGamesList.put(GameStatus.CONFIRMED, confirmed);
+                        }
+                    } else {
+                        newGamesList.put(GameStatus.CONFIRMED, new ArrayList<>());
+                    }
+
+                    if (oldGamesList.get("completed") != null) {
+                        List<String> completed = oldGamesList.get("completed");
+                        if (completed.contains(gameId)) {
+                            completed.remove(gameId);
+                            newGamesList.put(GameStatus.COMPLETED, completed);
+                        } else {
+                            newGamesList.put(GameStatus.COMPLETED, completed);
+                        }
+                    } else {
+                        newGamesList.put(GameStatus.COMPLETED, new ArrayList<>());
+                    }
+
+                    if (oldGamesList.get("pending") != null) {
+                        List<String> pending = oldGamesList.get("pending");
+                        if (pending.contains(gameId)) {
+                            pending.remove(gameId);
+                            newGamesList.put(GameStatus.PENDING, pending);
+                        } else {
+                            newGamesList.put(GameStatus.PENDING, pending);
+                        }
+                    } else {
+                        newGamesList.put(GameStatus.PENDING, new ArrayList<>());
+                    }
+
+                    UserProfile updatedUser = toUserProfile(user).withGames(newGamesList);
+                    transaction.set(userDocRef, toUserProfileDataModel(updatedUser));
+                }
+                return null;
+            }
+        });
     }
 
     @Override
     public LiveData<Game> getGame(String gameID) {
         return mGamesCache.getUnchecked(gameID);
+    }
+
+    public LiveData<List<UserProfile>> getParticipatingUsers(String gameId) {
+        LiveData<List<String>> listOfUserIds =
+                Transformations.map(getGame(gameId), Game::getParticipatingUids);
+        MediatorLiveData<ConcurrentHashMap<String, UserProfile>> participants = new MediatorLiveData<>();
+        ConcurrentHashMap<String, UserProfile> profiles = new ConcurrentHashMap<>();
+        participants.setValue(profiles);
+
+        participants.addSource(listOfUserIds, list -> {
+            for (String existingUser : profiles.keySet()) {
+                if (!list.contains(existingUser)) {
+                    profiles.remove(existingUser);
+                }
+            }
+            List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
+            for (String uid : list) {
+                Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection("Users")
+                        .document(uid).get();
+                task.addOnSuccessListener(snapshot -> {
+                    UserProfileDataModel profile = snapshot.toObject(UserProfileDataModel.class);
+                    if (profile != null) {
+                        profiles.put(uid, toUserProfile(profile));
+                    } else {
+                        Log.d("hi", snapshot.toString());
+                    }
+                });
+                tasks.add(task);
+            }
+
+            Tasks.whenAllSuccess(tasks).addOnSuccessListener(results -> participants.setValue(profiles));
+        });
+
+        return Transformations.map(participants, x -> new ArrayList<>(x.values()));
     }
 
     @Override
@@ -238,7 +423,7 @@ public class SportalRepo implements ISportalRepo {
         CollectionReference gamesRef = FirebaseFirestore.getInstance().collection("Games");
         String nameQuery = null;
 
-        HashMap<String, Game> allGames = new HashMap<>();
+        ConcurrentHashMap<String, Game> allGames = new ConcurrentHashMap<>();
         List<Task<QuerySnapshot>> tasks = new ArrayList<>();
 
         if (filter.getNameQuery() != null && filter.getNameQuery().length() > 3) {
@@ -257,14 +442,19 @@ public class SportalRepo implements ISportalRepo {
         }
 
         MutableLiveData<Map<String, Game>> data = new MutableLiveData<>();
-        for (Sport sport :sportsQuery) {
+        for (Sport sport : sportsQuery) {
             for (TimeOfDay timeOfDay : timeOfDayQuery) {
                 for (Difficulty skillLevel : skillLevelQuery) {
-                    Query query = gamesRef
-                            .orderBy("time")
-                            .startAt(timeOfDay.getStartTime().toString())
-                            .endAt(timeOfDay.getEndTime().toString())
-                            .whereEqualTo("sport", sport.toString().toUpperCase())
+                    Query query = gamesRef.orderBy("time");
+                    if (timeOfDay != TimeOfDay.NIGHT) {
+                        query = query.startAt(timeOfDay.getStartTime().toString())
+                                .endAt(timeOfDay.getEndTime().toString());
+                    } else {
+                        query = query.startAt(timeOfDay.getStartTime().toString())
+                                .endAt("00:00");
+                    }
+
+                    query = query.whereEqualTo("sport", sport.toString().toUpperCase())
                             .whereEqualTo("skillLevel", skillLevel.toString().toUpperCase())
                             .limit(20);
                     if (nameQuery != null) {
@@ -276,11 +466,36 @@ public class SportalRepo implements ISportalRepo {
                                 .map(documentSnapshot -> documentSnapshot.toObject(GameDataModel.class))
                                 .map(this::toGame)
                                 .forEach(game -> {
-                                    Log.d("hi", "Adding game " + game.toString());
+                                    Log.d("hi", "1");
                                     allGames.put(game.getUid(), game);
                                     data.setValue(allGames);
                                 });
                     });
+
+                    if (timeOfDay == TimeOfDay.NIGHT) {
+                        Query query2 = gamesRef.orderBy("time")
+                                .startAt("00:01")
+                                .endAt(timeOfDay.getEndTime())
+                                .whereEqualTo("sport", sport.toString().toUpperCase())
+                                .whereEqualTo("skillLevel", skillLevel.toString().toUpperCase())
+                                .limit(20);
+                        if (nameQuery != null) {
+                            query2 = query2.whereArrayContains("nameSubstrings", nameQuery);
+                        }
+                        Task<QuerySnapshot> querySnapshotTask2 = query2.get();
+                        querySnapshotTask2.addOnSuccessListener(snapshots -> {
+                            StreamSupport.stream(snapshots.getDocuments())
+                                    .map(documentSnapshot -> documentSnapshot.toObject(GameDataModel.class))
+                                    .map(this::toGame)
+                                    .forEach(game -> {
+                                        Log.d("hi", "1");
+                                        allGames.put(game.getUid(), game);
+                                        data.setValue(allGames);
+                                    });
+                        });
+                    }
+
+                    data.setValue(allGames);
                 }
             }
         }

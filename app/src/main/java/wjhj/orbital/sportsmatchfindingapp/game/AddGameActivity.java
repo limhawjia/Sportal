@@ -7,6 +7,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.ArrayAdapter;
@@ -55,16 +56,14 @@ public class AddGameActivity extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) binding.topToolbar;
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.add_game_toolbar_text);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         viewModel = ViewModelProviders.of(this).get(AddGameViewModel.class);
         if (getIntent().getExtras() != null) {
             String gameUid = getIntent().getStringExtra(GameActivity.GAME_UID);
-            SportalRepo.getInstance().getGame(gameUid)
-                    .observe(this, viewModel::setExistingGame);
-            viewModel.setEditMode(true);
             getSupportActionBar().setTitle(R.string.edit_game);
             binding.addGameButton.setText(R.string.make_changes);
+            SportalRepo.getInstance().getGame(gameUid)
+                    .observe(this, viewModel::setExistingGame);
         }
 
         binding.setAddGameViewModel(viewModel);
@@ -88,8 +87,9 @@ public class AddGameActivity extends AppCompatActivity implements
 
         viewModel.getNewGameResult().observe(this, result -> {
             if (result.isSuccessful()) {
-                //TODO redirect to game page when it is implemented.
-                Toast.makeText(this, result.getResult().toString(), Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(this, GameActivity.class);
+                intent.putExtra(GameActivity.GAME_UID, viewModel.getGameUid());
+                startActivity(intent);
             } else {
                 Toast.makeText(this, "Could not make game, please try again.", Toast.LENGTH_SHORT)
                         .show();

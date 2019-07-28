@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -13,7 +13,8 @@
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/game_activity_view_pager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_below="@id/top_toolbar">
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/game_activity_tab_layout"
@@ -22,5 +23,5 @@
 
         </androidx.viewpager.widget.ViewPager>
 
-    </FrameLayout>
+    </RelativeLayout>
 </layout>

@@ -1,11 +1,14 @@
 package wjhj.orbital.sportsmatchfindingapp.game;
 
+import android.util.Log;
+
 import androidx.databinding.ObservableInt;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.google.firebase.firestore.GeoPoint;
 import com.mapbox.geojson.Point;
 
@@ -41,6 +44,7 @@ public class AddGameViewModel extends ViewModel {
     private SportalRepo repo;
 
     private boolean editing;
+    private String gameUid;
 
     public AddGameViewModel() {
         sportSelection = new ObservableInt();
@@ -52,7 +56,7 @@ public class AddGameViewModel extends ViewModel {
         minPlayersInput = new ValidationInput<>(num -> num != null && !num.equals("0"), "Enter valid number.");
         maxPlayersInput = new ValidationInput<>(num -> num != null && !num.equals("0"), "Enter valid number.");
         skillLevel = new ValidationInput<>(difficulty -> difficulty != null, "");
-        gameDescription = new ValidationInput<>(text -> text.length() <= 250, "");
+        gameDescription = new ValidationInput<>(text -> text == null || text.length() <= 250, "");
         newGameResult = new MutableLiveData<>();
 
         validations = new ArrayList<>();
@@ -149,14 +153,17 @@ public class AddGameViewModel extends ViewModel {
     public void makeGame(String creatorUid) {
         StreamSupport.stream(validations).forEach(ValidationInput::validate);
 
-        if (Integer.valueOf(maxPlayersInput.getInput()) < Integer.valueOf(minPlayersInput.getInput())) {
-            maxPlayersInput.setState(ValidationInput.State.ERROR);
-            return;
-        }
-
         if (StreamSupport.stream(validations)
                 .allMatch(input -> input.getState() == ValidationInput.State.VALIDATED)) {
-            String gameUid = repo.generateGameUid();
+
+            if (Integer.valueOf(maxPlayersInput.getInput()) < Integer.valueOf(minPlayersInput.getInput())) {
+                maxPlayersInput.setState(ValidationInput.State.ERROR);
+                return;
+            }
+
+            if (!editing) {
+                gameUid = repo.generateGameUid();
+            }
             Game game = Game.builder()
                     .withGameName(gameName.getInput())
                     .withSport(Sport.values()[sportSelection.get()])
@@ -174,22 +181,20 @@ public class AddGameViewModel extends ViewModel {
                     .build();
 
             if (!editing) {
+                Log.d("hi", "not editing");
                 repo.addGame(gameUid, game)
                         .addOnSuccessListener(aVoid -> newGameResult.postValue(new Result<>(game)))
                         .addOnFailureListener(e -> newGameResult.postValue(new Result<>(e)));
             } else {
-//                repo.editGame(gameUid, game)
-//                        .addOnSuccessListener(aVoid -> newGameResult.postValue(new Result<>(game)))
-//                        .addOnFailureListener(e -> newGameResult.postValue(new Result<>(e)));
+                repo.updateGame(gameUid, game)
+                        .addOnSuccessListener(aVoid -> newGameResult.postValue(new Result<>(game)))
+                        .addOnFailureListener(e -> newGameResult.postValue(new Result<>(e)));
             }
         }
     }
 
-    public void setEditMode(boolean bool) {
-        editing = bool;
-    }
-
     public void setExistingGame(Game gameData) {
+        editing = true;
         sportSelection.set(gameData.getSport().ordinal());
         gameName.setInput(gameData.getGameName());
         date.setInput(gameData.getDate());
@@ -201,6 +206,10 @@ public class AddGameViewModel extends ViewModel {
         maxPlayersInput.setInput(String.valueOf(gameData.getMinPlayers()));
         skillLevel.setInput(gameData.getSkillLevel());
         gameDescription.setInput(gameData.getDescription().orNull());
+        gameUid = gameData.getUid();
     }
 
+    public String getGameUid() {
+        return gameUid;
+    }
 }
