@@ -11,7 +11,13 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+
+import com.google.firebase.firestore.GeoPoint;
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +26,7 @@ import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.SearchGameFiltersDialogBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
 import wjhj.orbital.sportsmatchfindingapp.game.TimeOfDay;
+import wjhj.orbital.sportsmatchfindingapp.maps.LocationPickerMapFragment;
 import wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter;
 
 public class SearchFilterDialogFragment extends DialogFragment {
@@ -27,15 +34,25 @@ public class SearchFilterDialogFragment extends DialogFragment {
         public void onSearchFilterDialogPositiveButtonClicked(GameSearchFilter filter);
     }
 
-    GameSearchFilter mGameSearchFilter;
+    private GameSearchFilter mGameSearchFilter;
+    private SearchGameFiltersDialogBinding binding;
+    private SearchFilterDialogViewModel searchFilterDialogViewModel;
+    private SearchFilterDialogListener listener;
 
     public SearchFilterDialogFragment(GameSearchFilter filter) {
         mGameSearchFilter = filter;
     }
 
-    private SearchGameFiltersDialogBinding binding;
-    private SearchFilterDialogViewModel searchFilterDialogViewModel;
-    private SearchFilterDialogListener listener;
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            listener = (SearchFilterDialogListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().getClass().getSimpleName()
+                    + " must implement SearchFilterDialogListener");
+        }
+    }
 
     @NonNull
     @Override
@@ -52,16 +69,6 @@ public class SearchFilterDialogFragment extends DialogFragment {
                 }).setNeutralButton(R.string.cancel, (view, which) -> {});
 
         return builder.create();
-    }
-
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            listener = (SearchFilterDialogListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(getActivity().getClass().getSimpleName() +
-                    "must implement SearchDialogFilterListener");
-        }
     }
 
     private void initViewModel() {

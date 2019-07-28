@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/tools">
 
     <data>
 
@@ -12,44 +13,53 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <RelativeLayout
             android:id="@+id/search_topbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/searchbar"
-                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+            <LinearLayout
+                android:id="@+id/toptop_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="16dp"
-                android:hint="@string/search"
-                app:endIconDrawable="@drawable/ic_search_black_24dp"
-                app:endIconMode="custom">
+                android:orientation="horizontal">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/add_game_name_text_input"
-                    style="@style/ThemeOverlay.MaterialComponents.Light"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:background="@color/white"
-                    android:fontFamily="sans-serif-light"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:textSize="14sp"
-                    android:text="@={search.searchParameter}"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/searchbar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_weight="1"
+                    android:hint="@string/search"
+                    app:endIconDrawable="@drawable/ic_search_black_24dp"
+                    app:endIconMode="custom">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/add_game_name_text_input"
+                        style="@style/ThemeOverlay.MaterialComponents.Light"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@color/white"
+                        android:fontFamily="sans-serif-light"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:text="@={search.searchParameter}"
+                        android:textSize="14sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
 
             <LinearLayout
                 android:id="@+id/search_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="62dp"
-                android:layout_below="@id/searchbar"
+                android:layout_below="@id/toptop_toolbar"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="0dp"
                 android:gravity="center_vertical"
@@ -72,17 +82,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="20dp"
                         android:text="@string/search_sport_filter"
-                        android:textSize="12sp"
-                        android:textColor="@color/gray" />
+                        android:textColor="@color/gray"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="24dp"
                         android:layout_marginStart="1dp"
-                        android:textSize="16sp"
                         android:gravity="center_vertical"
                         android:text="@{search.sportsSelectionText}"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -97,15 +107,15 @@
                         android:layout_height="20dp"
                         android:paddingStart="7dp"
                         android:paddingEnd="7dp"
-                        android:textSize="12sp"
                         android:text="@string/search_sort"
-                        android:textColor="@color/gray" />
+                        android:textColor="@color/gray"
+                        android:textSize="12sp" />
 
                     <androidx.appcompat.widget.AppCompatSpinner
                         android:id="@+id/sort_spinner"
                         android:layout_width="wrap_content"
                         android:layout_height="24dp"
-                        android:textSize="12sp"/>
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
@@ -114,9 +124,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="?attr/selectableItemBackground"
-                    android:gravity="center_vertical"
                     android:clickable="true"
                     android:focusable="true"
+                    android:gravity="center_vertical"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp">
 

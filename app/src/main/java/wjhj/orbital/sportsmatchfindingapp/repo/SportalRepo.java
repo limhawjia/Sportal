@@ -24,6 +24,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -32,6 +33,9 @@ import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.firestore.auth.User;
 
 import org.imperiumlabs.geofirestore.GeoFirestore;
+import org.imperiumlabs.geofirestore.GeoQuery;
+import org.imperiumlabs.geofirestore.listeners.GeoQueryDataEventListener;
+import org.jetbrains.annotations.NotNull;
 import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalTime;
@@ -44,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Filter;
 
 import java9.util.stream.StreamSupport;
 import timber.log.Timber;
@@ -182,7 +187,6 @@ public class SportalRepo implements ISportalRepo {
     public LiveData<UserProfile> getUser(String userUid) {
         return mUserProfilesCache.getUnchecked(userUid);
     }
-
 
 
     @Override
@@ -411,90 +415,173 @@ public class SportalRepo implements ISportalRepo {
         return Transformations.map(participants, x -> new ArrayList<>(x.values()));
     }
 
+    private boolean checkGameWithFilters(Game game, GameSearchFilter filter) {
+        List<Sport> sportQuery = Optional.fromNullable(filter.getSportQuery())
+                .or(new ArrayList<>());
+        List<Difficulty> skillLevelQuery = Optional.fromNullable(filter.getSkillLevelQuery())
+                .or(new ArrayList<>());
+        List<TimeOfDay> timeOfDayQuery = Optional.fromNullable(filter.getTimeOfDayQuery())
+                .or(new ArrayList<>());
+        String nameQuery = Optional.fromNullable(filter.getNameQuery()).or("");
+
+        for (Sport sport : sportQuery) {
+            for (Difficulty skillLevel : skillLevelQuery) {
+                for (TimeOfDay timeOfDay : timeOfDayQuery) {
+                    boolean sameSport = sport == game.getSport();
+                    boolean sameSkillLevel = skillLevel == game.getSkillLevel();
+                    boolean nameMatch = game.getGameName().contains(nameQuery);
+                    boolean timeMatch;
+                    if (timeOfDay != TimeOfDay.NIGHT) {
+                        timeMatch = game.getTime().isAfter(timeOfDay.getStartTime().minusMinutes(1)) &&
+                                game.getTime().isBefore((timeOfDay.getEndTime().plusMinutes(1)));
+                    } else {
+                        timeMatch = (game.getTime().isAfter(timeOfDay.getStartTime().minusMinutes(1)) &&
+                                game.getTime().isBefore(LocalTime.of(0, 0))) ||
+                                (game.getTime().isAfter(LocalTime.of(23, 59)) &&
+                                        game.getTime().isBefore(timeOfDay.getEndTime().plusMinutes(1)));
+                    }
+                    if (sameSport && sameSkillLevel && nameMatch && timeMatch) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     public LiveData<Map<String, Game>> getGamesWithFilters(GameSearchFilter filter) {
         Log.d("hi", "Filtering started...");
         CollectionReference gamesRef = FirebaseFirestore.getInstance().collection("Games");
-        String nameQuery = null;
+        GeoFirestore geoFirestore = new GeoFirestore(gamesRef);
 
-        ConcurrentHashMap<String, Game> allGames = new ConcurrentHashMap<>();
-        List<Task<QuerySnapshot>> tasks = new ArrayList<>();
+        if (filter.hasLocationQuery()) {
+            GeoQuery locationQuery = geoFirestore
+                    .queryAtLocation(filter.getLocationQuery(), filter.getLocationQueryRadius());
 
-        if (filter.getNameQuery() != null && filter.getNameQuery().length() > 3) {
-            nameQuery = filter.getNameQuery();
-        }
+            ConcurrentHashMap<String, Game> map = new ConcurrentHashMap<>();
+            MutableLiveData<Map<String, Game>> data = new MutableLiveData<>();
 
-        List<Sport> sportsQuery = filter.getSportQuery();
-        List<TimeOfDay> timeOfDayQuery = filter.getTimeOfDayQuery();
-        if (timeOfDayQuery.isEmpty()) {
-            timeOfDayQuery = Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON, TimeOfDay.NIGHT);
-        }
-        List<Difficulty> skillLevelQuery = filter.getSkillLevelQuery();
-        if (skillLevelQuery.isEmpty()) {
-            skillLevelQuery =
-                    Arrays.asList(Difficulty.BEGINNER, Difficulty.INTERMEDIATE, Difficulty.ADVANCED);
-        }
+            locationQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
+                @Override
+                public void onDocumentEntered(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {}
 
-        MutableLiveData<Map<String, Game>> data = new MutableLiveData<>();
-        for (Sport sport : sportsQuery) {
-            for (TimeOfDay timeOfDay : timeOfDayQuery) {
-                for (Difficulty skillLevel : skillLevelQuery) {
-                    Query query = gamesRef.orderBy("time");
-                    if (timeOfDay != TimeOfDay.NIGHT) {
-                        query = query.startAt(timeOfDay.getStartTime().toString())
-                                .endAt(timeOfDay.getEndTime().toString());
-                    } else {
-                        query = query.startAt(timeOfDay.getStartTime().toString())
-                                .endAt("23:59");
-                    }
+                @Override
+                public void onDocumentExited(@NotNull DocumentSnapshot documentSnapshot) {}
 
-                    query = query.whereEqualTo("sport", sport.toString().toUpperCase())
-                            .whereEqualTo("skillLevel", skillLevel.toString().toUpperCase())
-                            .limit(20);
-                    if (nameQuery != null) {
-                        query = query.whereArrayContains("nameSubstrings", nameQuery);
-                    }
-                    Task<QuerySnapshot> querySnapshotTask = query.get();
-                    querySnapshotTask.addOnSuccessListener(snapshots -> {
-                        StreamSupport.stream(snapshots.getDocuments())
-                                .map(documentSnapshot -> documentSnapshot.toObject(GameDataModel.class))
-                                .map(this::toGame)
-                                .forEach(game -> {
-                                    Log.d("hi", "1");
-                                    allGames.put(game.getUid(), game);
-                                    data.setValue(allGames);
-                                });
+                @Override
+                public void onDocumentMoved(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {}
+
+                @Override
+                public void onDocumentChanged(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {}
+
+                @Override
+                public void onGeoQueryReady() {
+                    StreamSupport.stream(locationQuery.getQueries()).forEach(query -> {
+                        query.get().addOnSuccessListener(result -> {
+                           StreamSupport.stream(result.getDocuments())
+                                   .map(documentSnapshot -> documentSnapshot.toObject(GameDataModel.class))
+                                   .map(SportalRepo.this::toGame)
+                                   .forEach(game -> {
+                                       if(checkGameWithFilters(game, filter)) {
+                                           map.put(game.getUid(), game);
+                                           data.setValue(map);
+                                       }
+                                   });
+                        });
                     });
+                }
 
-                    if (timeOfDay == TimeOfDay.NIGHT) {
-                        Query query2 = gamesRef.orderBy("time")
-                                .startAt("00:00")
-                                .endAt(timeOfDay.getEndTime())
-                                .whereEqualTo("sport", sport.toString().toUpperCase())
+                @Override
+                public void onGeoQueryError(@NotNull Exception e) {
+                    Log.d(DATA_DEBUG, e.toString());
+                }
+            });
+
+            return data;
+
+        } else {
+            String nameQuery = null;
+
+            ConcurrentHashMap<String, Game> allGames = new ConcurrentHashMap<>();
+            List<Task<QuerySnapshot>> tasks = new ArrayList<>();
+
+            if (filter.getNameQuery() != null && filter.getNameQuery().length() > 3) {
+                nameQuery = filter.getNameQuery();
+            }
+
+            List<Sport> sportsQuery = filter.getSportQuery();
+            List<TimeOfDay> timeOfDayQuery = filter.getTimeOfDayQuery();
+            if (timeOfDayQuery.isEmpty()) {
+                timeOfDayQuery = Arrays.asList(TimeOfDay.MORNING, TimeOfDay.AFTERNOON, TimeOfDay.NIGHT);
+            }
+            List<Difficulty> skillLevelQuery = filter.getSkillLevelQuery();
+            if (skillLevelQuery.isEmpty()) {
+                skillLevelQuery =
+                        Arrays.asList(Difficulty.BEGINNER, Difficulty.INTERMEDIATE, Difficulty.ADVANCED);
+            }
+
+            MutableLiveData<Map<String, Game>> data = new MutableLiveData<>();
+            for (Sport sport : sportsQuery) {
+                for (TimeOfDay timeOfDay : timeOfDayQuery) {
+                    for (Difficulty skillLevel : skillLevelQuery) {
+                        Query query = gamesRef.orderBy("time");
+                        if (timeOfDay != TimeOfDay.NIGHT) {
+                            query = query.startAt(timeOfDay.getStartTime().toString())
+                                    .endAt(timeOfDay.getEndTime().toString());
+                        } else {
+                            query = query.startAt(timeOfDay.getStartTime().toString())
+                                    .endAt("23:59");
+                        }
+
+                        query = query.whereEqualTo("sport", sport.toString().toUpperCase())
                                 .whereEqualTo("skillLevel", skillLevel.toString().toUpperCase())
                                 .limit(20);
                         if (nameQuery != null) {
-                            query2 = query2.whereArrayContains("nameSubstrings", nameQuery);
+                            query = query.whereArrayContains("nameSubstrings", nameQuery);
                         }
-                        Task<QuerySnapshot> querySnapshotTask2 = query2.get();
-                        querySnapshotTask2.addOnSuccessListener(snapshots -> {
+                        Task<QuerySnapshot> querySnapshotTask = query.get();
+                        querySnapshotTask.addOnSuccessListener(snapshots -> {
                             StreamSupport.stream(snapshots.getDocuments())
                                     .map(documentSnapshot -> documentSnapshot.toObject(GameDataModel.class))
                                     .map(this::toGame)
                                     .forEach(game -> {
-                                        Log.d("hi", "1");
+                                        Log.d("hi", game.getGameName() + " 1 " + game.getTime().toString());
                                         allGames.put(game.getUid(), game);
                                         data.setValue(allGames);
                                     });
                         });
-                    }
 
-                    data.setValue(allGames);
+                        if (timeOfDay == TimeOfDay.NIGHT) {
+                            Query query2 = gamesRef.orderBy("time")
+                                    .startAt("00:00")
+                                    .endAt(timeOfDay.getEndTime().toString())
+                                    .whereEqualTo("sport", sport.toString().toUpperCase())
+                                    .whereEqualTo("skillLevel", skillLevel.toString().toUpperCase())
+                                    .limit(20);
+                            if (nameQuery != null) {
+                                query2 = query2.whereArrayContains("nameSubstrings", nameQuery);
+                            }
+                            Task<QuerySnapshot> querySnapshotTask2 = query2.get();
+                            querySnapshotTask2.addOnSuccessListener(snapshots -> {
+                                StreamSupport.stream(snapshots.getDocuments())
+                                        .map(documentSnapshot -> documentSnapshot.toObject(GameDataModel.class))
+                                        .map(this::toGame)
+                                        .forEach(game -> {
+                                            Log.d("hi", game.getGameName() + " 2 " + game.getTime().toString());
+                                            allGames.put(game.getUid(), game);
+                                            data.setValue(allGames);
+                                        });
+                            });
+                        }
+
+                        data.setValue(allGames);
+                    }
                 }
             }
-        }
 
-        return data;
+            return data;
+        }
     }
 
     @Override
