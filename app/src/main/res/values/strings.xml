@@ -121,7 +121,17 @@
     <string name="edit_game">Edit game</string>
     <string name="make_changes">Make changes!</string>
 
+    <!-- GamePage -->
+    <string name="game_details_participating">Current: %d/%d</string>
+    <string name="game_details_min_players">Minimum: %d</string>
+    <string name="game_details_title">Participants:</string>
+    <string name="no_players">There are currently no participants :(</string>
+    <string name="game_ready">GAME IS ON!</string>
+    <string name="more_info">More details: </string>
+    <string name="about_owner">About the owner:</string>
+    <string name="details">Details</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="preferences_edit_profile">Edit Profile:</string>
     <string name="display_profile_friend_request_pending">Friend request pending</string>

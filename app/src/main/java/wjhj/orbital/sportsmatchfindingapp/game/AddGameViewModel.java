@@ -1,11 +1,14 @@
 package wjhj.orbital.sportsmatchfindingapp.game;
 
+import android.util.Log;
+
 import androidx.databinding.ObservableInt;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import com.google.firebase.firestore.GeoPoint;
 import com.mapbox.geojson.Point;
 
@@ -41,6 +44,7 @@ public class AddGameViewModel extends ViewModel {
     private SportalRepo repo;
 
     private boolean editing;
+    private String gameUid;
 
     public AddGameViewModel() {
         sportSelection = new ObservableInt();
@@ -157,7 +161,9 @@ public class AddGameViewModel extends ViewModel {
                 return;
             }
 
-            String gameUid = repo.generateGameUid();
+            if (!editing) {
+                gameUid = repo.generateGameUid();
+            }
             Game game = Game.builder()
                     .withGameName(gameName.getInput())
                     .withSport(Sport.values()[sportSelection.get()])
@@ -179,18 +185,15 @@ public class AddGameViewModel extends ViewModel {
                         .addOnSuccessListener(aVoid -> newGameResult.postValue(new Result<>(game)))
                         .addOnFailureListener(e -> newGameResult.postValue(new Result<>(e)));
             } else {
-//                repo.editGame(gameUid, game)
-//                        .addOnSuccessListener(aVoid -> newGameResult.postValue(new Result<>(game)))
-//                        .addOnFailureListener(e -> newGameResult.postValue(new Result<>(e)));
+                repo.updateGame(gameUid, game)
+                        .addOnSuccessListener(aVoid -> newGameResult.postValue(new Result<>(game)))
+                        .addOnFailureListener(e -> newGameResult.postValue(new Result<>(e)));
             }
         }
     }
 
-    public void setEditMode(boolean bool) {
-        editing = bool;
-    }
-
     public void setExistingGame(Game gameData) {
+        editing = true;
         sportSelection.set(gameData.getSport().ordinal());
         gameName.setInput(gameData.getGameName());
         date.setInput(gameData.getDate());
@@ -202,6 +205,10 @@ public class AddGameViewModel extends ViewModel {
         maxPlayersInput.setInput(String.valueOf(gameData.getMinPlayers()));
         skillLevel.setInput(gameData.getSkillLevel());
         gameDescription.setInput(gameData.getDescription().orNull());
+        gameUid = gameData.getUid();
     }
 
+    public String getGameUid() {
+        return gameUid;
+    }
 }

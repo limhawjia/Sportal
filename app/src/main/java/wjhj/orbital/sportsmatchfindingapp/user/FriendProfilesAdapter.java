@@ -75,7 +75,7 @@ public class FriendProfilesAdapter extends RecyclerView.Adapter<FriendProfilesAd
         }
     }
 
-    interface UserProfileClickListener {
+    public interface UserProfileClickListener {
         void onUserProfileClick(String uid);
     }
 }

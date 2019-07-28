@@ -36,15 +36,17 @@
 
         <activity
             android:name=".homepage.HomepageActivity"
-            android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan"
+            android:launchMode="singleTask"/>
 
         <activity
             android:name=".game.AddGameActivity"
-            android:parentActivityName=".homepage.HomepageActivity"/>
+            android:parentActivityName=".homepage.HomepageActivity"
+            android:noHistory="true"/>
 
         <activity android:name=".game.GameActivity"
-            android:parentActivityName=".homepage.HomepageActivity"/>
+            android:parentActivityName=".homepage.HomepageActivity"
+            android:launchMode="singleTask"/>
 
         <activity android:name=".homepage.socialpage.ChatPageActivity"
             android:parentActivityName=".homepage.HomepageActivity"/>
@@ -62,6 +64,8 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorPrimary" />
+
+
 
     </application>
 
