@@ -17,6 +17,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.threeten.bp.Duration;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalTime;
+import org.threeten.bp.format.DateTimeFormatter;
+
 import java.util.List;
 
 public class BindingAdapters {
@@ -59,5 +64,19 @@ public class BindingAdapters {
     @BindingAdapter("android:drawableStartResource")
     public static void setDrawableStart(TextView view, int resource) {
         view.setCompoundDrawablesRelativeWithIntrinsicBounds(resource, 0, 0, 0);
+    }
+
+    @BindingAdapter("android:setTextDate")
+    public static void setTextDate(TextView view, LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EE, d LL");
+        view.setText(formatter.format(date));
+    }
+
+    @BindingAdapter({"android:setTextTime", "android:duration"})
+    public static void setTextTime(TextView view, LocalTime time, Duration duration) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:ma");
+        String startTime = formatter.format(time);
+        String endTime = formatter.format(time.plus(duration));
+        view.setText(startTime + " to " + endTime);
     }
 }

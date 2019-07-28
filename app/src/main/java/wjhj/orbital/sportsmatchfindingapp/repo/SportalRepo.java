@@ -445,7 +445,7 @@ public class SportalRepo implements ISportalRepo {
                                 .endAt(timeOfDay.getEndTime().toString());
                     } else {
                         query = query.startAt(timeOfDay.getStartTime().toString())
-                                .endAt("00:00");
+                                .endAt("23:59");
                     }
 
                     query = query.whereEqualTo("sport", sport.toString().toUpperCase())
@@ -468,7 +468,7 @@ public class SportalRepo implements ISportalRepo {
 
                     if (timeOfDay == TimeOfDay.NIGHT) {
                         Query query2 = gamesRef.orderBy("time")
-                                .startAt("00:01")
+                                .startAt("00:00")
                                 .endAt(timeOfDay.getEndTime())
                                 .whereEqualTo("sport", sport.toString().toUpperCase())
                                 .whereEqualTo("skillLevel", skillLevel.toString().toUpperCase())
