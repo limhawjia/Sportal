@@ -15,7 +15,7 @@ import java9.util.stream.Collectors;
 import java9.util.stream.StreamSupport;
 import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.messaging.PrivateChat;
-import wjhj.orbital.sportsmatchfindingapp.messaging.SendbirdConstants;
+import wjhj.orbital.sportsmatchfindingapp.messaging.SendBirdConstants;
 
 public class SocialChatsViewModel extends ViewModel {
 
@@ -33,7 +33,7 @@ public class SocialChatsViewModel extends ViewModel {
         GroupChannelListQuery channelListQuery = GroupChannel.createMyGroupChannelListQuery();
         channelListQuery.setIncludeEmpty(true);
         channelListQuery.setOrder(GroupChannelListQuery.Order.LATEST_LAST_MESSAGE);
-        channelListQuery.setCustomTypesFilter(Collections.singletonList(SendbirdConstants.PRIVATE_CHAT_CUSTOM_TYPE));
+        channelListQuery.setCustomTypesFilter(Collections.singletonList(SendBirdConstants.PRIVATE_CHAT_CUSTOM_TYPE));
         channelListQuery.next((list, e) -> {
             if (e != null) {
                 Timber.d(e, "Load channels error");

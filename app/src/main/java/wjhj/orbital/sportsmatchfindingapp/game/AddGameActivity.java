@@ -58,6 +58,7 @@ public class AddGameActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         viewModel = ViewModelProviders.of(this).get(AddGameViewModel.class);
+
         if (getIntent().getExtras() != null) {
             String gameUid = getIntent().getStringExtra(GameActivity.GAME_UID);
             SportalRepo.getInstance().getGame(gameUid)

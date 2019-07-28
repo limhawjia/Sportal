@@ -1,5 +1,6 @@
 package wjhj.orbital.sportsmatchfindingapp.homepage.socialpage;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,10 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-
-import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.SocialChatsFragmentBinding;
 import wjhj.orbital.sportsmatchfindingapp.messaging.PrivateChat;
@@ -86,7 +84,10 @@ public class SocialChatsFragment extends Fragment implements DataBindingAdapter.
     @Override
     public void onItemClick(View view, PrivateChat item) {
         if (view.getId() == R.id.chat_card_container) {
-            item.getChannel().getUrl();
+            Intent openChatPageIntent = new Intent(requireActivity(), ChatPageActivity.class);
+            openChatPageIntent.putExtra(ChatPageActivity.CHANNEL_URL_TAG, item.getChannel().getUrl());
+            openChatPageIntent.putExtra(ChatPageActivity.CURR_USER_UID_TAG, mCurrUserUid);
+            requireActivity().startActivity(openChatPageIntent);
         }
     }
 

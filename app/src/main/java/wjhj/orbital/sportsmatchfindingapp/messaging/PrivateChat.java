@@ -13,17 +13,11 @@ import com.sendbird.android.Member;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.UserMessage;
 
-import org.threeten.bp.Instant;
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.ZoneId;
-import org.threeten.bp.format.DateTimeFormatter;
-
 import java.util.List;
 
-import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
+import wjhj.orbital.sportsmatchfindingapp.utils.DateUtils;
 
 public class PrivateChat {
 
@@ -58,6 +52,10 @@ public class PrivateChat {
 
     public GroupChannel getChannel() {
         return groupChannel;
+    }
+
+    public LiveData<String> getFriendUid() {
+        return Transformations.map(friendProfile, UserProfile::getUid);
     }
 
     public LiveData<String> getFriendDisplayName() {
@@ -97,18 +95,8 @@ public class PrivateChat {
     }
 
     public LiveData<String> getLastSentTime() {
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE;
-
-        return Transformations.map(loadLastSent(), message -> {
-            LocalDateTime localDateTime = LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(message.getCreatedAt()), ZoneId.systemDefault());
-            if (localDateTime.toLocalDate().isEqual(LocalDate.now())) {
-                return localDateTime.toLocalTime().format(timeFormatter);
-            } else {
-                return localDateTime.toLocalDate().format(dateFormatter);
-            }
-        });
+        return Transformations.map(loadLastSent(), message ->
+                DateUtils.formatDateTimeForChat(message.getCreatedAt()));
     }
 
 
@@ -125,5 +113,4 @@ public class PrivateChat {
         });
         return countLiveData;
     }
-
 }
