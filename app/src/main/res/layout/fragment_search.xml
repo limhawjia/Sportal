@@ -34,11 +34,12 @@
                     android:id="@+id/add_game_name_text_input"
                     style="@style/ThemeOverlay.MaterialComponents.Light"
                     android:layout_width="match_parent"
-                    android:layout_height="58dp"
+                    android:layout_height="50dp"
                     android:background="@color/white"
                     android:fontFamily="sans-serif-light"
                     android:inputType="text"
                     android:maxLines="1"
+                    android:textSize="14sp"
                     android:text="@={search.searchParameter}"/>
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -49,8 +50,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="62dp"
                 android:layout_below="@id/searchbar"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="4dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="0dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -71,12 +72,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="20dp"
                         android:text="@string/search_sport_filter"
+                        android:textSize="12sp"
                         android:textColor="@color/gray" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="24dp"
                         android:layout_marginStart="1dp"
+                        android:textSize="16sp"
                         android:gravity="center_vertical"
                         android:text="@{search.sportsSelectionText}"
                         android:textColor="@color/black" />
@@ -94,13 +97,15 @@
                         android:layout_height="20dp"
                         android:paddingStart="7dp"
                         android:paddingEnd="7dp"
+                        android:textSize="12sp"
                         android:text="@string/search_sort"
                         android:textColor="@color/gray" />
 
                     <androidx.appcompat.widget.AppCompatSpinner
                         android:id="@+id/sort_spinner"
                         android:layout_width="wrap_content"
-                        android:layout_height="24dp" />
+                        android:layout_height="24dp"
+                        android:textSize="12sp"/>
 
                 </LinearLayout>
 

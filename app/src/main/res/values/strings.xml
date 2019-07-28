@@ -120,6 +120,7 @@
     <string name="leave">leave</string>
     <string name="edit_game">Edit game</string>
     <string name="make_changes">Make changes!</string>
+    <string name="enough_players">You have enough players!</string>
 
     <!-- GamePage -->
     <string name="game_details_participating">Current: %d/%d</string>
