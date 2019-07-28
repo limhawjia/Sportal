@@ -48,6 +48,8 @@ public abstract class AbstractGame {
 
     public abstract Optional<String> getDescription();
 
+    public abstract Optional<String> getGameBoardChannelUrl();
+
     public abstract List<String> getParticipatingUids();
 
     public LocalDateTime getStartDateTime() {

@@ -89,7 +89,7 @@ public class AddGameActivity extends AppCompatActivity implements
         viewModel.getNewGameResult().observe(this, result -> {
             if (result.isSuccessful()) {
                 Intent intent = new Intent(this, GameActivity.class);
-                intent.putExtra(GameActivity.GAME_UID, viewModel.getGameUid());
+                intent.putExtra(GameActivity.GAME_UID, result.getResult().getUid());
                 startActivity(intent);
             } else {
                 Toast.makeText(this, "Could not make game, please try again.", Toast.LENGTH_SHORT)

@@ -3,7 +3,6 @@ package wjhj.orbital.sportsmatchfindingapp.game;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
@@ -12,8 +11,6 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.auth.User;
 
 import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
@@ -21,14 +18,14 @@ import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.temporal.ChronoUnit;
 
 import java.util.List;
-import java.util.Optional;
 
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
 public class GameDetailsViewModel extends ViewModel {
-    private DateTimeFormatter dateformatter = DateTimeFormatter.ofPattern("dd LLLL yyyy");
-    private DateTimeFormatter timeformatter = DateTimeFormatter.ofPattern("HH:mm a");
+    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd LLLL yyyy");
+    private DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm a");
 
     private LiveData<Game> mGame;
     private LiveData<List<String>> mParticipants;
@@ -49,7 +46,7 @@ public class GameDetailsViewModel extends ViewModel {
     private LiveData<String> mOwnerName;
     private LiveData<Uri> mOwnerDisplayUri;
     private LiveData<Boolean> mIsOwner;
-    private LiveData<Boolean> mIsParticpant;
+    private LiveData<Boolean> mIsParticipant;
     private MutableLiveData<Boolean> mIsDisabled;
     private MutableLiveData<Boolean> mResult;
 
@@ -77,8 +74,8 @@ public class GameDetailsViewModel extends ViewModel {
             }
         });
         mSport = Transformations.map(mGame, Game::getSport);
-        mDate = Transformations.map(mGame, game -> dateformatter.format(game.getDate()));
-        mTime = Transformations.map(mGame, game -> timeformatter.format(game.getTime()));
+        mDate = Transformations.map(mGame, game -> dateFormatter.format(game.getDate()));
+        mTime = Transformations.map(mGame, game -> timeFormatter.format(game.getTime()));
         mDuration = Transformations.map(mGame, game -> toDurationString(game.getDuration()));
         mSkillLevel = Transformations.map(mGame, game -> game.getSkillLevel().toString());
         mProgress = new MediatorLiveData<>();
@@ -107,10 +104,9 @@ public class GameDetailsViewModel extends ViewModel {
         mDaysLeft = Transformations.map(mGame, game -> getDaysLeft(game.getDate()));
         mOwnerName = Transformations.map(mOwner, UserProfile::getDisplayName);
         mOwnerDisplayUri = Transformations.map(mOwner, UserProfile::getDisplayPicUri);
-        mIsOwner = Transformations.map(mOwner, owner -> {
-            return FirebaseAuth.getInstance().getUid().equals(owner.getUid());
-        });
-        mIsParticpant = Transformations.map(mParticipants, participants -> {
+        mIsOwner = Transformations.map(mOwner, owner ->
+                FirebaseAuth.getInstance().getUid().equals(owner.getUid()));
+        mIsParticipant = Transformations.map(mParticipants, participants -> {
             Log.d("hi", "changed");
             Log.d("hi", String.valueOf(participants.contains(FirebaseAuth.getInstance().getUid())));
             return participants.contains(FirebaseAuth.getInstance().getUid());
@@ -185,7 +181,7 @@ public class GameDetailsViewModel extends ViewModel {
     }
 
     public LiveData<Boolean> getIsParticipant() {
-        return mIsParticpant;
+        return mIsParticipant;
     }
 
     public LiveData<Boolean> getResult() {
@@ -215,22 +211,27 @@ public class GameDetailsViewModel extends ViewModel {
     }
 
     public void onButtonClicked(View view) {
-        Boolean isParticipant = mIsParticpant.getValue();
+        Boolean isParticipant = mIsParticipant.getValue();
         String gameUid = mGame.getValue().getUid();
         if (gameUid != null) {
             if (isParticipant) {
-                Log.d("hi", "is participant");
                 mIsDisabled.setValue(true);
                 SportalRepo.getInstance().removeUserFromGame(FirebaseAuth.getInstance().getUid(), gameUid)
                         .addOnCompleteListener(x -> mIsDisabled.setValue(false))
                         .addOnSuccessListener(x -> mResult.postValue(true))
-                        .addOnFailureListener(x -> mResult.postValue(false));
+                        .addOnFailureListener(e -> {
+                            Timber.d(e, "Remove user from game error");
+                            mResult.postValue(false);
+                        });
             } else {
                 mIsDisabled.setValue(true);
                 SportalRepo.getInstance().addUserToGame(FirebaseAuth.getInstance().getUid(), gameUid)
                         .addOnCompleteListener(x -> mIsDisabled.setValue((false)))
                         .addOnSuccessListener(x -> mResult.postValue(true))
-                        .addOnFailureListener(x -> mResult.postValue(false));
+                        .addOnFailureListener(e -> {
+                            Timber.d(e, "Add user to game error");
+                            mResult.postValue(false);
+                        });
             }
         }
     }

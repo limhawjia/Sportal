@@ -1,13 +1,16 @@
-package wjhj.orbital.sportsmatchfindingapp.homepage.socialpage;
-
-import android.view.inputmethod.InputMethodManager;
+package wjhj.orbital.sportsmatchfindingapp.game;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.common.base.Optional;
+import com.google.firebase.auth.FirebaseAuth;
 import com.sendbird.android.BaseChannel;
 import com.sendbird.android.BaseMessage;
 import com.sendbird.android.GroupChannel;
@@ -19,105 +22,154 @@ import java.util.Collections;
 import java.util.List;
 
 import timber.log.Timber;
-import wjhj.orbital.sportsmatchfindingapp.messaging.PrivateChat;
 import wjhj.orbital.sportsmatchfindingapp.messaging.SendBirdConnectionManager;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 
-public class ChatPageViewModel extends ViewModel {
+public class GamesBoardViewModel extends ViewModel {
+
     private static final String CONNECTION_HANDLER = "connection_handler";
-    private static final String PRIVATE_CHAT_HANDLER_ID = "private_chat_handler";
+    private static final String GROUP_CHAT_HANDLER = "group_chat_handler";
     private static final int CHAT_MESSAGES_LIMIT = 30;
 
-    private String mCurrUserUid;
-    private String mChannelUrl;
-    private boolean mIsMessageListLoading;
-    private InputMethodManager mIMM;
-    private MutableLiveData<PrivateChat> chatLiveData;
+    private final SportalRepo repo;
+    private String mGameUid;
+    private LiveData<Game> currGame;
+    private LiveData<Boolean> isVerifiedUser;
+    private MutableLiveData<Exception> connectionExceptions;
     private MutableLiveData<String> messageTextLiveData;
     private LiveData<Boolean> sendButtonEnabled;
+    private MutableLiveData<GroupChannel> groupChannelLiveData;
     private MediatorLiveData<List<BaseMessage>> messagesLiveData;
 
+    private boolean mIsMessageListLoading;
 
-    public ChatPageViewModel(String currUserUid, String channelUrl, InputMethodManager iMM) {
-        mCurrUserUid = currUserUid;
-        mChannelUrl = channelUrl;
-        mIMM = iMM;
-        chatLiveData = new MutableLiveData<>();
+    public GamesBoardViewModel(String gameUid) {
+        mGameUid = gameUid;
+        repo = SportalRepo.getInstance();
+        currGame = repo.getGame(gameUid);
+        isVerifiedUser = Transformations.map(currGame, game -> {
+            String currUserUid = FirebaseAuth.getInstance().getUid();
+            return game.getCreatorUid().equals(currUserUid)
+                    || game.getParticipatingUids().contains(currUserUid);
+        });
+        connectionExceptions = new MutableLiveData<>();
         messageTextLiveData = new MutableLiveData<>();
         sendButtonEnabled = Transformations.map(messageTextLiveData, text -> text != null && text.length() > 0);
+        groupChannelLiveData = new MutableLiveData<>();
         messagesLiveData = new MediatorLiveData<>();
+        messagesLiveData.addSource(groupChannelLiveData, this::loadLatestMessages);
 
         setUpConnectionManger();
-        refresh();
+        tryLoadChannel();
         setUpChannelHandler();
 
-        messagesLiveData.addSource(chatLiveData, this::loadLatestMessages);
 
     }
+
 
     private void setUpConnectionManger() {
         SendBirdConnectionManager.addConnectionManagementHandler(CONNECTION_HANDLER,
-                reconnect -> refresh());
+                reconnect -> tryLoadChannel());
     }
 
-    private void setUpChannelHandler() {
-        SendBird.addChannelHandler(PRIVATE_CHAT_HANDLER_ID, new SendBird.ChannelHandler() {
+    private void tryLoadChannel() {
+        isVerifiedUser.observeForever(new Observer<Boolean>() {
             @Override
-            public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
-                if (baseChannel.getUrl().equals(mChannelUrl)) {
-                    addMessage(baseMessage);
+            public void onChanged(Boolean bool) {
+                if (bool) {
+                    loadChannel();
                 }
+                isVerifiedUser.removeObserver(this);
             }
         });
     }
 
-    private void refresh() {
-        if (chatLiveData.getValue() == null) {
-            GroupChannel.getChannel(mChannelUrl, (groupChannel, e) -> {
-                if (e != null) {
-                    Timber.d(e, "Get channel error");
+    private void loadChannel() {
+        if (currGame.getValue() == null) {
+            return;
+        }
+
+        Optional<String> groupChannelUrl = currGame.getValue().getGameBoardChannelUrl();
+
+        if (groupChannelUrl.isPresent()) {
+            GroupChannel.getChannel(groupChannelUrl.get(), (groupChannel, e1) -> {
+                if (e1 != null) {
+                    connectionExceptions.postValue(e1);
+                    Timber.d(e1, "Get games channel error");
                     return;
                 }
-                chatLiveData.postValue(PrivateChat.of(groupChannel, mCurrUserUid));
+
+                groupChannel.join(e2 -> {
+                    if (e2 != null) {
+                        connectionExceptions.postValue(e2);
+                        Timber.d(e2, "Join game channel error");
+                        return;
+                    }
+
+                    groupChannelLiveData.postValue(groupChannel);
+                });
             });
+
         } else {
-            GroupChannel channel = chatLiveData.getValue().getChannel();
-            channel.refresh(e -> {
-                if (e != null) {
-                    Timber.d(e, "Get channel error");
-                    return;
-                }
-                chatLiveData.postValue(PrivateChat.of(channel, mCurrUserUid));
-            });
+            SendBirdConnectionManager.createGameBoardChannel(mGameUid)
+                    .addOnSuccessListener(groupChannel -> {
+                        groupChannel.join(e -> {
+                            if (e != null) {
+                                connectionExceptions.postValue(e);
+                                Timber.d(e, "Join game channel error");
+                                return;
+                            }
+                            groupChannelLiveData.postValue(groupChannel);
+                        });
+                        repo.updateGame(currGame.getValue().getUid(),
+                                currGame.getValue().withGameBoardChannelUrl(groupChannel.getUrl()));
+                    })
+                    .addOnFailureListener(connectionExceptions::postValue);
         }
     }
 
-    private void loadLatestMessages(PrivateChat chat) {
-        if(isMessageListLoading()) {
+    private void setUpChannelHandler() {
+        GroupChannel channel = groupChannelLiveData.getValue();
+        if (channel != null) {
+            SendBird.addChannelHandler(GROUP_CHAT_HANDLER, new SendBird.ChannelHandler() {
+                @Override
+                public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
+                    if (baseChannel.getUrl().equals(channel.getUrl())) {
+                        addMessage(baseMessage);
+                    }
+                }
+            });
+        }
+
+    }
+
+    private void loadLatestMessages(GroupChannel groupChannel) {
+        if (isMessageListLoading()) {
             return;
         }
 
         setMessageListLoading(true);
-        chat.getChannel().getPreviousMessagesByTimestamp(Long.MAX_VALUE, true, CHAT_MESSAGES_LIMIT,
+        groupChannel.getPreviousMessagesByTimestamp(Long.MAX_VALUE, true, CHAT_MESSAGES_LIMIT,
                 true, BaseChannel.MessageTypeFilter.ALL, null,
                 (list, e) -> {
                     setMessageListLoading(false);
                     if (e != null) {
-                        Timber.d(e, "Get messages error");
+                        Timber.d(e, "Get messagesLiveData error");
                         return;
                     }
-                    chat.getChannel().markAsRead();
+                    groupChannel.markAsRead();
                     messagesLiveData.postValue(list);
                 }
         );
     }
 
     void loadPreviousMessages() {
-        if(isMessageListLoading()) {
+        if (isMessageListLoading()) {
             return;
         }
 
-        if (chatLiveData.getValue() != null) {
-            GroupChannel channel = chatLiveData.getValue().getChannel();
+        if (groupChannelLiveData.getValue() != null) {
+            GroupChannel channel = groupChannelLiveData.getValue();
 
             long oldestMessageCreatedAt = Long.MAX_VALUE;
             List<BaseMessage> messages = messagesLiveData.getValue();
@@ -141,22 +193,22 @@ public class ChatPageViewModel extends ViewModel {
     }
 
     public void sendMessage(String messageText) {
-        PrivateChat chat = chatLiveData.getValue();
-        if (chat == null) {
+        Timber.d(messageText);
+        GroupChannel channel = groupChannelLiveData.getValue();
+        if (channel == null) {
             return;
         }
 
-        UserMessage tempUserMessage = chat.getChannel().sendUserMessage(messageText,
+        UserMessage tempUserMessage = channel.sendUserMessage(messageText,
                 (userMessage, e) -> {
-            if (e != null) {
-                Timber.d(e, "Send message failed");
-                removeFailedMessage(userMessage);
-                return;
-            }
+                    if (e != null) {
+                        Timber.d(e, "Send message failed");
+                        removeFailedMessage(userMessage);
+                        return;
+                    }
+                    markMessageSent(userMessage);
 
-            markMessageSent(userMessage);
-
-        });
+                });
         messageTextLiveData.setValue("");
         addMessage(tempUserMessage);
     }
@@ -180,6 +232,7 @@ public class ChatPageViewModel extends ViewModel {
             messagesLiveData.postValue(existingMessages);
         }
     }
+
 
     private void markMessageSent(BaseMessage message) {
         List<BaseMessage> messages = messagesLiveData.getValue();
@@ -206,12 +259,12 @@ public class ChatPageViewModel extends ViewModel {
         }
     }
 
-    LiveData<PrivateChat> getChatLiveData() {
-        return chatLiveData;
-    }
-
     LiveData<List<BaseMessage>> getMessagesLiveData() {
         return messagesLiveData;
+    }
+
+    LiveData<Exception> getConnectionExceptions() {
+        return connectionExceptions;
     }
 
     public MutableLiveData<String> getMessageTextLiveData() {
@@ -222,11 +275,16 @@ public class ChatPageViewModel extends ViewModel {
         return sendButtonEnabled;
     }
 
+    // Verified means either participating or the creator.
+    public LiveData<Boolean> isVerifiedUser() {
+        return isVerifiedUser;
+    }
+
     private synchronized boolean isMessageListLoading() {
         return mIsMessageListLoading;
     }
 
-    private synchronized void setMessageListLoading(boolean isMessageListLoading) {
+    public synchronized void setMessageListLoading(boolean isMessageListLoading) {
         mIsMessageListLoading = isMessageListLoading;
     }
 }

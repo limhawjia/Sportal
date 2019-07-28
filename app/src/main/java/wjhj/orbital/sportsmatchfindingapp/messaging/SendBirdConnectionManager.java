@@ -2,9 +2,16 @@ package wjhj.orbital.sportsmatchfindingapp.messaging;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.sendbird.android.GroupChannel;
+import com.sendbird.android.GroupChannelParams;
 import com.sendbird.android.SendBird;
+import com.sendbird.android.SendBirdException;
+
+import timber.log.Timber;
 
 public class SendBirdConnectionManager {
 
@@ -54,6 +61,26 @@ public class SendBirdConnectionManager {
                 });
             }
         }
+    }
+
+    public static Task<GroupChannel> createGameBoardChannel(String gameUid) {
+        TaskCompletionSource<GroupChannel> channelSource = new TaskCompletionSource<>();
+
+        GroupChannelParams params = new GroupChannelParams()
+                .setData(gameUid)
+                .setPublic(true)
+                .setDistinct(false)
+                .setCustomType(SendBirdConstants.GROUP_CHAT_CUSTOM_TYPE);
+
+        GroupChannel.createChannel(params, (groupChannel, e) -> {
+            if (e != null) {
+                Timber.d(e, "Failed to create channel");
+                channelSource.setException(e);
+            }
+            channelSource.setResult(groupChannel);
+        });
+
+        return channelSource.getTask();
     }
 
     public static void removeConnectionManagementHandler(String handlerId) {

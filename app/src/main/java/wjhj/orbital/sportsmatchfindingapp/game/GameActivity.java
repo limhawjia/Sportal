@@ -76,8 +76,8 @@ public class GameActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         if (mGameLiveData.getValue() != null) {
             String creatorUid = mGameLiveData.getValue().getCreatorUid();
-            String curUserid = FirebaseAuth.getInstance().getUid();
-            if (creatorUid != null && creatorUid.equals(curUserid)) {
+            String currUserUid = FirebaseAuth.getInstance().getUid();
+            if (creatorUid != null && creatorUid.equals(currUserUid)) {
                 getMenuInflater().inflate(R.menu.game_owner_menu, menu);
             }
             return true;
@@ -85,8 +85,8 @@ public class GameActivity extends AppCompatActivity {
             mGameLiveData.observe(this, game -> {
                 if (game != null) {
                     String creatorUid = mGameLiveData.getValue().getCreatorUid();
-                    String curUserid = FirebaseAuth.getInstance().getUid();
-                    if (creatorUid != null && creatorUid.equals(curUserid)) {
+                    String currUserUid = FirebaseAuth.getInstance().getUid();
+                    if (creatorUid != null && creatorUid.equals(currUserUid)) {
                         getMenuInflater().inflate(R.menu.game_owner_menu, menu);
                     }
                     invalidateOptionsMenu();

@@ -628,6 +628,7 @@ public class SportalRepo implements ISportalRepo {
                 .withUid(dataModel.getUid())
                 .withCreatorUid(dataModel.getCreatorUid())
                 .withDescription(Optional.fromNullable(dataModel.getDescription()))
+                .withGameBoardChannelUrl(Optional.fromNullable(dataModel.getGameBoardChannelUrl()))
                 .addAllParticipatingUids(dataModel.getParticipatingUids())
                 .build();
     }

@@ -14,7 +14,7 @@ import wjhj.orbital.sportsmatchfindingapp.homepage.searchpage.SearchFragment;
 public class GameActivityPagerAdapter extends FragmentPagerAdapter {
     private String gameUid;
 
-    public GameActivityPagerAdapter(FragmentManager fm) {
+    GameActivityPagerAdapter(FragmentManager fm) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
 
@@ -23,11 +23,9 @@ public class GameActivityPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-//                return GameDetailsFragment.newInstance(gameUid);
                 return GameDetailsFragment.newInstance(gameUid);
-
             case 1:
-                return SearchFragment.newInstance(ImmutableList.<Sport>builder().build());
+                return GamesBoardFragment.newInstance(gameUid);
         }
         return null;
     }

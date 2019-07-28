@@ -143,5 +143,6 @@
     <string name="friend_card_sports_you_have_in_common">SPORTS IN COMMON:</string>
     <string name="chat_page_send">Send</string>
     <string name="chat_page_message_hint">Message</string>
+    <string name="games_board_no_permission">Oops, you are not participating in this game!</string>
 
 </resources>

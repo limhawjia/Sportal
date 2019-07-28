@@ -7,10 +7,10 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class GameDetailsViewModelFactory implements ViewModelProvider.Factory {
-    String gameUid;
+public class GameUidViewModelFactory implements ViewModelProvider.Factory {
+    private String gameUid;
 
-    public GameDetailsViewModelFactory(String gameUid) {
+    GameUidViewModelFactory(String gameUid) {
         this.gameUid = gameUid;
     }
 
@@ -18,7 +18,8 @@ public class GameDetailsViewModelFactory implements ViewModelProvider.Factory {
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (GameDetailsViewModel.class.isAssignableFrom(modelClass)) {
+        if (GameDetailsViewModel.class.isAssignableFrom(modelClass) ||
+                GamesBoardViewModel.class.isAssignableFrom(modelClass)) {
             try {
                 return modelClass.getConstructor(String.class).newInstance(gameUid);
 
