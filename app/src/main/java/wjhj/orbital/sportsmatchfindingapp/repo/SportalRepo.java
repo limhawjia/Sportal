@@ -232,21 +232,18 @@ public class SportalRepo implements ISportalRepo {
     @Override
     public Task<Void> updateGame(String gameId, Game game) {
         DocumentReference docRef = db.collection(GAMES_PATH).document(gameId);
-        return db.runTransaction(new Transaction.Function<Void>() {
-            @Nullable
-            @Override
-            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                GameDataModel oldRecord = transaction.get(docRef).toObject(GameDataModel.class);
-                if (oldRecord != null && oldRecord.getParticipatingUids() != null) {
-                    Game newGame = game.withParticipatingUids(oldRecord.getParticipatingUids());
-                    GameDataModel newRocrd = toGameDataModel(newGame);
-                    transaction.set(docRef, newRocrd);
-                } else {
-                    GameDataModel newRecord = toGameDataModel(game);
-                    transaction.set(docRef, newRecord);
-                }
-                return null;
+        return db.runTransaction(transaction -> {
+            GameDataModel oldRecord = transaction.get(docRef).toObject(GameDataModel.class);
+
+            if (oldRecord != null && oldRecord.getParticipatingUids() != null) {
+                Game newGame = game.withParticipatingUids(oldRecord.getParticipatingUids());
+                GameDataModel newRecord = toGameDataModel(newGame);
+                transaction.set(docRef, newRecord);
+            } else {
+                GameDataModel newRecord = toGameDataModel(game);
+                transaction.set(docRef, newRecord);
             }
+            return null;
         });
     }
 
