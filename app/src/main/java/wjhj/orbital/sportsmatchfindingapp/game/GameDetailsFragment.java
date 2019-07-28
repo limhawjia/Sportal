@@ -136,6 +136,8 @@ public class GameDetailsFragment extends Fragment implements FriendProfilesAdapt
         viewModel.getResult().observe(this, bool -> {
             if (!bool) {
                 Toast.makeText(requireContext(), "Process failed, please try again later", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(requireContext(), "Success!", Toast.LENGTH_SHORT).show();
             }
         });
     }
