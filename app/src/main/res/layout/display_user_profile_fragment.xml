@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="viewModel"
             type="wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileViewModel" />
@@ -80,6 +79,19 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/display_user_display_name" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:visibility="@{(viewModel.currentUser || !safeUnbox(viewModel.isFriend())) ? View.INVISIBLE : View.VISIBLE}"
+                android:onClickListener="@{v -> viewModel.sendMessage()}"
+                android:src="@drawable/ic_chat_green_36dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/display_user_display_name"
+                app:layout_constraintBottom_toBottomOf="@id/display_user_bio"
+                android:contentDescription="@string/image" />
 
             <RelativeLayout
                 android:id="@+id/display_user_info_container"

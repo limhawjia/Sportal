@@ -50,6 +50,7 @@
             android:launchMode="singleTask"/>
 
         <activity android:name=".homepage.socialpage.ChatPageActivity"
+            android:windowSoftInputMode="stateVisible|adjustPan"
             android:parentActivityName=".homepage.HomepageActivity"/>
 
 

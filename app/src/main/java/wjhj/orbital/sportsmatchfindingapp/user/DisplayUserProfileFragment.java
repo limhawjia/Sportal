@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,31 +24,30 @@ import java.util.Collections;
 
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.DisplayUserProfileFragmentBinding;
-import wjhj.orbital.sportsmatchfindingapp.databinding.GameActionbarBinding;
-import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.GameActivity;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesCardAdapter;
+import wjhj.orbital.sportsmatchfindingapp.homepage.socialpage.ChatPageActivity;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class DisplayUserProfileFragment extends Fragment implements FriendProfilesAdapter.UserProfileClickListener {
 
-    private static String USER_UID_TAG = "user_uid";
+    private static String DISPLAYED_USER_UID_TAG = "user_uid";
 
     private DisplayUserProfileFragmentBinding binding;
     private DisplayUserProfileViewModel viewModel;
     private BottomNavigationView bottomNav;
-    private String mUserUid;
+    private String mDisplayedUserUid;
 
     public DisplayUserProfileFragment() {
         // Required empty public constructor
     }
 
-    public static DisplayUserProfileFragment newInstance(String userUid) {
+    public static DisplayUserProfileFragment newInstance(String displayedUserUid) {
         DisplayUserProfileFragment fragment = new DisplayUserProfileFragment();
         Bundle args = new Bundle();
-        args.putString(USER_UID_TAG, userUid);
+        args.putString(DISPLAYED_USER_UID_TAG, displayedUserUid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -59,11 +57,11 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mUserUid = getArguments().getString(USER_UID_TAG);
+            mDisplayedUserUid = getArguments().getString(DISPLAYED_USER_UID_TAG);
         }
 
-        if (mUserUid != null) {
-            DisplayUserProfileViewModelFactory factory = new DisplayUserProfileViewModelFactory(mUserUid);
+        if (mDisplayedUserUid != null) {
+            DisplayUserProfileViewModelFactory factory = new DisplayUserProfileViewModelFactory(mDisplayedUserUid);
             viewModel = ViewModelProviders.of(this, factory)
                     .get(DisplayUserProfileViewModel.class);
         } else {
@@ -94,6 +92,16 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
 
         initGamesCardRecyclerView(binding.displayUserGamesRecyclerView);
 
+        viewModel.getSendMessageResult().observe(getViewLifecycleOwner(), groupChannelResult -> {
+            if (groupChannelResult.isSuccessful()) {
+                Intent intent = new Intent(requireContext(), ChatPageActivity.class);
+                intent.putExtra(ChatPageActivity.CURR_USER_UID_TAG, viewModel.getCurrUserUid());
+                intent.putExtra(ChatPageActivity.CHANNEL_URL_TAG, groupChannelResult.getResult().getUrl());
+
+                requireActivity().startActivity(intent);
+            }
+        });
+
         return binding.getRoot();
     }
 
@@ -112,7 +120,7 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
                     requireActivity().getString(R.string.user_profile_edit_profile),
                     v -> {
                         Intent intent = new Intent(getContext(), UserPreferencesActivity.class);
-                        intent.putExtra(UserPreferencesActivity.EDIT_PROFILE_TAG, mUserUid);
+                        intent.putExtra(UserPreferencesActivity.EDIT_PROFILE_TAG, mDisplayedUserUid);
                         startActivity(intent);
                     },
                     true);

@@ -41,6 +41,7 @@
             app:layout_constraintStart_toEndOf="@id/chat_card_pic"
             app:layout_constraintTop_toTopOf="@id/chat_card_pic"
             android:maxLines="1"
+            android:ellipsize="end"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:text="@{item.friendDisplayName}"/>
@@ -51,6 +52,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
+            android:maxLines="1"
+            android:maxEms="18"
             app:layout_constraintStart_toEndOf="@id/chat_card_pic"
             app:layout_constraintTop_toBottomOf="@id/chat_card_friend_name"
             android:ellipsize="end"
