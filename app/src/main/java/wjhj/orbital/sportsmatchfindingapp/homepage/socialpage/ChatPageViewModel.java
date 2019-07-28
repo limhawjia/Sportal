@@ -22,7 +22,7 @@ import wjhj.orbital.sportsmatchfindingapp.messaging.PrivateChat;
 
 public class ChatPageViewModel extends ViewModel {
     private static final String PRIVATE_CHAT_HANDLER_ID = "private_chat_handler";
-    private static final int CHAT_LIST_LIMIT = 30;
+    private static final int CHAT_LIST_LIMIT = 20;
 
     private String mCurrUserUid;
     private String mChannelUrl;

@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import java.util.List;
+import java.util.Map;
 
 import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
@@ -44,7 +45,6 @@ public class SearchViewModel extends ViewModel {
         LiveData<Map<String, Game>> source1 = Transformations
                 .switchMap(searchFilters, filters -> repo.getGamesWithFilters(filters));
         liveGamesData.addSource(source1, map -> {
-            Log.d("hi", "received");
             List<Game> games = new ArrayList<>(map.values());
             Collections.sort(games, sortComparator.getValue());
             liveGamesData.setValue(games);
