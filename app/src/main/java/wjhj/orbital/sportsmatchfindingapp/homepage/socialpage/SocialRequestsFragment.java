@@ -4,7 +4,6 @@ package wjhj.orbital.sportsmatchfindingapp.homepage.socialpage;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.arch.core.util.Function;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
@@ -15,9 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.util.List;
@@ -34,7 +30,7 @@ import wjhj.orbital.sportsmatchfindingapp.utils.DataBindingAdapter;
  * Use the {@link SocialRequestsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SocialRequestsFragment extends Fragment {
+public class SocialRequestsFragment extends Fragment implements DataBindingAdapter.ItemClickListener<UserProfile> {
     private static final String CURR_USER_UID_TAG = "curr_user_uid";
 
     private SportalRepo repo;
@@ -75,7 +71,8 @@ public class SocialRequestsFragment extends Fragment {
 
     private void initRecyclerView(RecyclerView recyclerView, TextView textView) {
         LinearLayoutManager manager = new LinearLayoutManager(requireActivity());
-        FriendRequestAdapter adapter = new FriendRequestAdapter(new UserProfileItemCallback(), this);
+        FriendRequestAdapter adapter = new FriendRequestAdapter(new UserProfileItemCallback());
+        adapter.setItemClickListener(this);
 
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
@@ -94,28 +91,33 @@ public class SocialRequestsFragment extends Fragment {
 
     }
 
-    public void acceptFriendRequest(String senderUid) {
-        repo.acceptFriendRequest(senderUid, currUserUid);
-    }
 
-    public void declineFriendRequest(String senderUid) {
-        repo.declineFriendRequest(senderUid, currUserUid);
-    }
+    @Override
+    public void onItemClick(View view, UserProfile item) {
+        switch (view.getId()) {
+            case R.id.friend_request_container:
+                DisplayUserProfileFragment fragment = DisplayUserProfileFragment.newInstance(item.getUid());
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.homepage_secondary_fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+                break;
+            case R.id.friend_request_accept_button:
+                repo.acceptFriendRequest(item.getUid(), currUserUid);
+                break;
+            case R.id.friend_request_decline_button:
+                repo.declineFriendRequest(item.getUid(), currUserUid);
+                break;
+        }
 
-    public void openProfile(String profileUid) {
-        DisplayUserProfileFragment fragment = DisplayUserProfileFragment.newInstance(profileUid);
-        requireActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.homepage_secondary_fragment_container, fragment)
-                .addToBackStack(null)
-                .commit();
     }
 
 
     static class FriendRequestAdapter extends DataBindingAdapter<UserProfile> {
 
-        FriendRequestAdapter(@NonNull DiffUtil.ItemCallback<UserProfile> diffCallback, SocialRequestsFragment controller) {
-            super(diffCallback, controller);
+        FriendRequestAdapter(@NonNull DiffUtil.ItemCallback<UserProfile> diffCallback) {
+            super(diffCallback);
         }
 
         @Override

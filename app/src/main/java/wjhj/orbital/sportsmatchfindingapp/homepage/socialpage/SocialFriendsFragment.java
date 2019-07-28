@@ -46,7 +46,7 @@ public class SocialFriendsFragment extends Fragment implements FriendsCardAdapte
             currUserUid = getArguments().getString(CURR_USER_UID_TAG);
         }
 
-        SocialFriendsViewModelFactory factory = new SocialFriendsViewModelFactory(currUserUid);
+        SocialViewModelFactory factory = new SocialViewModelFactory(currUserUid);
         viewModel = ViewModelProviders.of(this, factory).get(SocialFriendsViewModel.class);
     }
 

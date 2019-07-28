@@ -15,7 +15,6 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserPreferencesActivity;
 public class SignUpActivity extends AppCompatActivity {
 
     public static final String SIGNUP_DEBUG = "signup";
-    private static final String DISPLAY_NAME_TAG = "display_name;";
 
     private Authentications auths;
     private SignupActivityBinding binding;
@@ -60,7 +59,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void updateOnSignedUp(SignUpAuth signUpAuth) {
         Intent preferencesIntent = new Intent(this, UserPreferencesActivity.class);
-        preferencesIntent.putExtra(DISPLAY_NAME_TAG, signUpAuth.getDisplayName());
+        preferencesIntent.putExtra(UserPreferencesActivity.DISPLAY_NAME_TAG, signUpAuth.getDisplayName());
         startActivity(preferencesIntent);
         finish();
     }

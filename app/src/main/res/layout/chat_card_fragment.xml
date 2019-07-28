@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="item"
+            type="wjhj.orbital.sportsmatchfindingapp.messaging.PrivateChat" />
+
+        <variable
+            name="listener"
+            type="wjhj.orbital.sportsmatchfindingapp.utils.DataBindingAdapter.ItemClickListener" />
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/chat_card_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:onClick="@{v -> listener.onItemClick(v, item)}">
+
+        <ImageView
+            android:id="@+id/chat_card_pic"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="12dp"
+            android:circularImageUri="@{item.friendDisplayPicUri}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:contentDescription="@string/image" />
+
+        <TextView
+            android:id="@+id/chat_card_friend_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            app:layout_constraintStart_toEndOf="@id/chat_card_pic"
+            app:layout_constraintTop_toTopOf="@id/chat_card_pic"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:text="@{item.friendDisplayName}"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            app:layout_constraintStart_toEndOf="@id/chat_card_pic"
+            app:layout_constraintTop_toBottomOf="@id/chat_card_friend_name"
+            android:ellipsize="end"
+            android:text="@{item.lastSentUserMessage}"/>
+
+        <TextView
+            android:id="@+id/chat_card_last_sent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:text="@{item.lastSentTime}"
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="@id/chat_card_pic"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/oval_shape_color_primary"
+            android:textColor="@color/white"
+            android:visibility="@{(item.unreadMessageCount.equals(0)) ? View.GONE : View.VISIBLE}"
+            android:text="@{item.unreadMessageCount.toString()}"
+            app:layout_constraintTop_toBottomOf="@id/chat_card_last_sent"
+            app:layout_constraintEnd_toEndOf="@id/chat_card_last_sent"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            style="@style/Divider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:contentDescription="@string/image" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

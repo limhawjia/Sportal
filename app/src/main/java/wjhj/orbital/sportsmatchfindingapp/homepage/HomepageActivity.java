@@ -37,6 +37,7 @@ import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesSwipeViewFragment;
 import wjhj.orbital.sportsmatchfindingapp.homepage.searchpage.SearchFragment;
 import wjhj.orbital.sportsmatchfindingapp.homepage.socialpage.SocialSwipeViewFragment;
+import wjhj.orbital.sportsmatchfindingapp.messaging.SendBirdConnectionManager;
 import wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileFragment;
@@ -134,7 +135,7 @@ public class HomepageActivity extends AppCompatActivity implements
     }
 
     private void connectToChatClient() {
-        SendBird.connect(currUser.getUid(), (user, e) -> {
+        SendBirdConnectionManager.login(currUser.getUid(), (user, e) -> {
             if (e != null) {
                 Timber.d(e,"Connection error");
             } else {
@@ -144,7 +145,7 @@ public class HomepageActivity extends AppCompatActivity implements
     }
 
     private void disconnectFromChatClient() {
-        SendBird.disconnect(() -> Timber.d("Disconnected from chat client"));
+        SendBirdConnectionManager.logout(() -> Timber.d("Disconnected from chat client"));
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {

@@ -58,6 +58,7 @@ public class AddGameActivity extends AppCompatActivity implements
         getSupportActionBar().setTitle(R.string.add_game_toolbar_text);
 
         viewModel = ViewModelProviders.of(this).get(AddGameViewModel.class);
+
         if (getIntent().getExtras() != null) {
             String gameUid = getIntent().getStringExtra(GameActivity.GAME_UID);
             getSupportActionBar().setTitle(R.string.edit_game);

@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -20,14 +19,13 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.homepage.HomepageActivity;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.LoginActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.user.UserPreferencesActivity;
 
 public class LoginActivity extends AppCompatActivity {
-    public static final String LOGIN_DEBUG = "login";
-    public static final String GOOGLE_NAME_TAG = "google_name";
     public static final int GOOGLE_SIGN_IN_RC = 1;
 
     private LoginViewModel loginViewModel;
@@ -38,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(LOGIN_DEBUG, "Login activity created");
+        Timber.d("Login activity created");
 
         auths = new Authentications();
 
@@ -55,11 +53,11 @@ public class LoginActivity extends AppCompatActivity {
             } else {
                 auths.trySignIn(loginUser)
                         .addOnSuccessListener(this, task -> {
-                            Log.d(LOGIN_DEBUG, "sign in w email/password success");
+                            Timber.d("sign in w email/password success");
                             updateOnLoggedIn(task);
                         })
                         .addOnFailureListener(this, e -> {
-                            Log.d(LOGIN_DEBUG, "sign in w email/password failure", e);
+                            Timber.d(e, "sign in w email/password failure");
                             if (e instanceof FirebaseAuthInvalidUserException) {
                                 Toast.makeText(this, "Account does not exist", Toast.LENGTH_LONG)
                                         .show();
@@ -104,11 +102,11 @@ public class LoginActivity extends AppCompatActivity {
         if (googleAccount != null) {
             auths.firebaseAuthWithGoogle(googleAccount)
                     .addOnSuccessListener(this, result -> {
-                        Log.d(LOGIN_DEBUG, "Sign in with Google credentials success");
+                        Timber.d("Sign in with Google credentials success");
                         updateOnLoggedIn(result);
                     })
                     .addOnFailureListener(this, e -> {
-                        Log.d(LOGIN_DEBUG, "Sign in with Google credentials failure", e);
+                        Timber.d(e, "Sign in with Google credentials failure");
                         Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT)
                                 .show();
                     });
@@ -128,19 +126,19 @@ public class LoginActivity extends AppCompatActivity {
 
                     auths.firebaseAuthWithGoogle(account)
                             .addOnSuccessListener(this, result -> {
-                                Log.d(LOGIN_DEBUG, "Sign in with Google credentials success");
+                                Timber.d("Sign in with Google credentials success");
                                 updateOnLoggedIn(result);
                             })
                             .addOnFailureListener(this, e -> {
-                                Log.d(LOGIN_DEBUG, "Sign in with Google credentials failure", e);
+                                Timber.d(e, "Sign in with Google credentials failure");
                                 Toast.makeText(this, "Authentication failed.", Toast.LENGTH_LONG)
                                         .show();
                             });
                 } catch (ApiException e) {
-                    Log.d(LOGIN_DEBUG, "Google sign in fail", e);
+                    Timber.d(e, "Google sign in fail");
                 }
             } else {
-                Log.d(LOGIN_DEBUG, "Google login cancelled with result code: " + resultCode);
+                Timber.d("Google login cancelled with result code: %s", resultCode);
             }
         }
     }
@@ -155,7 +153,7 @@ public class LoginActivity extends AppCompatActivity {
                     profileSetupIntent.putExtra(UserPreferencesActivity.DISPLAY_NAME_TAG,
                             (String) additionalUserInfo.getProfile().get("name"));
                 } catch (ClassCastException e) {
-                    Log.d(LOGIN_DEBUG, "Class cast exception", e);
+                    Timber.d(e, "Class cast exception");
                 }
                 startActivity(profileSetupIntent);
                 finish();

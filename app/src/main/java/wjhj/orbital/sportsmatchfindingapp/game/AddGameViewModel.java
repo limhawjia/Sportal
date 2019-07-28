@@ -181,7 +181,6 @@ public class AddGameViewModel extends ViewModel {
                     .build();
 
             if (!editing) {
-                Log.d("hi", "not editing");
                 repo.addGame(gameUid, game)
                         .addOnSuccessListener(aVoid -> newGameResult.postValue(new Result<>(game)))
                         .addOnFailureListener(e -> newGameResult.postValue(new Result<>(e)));

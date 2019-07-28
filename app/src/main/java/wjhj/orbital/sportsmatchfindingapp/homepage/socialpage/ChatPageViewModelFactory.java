@@ -1,25 +1,32 @@
 package wjhj.orbital.sportsmatchfindingapp.homepage.socialpage;
 
+import android.view.inputmethod.InputMethodManager;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class SocialFriendsViewModelFactory implements ViewModelProvider.Factory {
+public class ChatPageViewModelFactory implements ViewModelProvider.Factory {
 
-    private final String userUid;
+    private String currUserUid;
+    private String channelUrl;
+    private InputMethodManager iMM;
 
-    public SocialFriendsViewModelFactory(String userUid) {
-        this.userUid = userUid;
+    ChatPageViewModelFactory(String currUserUid, String channelUrl, InputMethodManager iMM) {
+        this.currUserUid = currUserUid;
+        this.channelUrl = channelUrl;
+        this.iMM = iMM;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        if (SocialFriendsViewModel.class.isAssignableFrom(modelClass)) {
+        if (ChatPageViewModel.class.isAssignableFrom(modelClass)) {
             try {
-                return modelClass.getConstructor(String.class).newInstance(userUid);
+                return modelClass.getConstructor(String.class, String.class, InputMethodManager.class)
+                        .newInstance(currUserUid, channelUrl, iMM);
 
             } catch (NoSuchMethodException | IllegalAccessException |
                     InstantiationException | InvocationTargetException e) {
@@ -29,6 +36,4 @@ public class SocialFriendsViewModelFactory implements ViewModelProvider.Factory 
 
         throw new IllegalArgumentException("Unexpected model class " + modelClass);
     }
-
 }
-
