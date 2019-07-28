@@ -250,59 +250,57 @@ public class SportalRepo implements ISportalRepo {
     public Task<Void> addUserToGame(String userId, String gameId) {
         DocumentReference gameDocRef = db.collection(GAMES_PATH).document(gameId);
         DocumentReference userDocRef = db.collection(USERS_PATH).document(userId);
-        return db.runTransaction(new Transaction.Function<Void>() {
-            @Nullable
-            @Override
-            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                boolean joinedGameSuccessfully = false;
-                GameDataModel oldRecord = transaction.get(gameDocRef).toObject(GameDataModel.class);
-                UserProfileDataModel user = transaction.get(userDocRef).toObject(UserProfileDataModel.class);
+        return db.runTransaction(transaction -> {
 
-                if (oldRecord != null && oldRecord.getParticipatingUids() != null) {
-                    List<String> participants = oldRecord.getParticipatingUids();
-                    participants.add(userId);
-                    Game newGame = toGame(oldRecord).withParticipatingUids(participants);
-                    GameDataModel newRocrd = toGameDataModel(newGame);
-                    transaction.set(gameDocRef, newRocrd);
-                    joinedGameSuccessfully = true;
-                } else if (oldRecord != null) {
-                    Game newGame = toGame(oldRecord).withParticipatingUids(userId);
-                    GameDataModel newRecord = toGameDataModel(newGame);
-                    transaction.set(gameDocRef, newRecord);
-                    joinedGameSuccessfully = true;
-                }
+            boolean joinedGameSuccessfully = false;
+            GameDataModel oldRecord = transaction.get(gameDocRef).toObject(GameDataModel.class);
+            UserProfileDataModel user = transaction.get(userDocRef).toObject(UserProfileDataModel.class);
 
-                if (joinedGameSuccessfully && user != null && user.getGames() != null) {
-                    Log.d("hi", "hihi");
-                    Map<String, List<String>> oldGamesList = user.getGames();
-                    Map<GameStatus, List<String>> newGamesList = new EnumMap<GameStatus, List<String>>(GameStatus.class);
+            if (oldRecord != null && oldRecord.getParticipatingUids() != null) {
+                List<String> participants = oldRecord.getParticipatingUids();
+                participants.add(userId);
+                Game newGame = toGame(oldRecord).withParticipatingUids(participants);
+                GameDataModel newRecord = toGameDataModel(newGame);
+                transaction.set(gameDocRef, newRecord);
+                joinedGameSuccessfully = true;
 
-                    if (oldGamesList.get("confirmed") != null) {
-                        newGamesList.put(GameStatus.CONFIRMED, oldGamesList.get("confirmed"));
-                    } else {
-                        newGamesList.put(GameStatus.CONFIRMED, new ArrayList<>());
-                    }
-
-                    if (oldGamesList.get("completed") != null) {
-                        newGamesList.put(GameStatus.COMPLETED, oldGamesList.get("completed"));
-                    } else {
-                        newGamesList.put(GameStatus.COMPLETED, new ArrayList<>());
-                    }
-
-                    if (oldGamesList.get("pending") != null) {
-                        List<String> pending = oldGamesList.get("pending");
-                        pending.add(gameId);
-                        newGamesList.put(GameStatus.PENDING, pending);
-                    } else {
-                        List<String> pending = new ArrayList<>();
-                        pending.add(gameId);
-                        newGamesList.put(GameStatus.PENDING, pending);
-                    }
-                    UserProfile updatedUser = toUserProfile(user).withGames(newGamesList);
-                    transaction.set(userDocRef, toUserProfileDataModel(updatedUser));
-                }
-                return null;
+            } else if (oldRecord != null) {
+                Game newGame = toGame(oldRecord).withParticipatingUids(userId);
+                GameDataModel newRecord = toGameDataModel(newGame);
+                transaction.set(gameDocRef, newRecord);
+                joinedGameSuccessfully = true;
             }
+
+            if (joinedGameSuccessfully && user != null && user.getGames() != null) {
+                Log.d("hi", "hihi");
+                Map<String, List<String>> oldGamesList = user.getGames();
+                Map<GameStatus, List<String>> newGamesList = new EnumMap<>(GameStatus.class);
+
+                if (oldGamesList.get("confirmed") != null) {
+                    newGamesList.put(GameStatus.CONFIRMED, oldGamesList.get("confirmed"));
+                } else {
+                    newGamesList.put(GameStatus.CONFIRMED, new ArrayList<>());
+                }
+
+                if (oldGamesList.get("completed") != null) {
+                    newGamesList.put(GameStatus.COMPLETED, oldGamesList.get("completed"));
+                } else {
+                    newGamesList.put(GameStatus.COMPLETED, new ArrayList<>());
+                }
+
+                if (oldGamesList.get("pending") != null) {
+                    List<String> pending = oldGamesList.get("pending");
+                    pending.add(gameId);
+                    newGamesList.put(GameStatus.PENDING, pending);
+                } else {
+                    List<String> pending = new ArrayList<>();
+                    pending.add(gameId);
+                    newGamesList.put(GameStatus.PENDING, pending);
+                }
+                UserProfile updatedUser = toUserProfile(user).withGames(newGamesList);
+                transaction.set(userDocRef, toUserProfileDataModel(updatedUser));
+            }
+            return null;
         });
     }
 
@@ -310,68 +308,64 @@ public class SportalRepo implements ISportalRepo {
         DocumentReference gameDocRef = db.collection(GAMES_PATH).document(gameId);
         DocumentReference userDocRef = db.collection(USERS_PATH).document(userId);
 
-        return db.runTransaction(new Transaction.Function<Void>() {
-            @Nullable
-            @Override
-            public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                boolean removedSuccessfully = false;
-                GameDataModel oldRecord = transaction.get(gameDocRef).toObject(GameDataModel.class);
-                UserProfileDataModel user = transaction.get(userDocRef).toObject(UserProfileDataModel.class);
+        return db.runTransaction(transaction -> {
+            boolean removedSuccessfully = false;
+            GameDataModel oldRecord = transaction.get(gameDocRef).toObject(GameDataModel.class);
+            UserProfileDataModel user = transaction.get(userDocRef).toObject(UserProfileDataModel.class);
 
-                if (oldRecord != null && oldRecord.getParticipatingUids() != null) {
-                    List<String> participants = oldRecord.getParticipatingUids();
-                    participants.remove(userId);
-                    Game newGame = toGame(oldRecord).withParticipatingUids(participants);
-                    GameDataModel newRocrd = toGameDataModel(newGame);
-                    transaction.set(gameDocRef, newRocrd);
-                    removedSuccessfully = true;
-                }
-
-                if (removedSuccessfully && user != null) {
-                    Map<String, List<String>> oldGamesList = user.getGames();
-                    Map<GameStatus, List<String>> newGamesList = new EnumMap<GameStatus, List<String>>(GameStatus.class);
-
-                    if (oldGamesList.get("confirmed") != null) {
-                        List<String> confirmed = oldGamesList.get("confirmed");
-                        if (confirmed.contains(gameId)) {
-                            confirmed.remove(gameId);
-                            newGamesList.put(GameStatus.CONFIRMED, confirmed);
-                        } else {
-                            newGamesList.put(GameStatus.CONFIRMED, confirmed);
-                        }
-                    } else {
-                        newGamesList.put(GameStatus.CONFIRMED, new ArrayList<>());
-                    }
-
-                    if (oldGamesList.get("completed") != null) {
-                        List<String> completed = oldGamesList.get("completed");
-                        if (completed.contains(gameId)) {
-                            completed.remove(gameId);
-                            newGamesList.put(GameStatus.COMPLETED, completed);
-                        } else {
-                            newGamesList.put(GameStatus.COMPLETED, completed);
-                        }
-                    } else {
-                        newGamesList.put(GameStatus.COMPLETED, new ArrayList<>());
-                    }
-
-                    if (oldGamesList.get("pending") != null) {
-                        List<String> pending = oldGamesList.get("pending");
-                        if (pending.contains(gameId)) {
-                            pending.remove(gameId);
-                            newGamesList.put(GameStatus.PENDING, pending);
-                        } else {
-                            newGamesList.put(GameStatus.PENDING, pending);
-                        }
-                    } else {
-                        newGamesList.put(GameStatus.PENDING, new ArrayList<>());
-                    }
-
-                    UserProfile updatedUser = toUserProfile(user).withGames(newGamesList);
-                    transaction.set(userDocRef, toUserProfileDataModel(updatedUser));
-                }
-                return null;
+            if (oldRecord != null && oldRecord.getParticipatingUids() != null) {
+                List<String> participants = oldRecord.getParticipatingUids();
+                participants.remove(userId);
+                Game newGame = toGame(oldRecord).withParticipatingUids(participants);
+                GameDataModel newRecord = toGameDataModel(newGame);
+                transaction.set(gameDocRef, newRecord);
+                removedSuccessfully = true;
             }
+
+            if (removedSuccessfully && user != null) {
+                Map<String, List<String>> oldGamesList = user.getGames();
+                Map<GameStatus, List<String>> newGamesList = new EnumMap<>(GameStatus.class);
+
+                if (oldGamesList.get("confirmed") != null) {
+                    List<String> confirmed = oldGamesList.get("confirmed");
+                    if (confirmed.contains(gameId)) {
+                        confirmed.remove(gameId);
+                        newGamesList.put(GameStatus.CONFIRMED, confirmed);
+                    } else {
+                        newGamesList.put(GameStatus.CONFIRMED, confirmed);
+                    }
+                } else {
+                    newGamesList.put(GameStatus.CONFIRMED, new ArrayList<>());
+                }
+
+                if (oldGamesList.get("completed") != null) {
+                    List<String> completed = oldGamesList.get("completed");
+                    if (completed.contains(gameId)) {
+                        completed.remove(gameId);
+                        newGamesList.put(GameStatus.COMPLETED, completed);
+                    } else {
+                        newGamesList.put(GameStatus.COMPLETED, completed);
+                    }
+                } else {
+                    newGamesList.put(GameStatus.COMPLETED, new ArrayList<>());
+                }
+
+                if (oldGamesList.get("pending") != null) {
+                    List<String> pending = oldGamesList.get("pending");
+                    if (pending.contains(gameId)) {
+                        pending.remove(gameId);
+                        newGamesList.put(GameStatus.PENDING, pending);
+                    } else {
+                        newGamesList.put(GameStatus.PENDING, pending);
+                    }
+                } else {
+                    newGamesList.put(GameStatus.PENDING, new ArrayList<>());
+                }
+
+                UserProfile updatedUser = toUserProfile(user).withGames(newGamesList);
+                transaction.set(userDocRef, toUserProfileDataModel(updatedUser));
+            }
+            return null;
         });
     }
 
@@ -383,6 +377,7 @@ public class SportalRepo implements ISportalRepo {
     public LiveData<List<UserProfile>> getParticipatingUsers(String gameId) {
         LiveData<List<String>> listOfUserIds =
                 Transformations.map(getGame(gameId), Game::getParticipatingUids);
+
         MediatorLiveData<ConcurrentHashMap<String, UserProfile>> participants = new MediatorLiveData<>();
         ConcurrentHashMap<String, UserProfile> profiles = new ConcurrentHashMap<>();
         participants.setValue(profiles);
@@ -393,10 +388,12 @@ public class SportalRepo implements ISportalRepo {
                     profiles.remove(existingUser);
                 }
             }
+
             List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
             for (String uid : list) {
-                Task<DocumentSnapshot> task = FirebaseFirestore.getInstance().collection("Users")
-                        .document(uid).get();
+                Task<DocumentSnapshot> task = db.collection(USERS_PATH)
+                        .document(uid)
+                        .get();
                 task.addOnSuccessListener(snapshot -> {
                     UserProfileDataModel profile = snapshot.toObject(UserProfileDataModel.class);
                     if (profile != null) {
@@ -651,7 +648,4 @@ public class SportalRepo implements ISportalRepo {
         }
     }
 
-    private void test() {
-        GeoFirestore geoFirestore = new GeoFirestore(db.collection("lul"));
-    }
 }
