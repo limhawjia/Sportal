@@ -68,7 +68,7 @@ public class BindingAdapters {
 
     @BindingAdapter("android:setTextDate")
     public static void setTextDate(TextView view, LocalDate date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EE, d LL");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EE, d L");
         view.setText(formatter.format(date));
     }
 

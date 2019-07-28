@@ -9,6 +9,7 @@
             type="wjhj.orbital.sportsmatchfindingapp.game.AbstractGame" />
 
         <import type="java.time.format.DateTimeFormatter" />
+        <import type="android.view.View"/>
     </data>
 
     <androidx.cardview.widget.CardView
@@ -103,7 +104,17 @@
                             android:layout_height="wrap_content"
                             android:textSize="12sp"
                             android:textColor="@color/red"
-                            android:text="@{game.minPlayers - game.participatingUids.size() + ` more players`}"/>
+                            android:text="@{game.minPlayers - game.participatingUids.size() + ` more players`}"
+                            android:visibility="@{game.participatingUids.size() &lt; game.minPlayers ? View.VISIBLE : View.GONE}"
+                            />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="@color/green"
+                            android:visibility="@{game.participatingUids.size() &lt; game.minPlayers ? View.GONE : View.VISIBLE}"
+                            android:text="@string/enough_players"/>
 
                         <ProgressBar
                             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -133,7 +144,7 @@
                     android:id="@+id/line"
                     style="?android:attr/listSeparatorTextViewStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="2dp"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="4dp"
                     android:background="@color/offWhite"
@@ -145,7 +156,8 @@
                     android:orientation="horizontal"
                     android:paddingLeft="8dp"
                     android:paddingTop="8dp"
-                    android:paddingRight="8dp">
+                    android:paddingRight="8dp"
+                    android:layout_marginBottom="4dp">
 
 
                     <TextView
