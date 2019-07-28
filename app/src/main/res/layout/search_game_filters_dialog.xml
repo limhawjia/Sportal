@@ -1,102 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto">
+
     <data>
+
         <variable
             name="gameFilters"
             type="wjhj.orbital.sportsmatchfindingapp.dialogs.SearchFilterDialogViewModel" />
+
         <import type="wjhj.orbital.sportsmatchfindingapp.game.TimeOfDay" />
+
         <import type="wjhj.orbital.sportsmatchfindingapp.game.Difficulty" />
+
         <import type="wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter" />
     </data>
+
     <LinearLayout
         android:id="@+id/filters_form"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
 
         <TextView
             android:id="@+id/title"
             style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:layout_width="match_parent"
+            android:drawableEnd="@drawable/icons8_slider_24"
+            android:gravity="center_vertical"
+            android:paddingEnd="8dp"
             android:text="@string/search_filter"
             android:textColor="@color/black"
-            android:textFontWeight="400"
-            android:paddingEnd="8dp"
-            android:gravity="center_vertical"
-            android:drawableEnd="@drawable/icons8_slider_24"/>
+            android:textFontWeight="400" />
 
         <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:layout_width="match_parent"
             android:text="@string/search_time_of_day" />
 
         <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:layout_width="wrap_content"
             android:baselineAligned="false">
 
             <LinearLayout
                 android:id="@+id/morning_button"
                 android:layout_width="90dp"
                 android:layout_height="100dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:padding="8dp"
+                android:alpha='@{gameFilters.filter.getTimeOfDayQuery().contains(TimeOfDay.MORNING) ? 1f : 0.2f}'
+                android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:layout_marginEnd="8dp"
-                android:background="?attr/selectableItemBackground"
                 android:foreground="@drawable/border"
+                android:gravity="center"
+                android:onClick="@{gameFilters::toggleMorning}"
+                android:orientation="vertical"
                 android:outlineAmbientShadowColor="@color/black"
-                android:alpha='@{gameFilters.filter.getTimeOfDayQuery().contains(TimeOfDay.MORNING) ? 1f : 0.2f}'
-                android:onClick="@{gameFilters::toggleMorning}">
+                android:padding="8dp">
+
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/icons8_sunrise_64"
-                    android:contentDescription="@string/image" />
+                    android:contentDescription="@string/image"
+                    android:src="@drawable/icons8_sunrise_64" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_marginTop="8dp"
-                    android:text="@string/morning"/>
+                    android:gravity="center"
+                    android:text="@string/morning" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/afternoon_button"
                 android:layout_width="90dp"
                 android:layout_height="100dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:padding="8dp"
+                android:alpha='@{gameFilters.filter.getTimeOfDayQuery().contains(TimeOfDay.AFTERNOON) ? 1f : 0.2f}'
+                android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground"
-                android:layout_marginEnd="8dp"
                 android:foreground="@drawable/border"
+                android:gravity="center"
+                android:onClick="@{gameFilters::toggleAfternoon}"
+                android:orientation="vertical"
                 android:outlineAmbientShadowColor="@color/black"
-                android:alpha='@{gameFilters.filter.getTimeOfDayQuery().contains(TimeOfDay.AFTERNOON) ? 1f : 0.2f}'
-                android:onClick="@{gameFilters::toggleAfternoon}">
-            <ImageView
+                android:padding="8dp">
+
+                <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/icons8_sun_100"
-                android:contentDescription="@string/image" />
+                    android:contentDescription="@string/image"
+                    android:src="@drawable/icons8_sun_100" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_marginTop="8dp"
-                    android:text="@string/afternoon"/>
+                    android:gravity="center"
+                    android:text="@string/afternoon" />
             </LinearLayout>
 
             <LinearLayout
@@ -104,40 +114,42 @@
                 android:layout_width="90dp"
                 android:layout_height="100dp"
                 android:layout_weight="1"
-                android:padding="8dp"
+                android:alpha='@{gameFilters.filter.getTimeOfDayQuery().contains(TimeOfDay.NIGHT) ? 1f : 0.2f}'
+                android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground"
                 android:foreground="@drawable/border"
+                android:gravity="center"
+                android:onClick="@{gameFilters::toggleNight}"
+                android:orientation="vertical"
                 android:outlineAmbientShadowColor="@color/black"
-                android:alpha='@{gameFilters.filter.getTimeOfDayQuery().contains(TimeOfDay.NIGHT) ? 1f : 0.2f}'
-                android:onClick="@{gameFilters::toggleNight}">
-            <ImageView
+                android:padding="8dp">
+
+                <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/icons8_crescent_moon_100"
-                android:contentDescription="@string/image" />
+                    android:contentDescription="@string/image"
+                    android:src="@drawable/icons8_crescent_moon_100" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_marginTop="8dp"
-                    android:text="@string/night"/>
+                    android:gravity="center"
+                    android:text="@string/night" />
             </LinearLayout>
 
         </LinearLayout>
 
         <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:layout_width="match_parent"
             android:text="@string/search_skill_level" />
 
         <LinearLayout
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:baselineAligned="false">
 
@@ -145,56 +157,60 @@
                 android:id="@+id/beginner_button"
                 android:layout_width="90dp"
                 android:layout_height="100dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:padding="8dp"
+                android:alpha='@{gameFilters.filter.getSkillLevelQuery().contains(Difficulty.BEGINNER) ? 1f : 0.2f}'
+                android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:layout_marginEnd="8dp"
-                android:background="?attr/selectableItemBackground"
                 android:foreground="@drawable/border"
+                android:gravity="center"
+                android:onClick="@{gameFilters::toggleBeginner}"
+                android:orientation="vertical"
                 android:outlineAmbientShadowColor="@color/black"
-                android:alpha='@{gameFilters.filter.getSkillLevelQuery().contains(Difficulty.BEGINNER) ? 1f : 0.2f}'
-                android:onClick="@{gameFilters::toggleBeginner}">
-            <ImageView
+                android:padding="8dp">
+
+                <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/icons8_bronze_medal_48"/>
+                    android:src="@drawable/icons8_bronze_medal_48" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_marginTop="8dp"
-                    android:text="@string/beginner"/>
+                    android:gravity="center"
+                    android:text="@string/beginner" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/intermediate_button"
                 android:layout_width="90dp"
                 android:layout_height="100dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:padding="8dp"
+                android:alpha='@{gameFilters.filter.getSkillLevelQuery().contains(Difficulty.INTERMEDIATE) ? 1f : 0.2f}'
+                android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:layout_marginEnd="8dp"
-                android:background="?attr/selectableItemBackground"
                 android:foreground="@drawable/border"
+                android:gravity="center"
+                android:onClick="@{gameFilters::toggleIntermediate}"
+                android:orientation="vertical"
                 android:outlineAmbientShadowColor="@color/black"
-                android:alpha='@{gameFilters.filter.getSkillLevelQuery().contains(Difficulty.INTERMEDIATE) ? 1f : 0.2f}'
-                android:onClick="@{gameFilters::toggleIntermediate}">
-            <ImageView
+                android:padding="8dp">
+
+                <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/icons8_silver_medal_48"/>
+                    android:src="@drawable/icons8_silver_medal_48" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_marginTop="8dp"
-                    android:text="@string/intermediate"/>
+                    android:gravity="center"
+                    android:text="@string/intermediate" />
             </LinearLayout>
 
             <LinearLayout
@@ -202,27 +218,55 @@
                 android:layout_width="90dp"
                 android:layout_height="100dp"
                 android:layout_weight="1"
-                android:padding="8dp"
+                android:alpha='@{gameFilters.filter.getSkillLevelQuery().contains(Difficulty.ADVANCED) ? 1f : 0.2f}'
+                android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground"
                 android:foreground="@drawable/border"
+                android:gravity="center"
+                android:onClick="@{gameFilters::toggleAdvanced}"
+                android:orientation="vertical"
                 android:outlineAmbientShadowColor="@color/black"
-                android:alpha='@{gameFilters.filter.getSkillLevelQuery().contains(Difficulty.ADVANCED) ? 1f : 0.2f}'
-                android:onClick="@{gameFilters::toggleAdvanced}">
+                android:padding="8dp">
+
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/icons8_gold_medal_48"/>
+                    android:src="@drawable/icons8_gold_medal_48" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
                     android:layout_marginTop="8dp"
-                    android:text="@string/advanced"/>
+                    android:gravity="center"
+                    android:text="@string/advanced" />
             </LinearLayout>
+
+
         </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/search_location" />
+
+        <wjhj.orbital.sportsmatchfindingapp.utils.MyTextView
+            android:id="@+id/search_location_picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/border"
+            android:padding="8dp"
+            android:drawablePadding="8dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center_vertical"
+            android:hint="@string/add_game_pick_a_location"
+            android:textSize="14sp"
+            android:text="@{gameFilters.locationName}"
+            custom:leftIcon="@drawable/ic_add_location_black_24dp" />
+
     </LinearLayout>
 </layout>

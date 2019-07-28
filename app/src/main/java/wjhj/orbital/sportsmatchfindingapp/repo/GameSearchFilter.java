@@ -17,6 +17,7 @@ public class GameSearchFilter {
     private List<Difficulty> skillLevelQuery;
     private GeoPoint locationQuery;
     private double locationQueryRadius;
+    private String locationName;
 
     public GameSearchFilter() {
         this.sportQuery = new ArrayList<>();
@@ -87,5 +88,13 @@ public class GameSearchFilter {
 
     public double getLocationQueryRadius() {
         return this.locationQueryRadius;
+    }
+
+    public void setLocationName(String string) {
+        locationName = string;
+    }
+
+    public String getLocationName() {
+        return locationName;
     }
 }

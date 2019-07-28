@@ -54,9 +54,7 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
 @SuppressWarnings({"FieldCanBeLocal"})
 public class HomepageActivity extends AppCompatActivity implements
         SportMultiSelectDialogFragment.SportMultiSelectDialogListener,
-        SearchFilterDialogFragment.SearchFilterDialogListener,
-        LocationPickerMapFragment.LocationPickerListener, LocationPickerMapFragment.OnMapFragmentCancelledListener {
-
+        SearchFilterDialogFragment.SearchFilterDialogListener {
     public static final String DISPLAY_PROFILE_PIC_TAG = "display_profile_pic";
     private static final int ADD_GAME_RC = 1;
     private static final String LOCATION_PICKER_TAG = "location";
@@ -250,20 +248,6 @@ public class HomepageActivity extends AppCompatActivity implements
         if (fragment != null) {
             fragment.updateSports(selection);
         }
-    }
-
-    @Override
-    public void onLocationPicked(LocationPickerMapFragment locationPickerMapFragment, Point selectedPoint, String selectedPlaceName) {
-        SearchFragment fragment =
-                (SearchFragment) getSupportFragmentManager().findFragmentByTag("Search");
-        if (fragment != null) {
-            fragment.onLocationPicked(locationPickerMapFragment, selectedPoint, selectedPlaceName);
-        }
-    }
-
-    @Override
-    public void onMapCancelled(LocationPickerMapFragment locationPickerMapFragment) {
-
     }
 
     @Override

@@ -177,8 +177,4 @@ public class SearchFragment extends Fragment implements
     public void onSearchFilterDialogPositiveButtonClicked(GameSearchFilter filters) {
         this.updateFilterFromSearchFilterDialog(filters);
     }
-
-    public void onLocationPicked(LocationPickerMapFragment locationPickerMapFragment, Point selectedPoint, String selectedPlaceName) {
-        ;
-    }
 }

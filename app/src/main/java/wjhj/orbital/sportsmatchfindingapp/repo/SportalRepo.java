@@ -212,6 +212,7 @@ public class SportalRepo implements ISportalRepo {
 
     @Override
     public Task<Void> addGame(String gameUid, Game game) {
+        CollectionReference colRef = db.collection(GAMES_PATH);
         GameDataModel dataModel = toGameDataModel(game);
 
         WriteBatch batch = db.batch();
@@ -229,13 +230,17 @@ public class SportalRepo implements ISportalRepo {
         }
 
         return batch.commit()
-                .addOnSuccessListener(docRef -> Log.d(DATA_DEBUG, "Add game complete."))
+                .addOnSuccessListener(docRef -> {
+                    Log.d(DATA_DEBUG, "Add game complete.");
+                    new GeoFirestore(colRef).setLocation(gameUid, game.getLocation());
+                })
                 .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game failed.", e));
     }
 
     @Override
     public Task<Void> updateGame(String gameId, Game game) {
-        DocumentReference docRef = db.collection(GAMES_PATH).document(gameId);
+        CollectionReference colRef = db.collection(GAMES_PATH);
+        DocumentReference docRef = colRef.document(gameId);
         return db.runTransaction(transaction -> {
             GameDataModel oldRecord = transaction.get(docRef).toObject(GameDataModel.class);
 
@@ -247,6 +252,7 @@ public class SportalRepo implements ISportalRepo {
                 GameDataModel newRecord = toGameDataModel(game);
                 transaction.set(docRef, newRecord);
             }
+            new GeoFirestore(colRef).setLocation(game.getUid(),game.getLocation());
             return null;
         });
     }
@@ -456,6 +462,8 @@ public class SportalRepo implements ISportalRepo {
         GeoFirestore geoFirestore = new GeoFirestore(gamesRef);
 
         if (filter.hasLocationQuery()) {
+            Log.d("hi", "has location");
+            Log.d("hi", filter.getLocationQuery().toString());
             GeoQuery locationQuery = geoFirestore
                     .queryAtLocation(filter.getLocationQuery(), filter.getLocationQueryRadius());
 
@@ -464,32 +472,32 @@ public class SportalRepo implements ISportalRepo {
 
             locationQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
                 @Override
-                public void onDocumentEntered(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {}
+                public void onDocumentEntered(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+                    Log.d("hi", "entered");
+                    Game game = toGame(documentSnapshot.toObject(GameDataModel.class));
+                    map.put(game.getUid(), game);
+                    data.setValue(map);
+                }
 
                 @Override
-                public void onDocumentExited(@NotNull DocumentSnapshot documentSnapshot) {}
+                public void onDocumentExited(@NotNull DocumentSnapshot documentSnapshot) {
+                    Log.d("hi", "exited");
+                }
 
                 @Override
-                public void onDocumentMoved(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {}
+                public void onDocumentMoved(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+                    Log.d("hi", "moved");
+                }
 
                 @Override
-                public void onDocumentChanged(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {}
+                public void onDocumentChanged(@NotNull DocumentSnapshot documentSnapshot, @NotNull GeoPoint geoPoint) {
+                    Log.d("hi", "changed");
+                }
 
                 @Override
                 public void onGeoQueryReady() {
-                    StreamSupport.stream(locationQuery.getQueries()).forEach(query -> {
-                        query.get().addOnSuccessListener(result -> {
-                           StreamSupport.stream(result.getDocuments())
-                                   .map(documentSnapshot -> documentSnapshot.toObject(GameDataModel.class))
-                                   .map(SportalRepo.this::toGame)
-                                   .forEach(game -> {
-                                       if(checkGameWithFilters(game, filter)) {
-                                           map.put(game.getUid(), game);
-                                           data.setValue(map);
-                                       }
-                                   });
-                        });
-                    });
+                    Log.d("hi", "ready");
+
                 }
 
                 @Override
@@ -497,7 +505,7 @@ public class SportalRepo implements ISportalRepo {
                     Log.d(DATA_DEBUG, e.toString());
                 }
             });
-
+            data.setValue(map);
             return data;
 
         } else {

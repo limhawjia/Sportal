@@ -54,6 +54,8 @@
             android:parentActivityName=".homepage.HomepageActivity"/>
 
 
+        <activity android:name=".utils.LocationPickerActivity"
+            android:windowSoftInputMode="adjustPan"/>
 
         <service
             android:name=".messaging.SportalFirebaseMessagingService"
