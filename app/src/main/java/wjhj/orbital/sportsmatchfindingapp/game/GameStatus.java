@@ -2,7 +2,7 @@ package wjhj.orbital.sportsmatchfindingapp.game;
 
 public enum GameStatus {
     PENDING("pending", 0),
-    CONFIRMED("confirmed", 1),
+    CONFIRMED("ready", 1),
     COMPLETED("completed", 2);
 
     private String str;
