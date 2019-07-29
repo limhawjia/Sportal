@@ -46,6 +46,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Filter;
@@ -247,10 +248,10 @@ public class SportalRepo implements ISportalRepo {
             if (oldRecord != null && oldRecord.getParticipatingUids() != null) {
                 Game newGame = game.withParticipatingUids(oldRecord.getParticipatingUids());
                 GameDataModel newRecord = toGameDataModel(newGame);
-                transaction.set(docRef, newRecord);
+                transaction.set(docRef, newRecord, SetOptions.merge());
             } else {
                 GameDataModel newRecord = toGameDataModel(game);
-                transaction.set(docRef, newRecord);
+                transaction.set(docRef, newRecord, SetOptions.merge());
             }
             new GeoFirestore(colRef).setLocation(game.getUid(),game.getLocation());
             return null;
