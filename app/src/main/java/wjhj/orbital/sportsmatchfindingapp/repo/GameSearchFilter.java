@@ -1,5 +1,7 @@
 package wjhj.orbital.sportsmatchfindingapp.repo;
 
+import com.google.firebase.firestore.GeoPoint;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,11 +15,15 @@ public class GameSearchFilter {
     private List<TimeOfDay> timeOfDayQuery;
     private String nameQuery;
     private List<Difficulty> skillLevelQuery;
+    private GeoPoint locationQuery;
+    private double locationQueryRadius;
+    private String locationName;
 
     public GameSearchFilter() {
         this.sportQuery = new ArrayList<>();
         this.timeOfDayQuery = new ArrayList<>();
         this.skillLevelQuery = new ArrayList<>();
+        this.locationQueryRadius = 10.0;
     }
 
     public void addSportQuery(Sport... sports) {
@@ -48,24 +54,6 @@ public class GameSearchFilter {
         skillLevelQuery = skills;
     }
 
-
-    // Sir most of these hasSomething() methods always return true cuz u initialized the list in the constructor :)
-    public boolean hasSportQuery() {
-        return sportQuery != null;
-    }
-
-    public boolean hasTimeOfDayQuery() {
-        return timeOfDayQuery != null;
-    }
-
-    public boolean hasNameQuery() {
-        return nameQuery != null;
-    }
-
-    public boolean hasSkillLevelQuery() {
-        return skillLevelQuery != null;
-    }
-
     public List<Sport> getSportQuery() {
         return sportQuery;
     }
@@ -80,5 +68,33 @@ public class GameSearchFilter {
 
     public List<Difficulty> getSkillLevelQuery() {
         return skillLevelQuery;
+    }
+
+    public void setLocationQuery(GeoPoint location) {
+        this.locationQuery = location;
+    }
+
+    public boolean hasLocationQuery() {
+        return this.locationQuery != null;
+    }
+
+    public GeoPoint getLocationQuery() {
+        return this.locationQuery;
+    }
+
+    public void setLocationQueryRadius(double radius) {
+        this.locationQueryRadius = radius;
+    }
+
+    public double getLocationQueryRadius() {
+        return this.locationQueryRadius;
+    }
+
+    public void setLocationName(String string) {
+        locationName = string;
+    }
+
+    public String getLocationName() {
+        return locationName;
     }
 }

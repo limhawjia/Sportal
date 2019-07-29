@@ -6,7 +6,10 @@ import android.view.View;
 import androidx.databinding.BaseObservable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
+
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +23,13 @@ import wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter;
 
 public class SearchFilterDialogViewModel extends ViewModel {
     MutableLiveData<GameSearchFilter>  filter = new MutableLiveData<>();
+    MutableLiveData<String> locationName = new MutableLiveData<>();
 
     public SearchFilterDialogViewModel(GameSearchFilter searchFilter) {
         filter.setValue(searchFilter);
+        if (searchFilter != null && searchFilter.getLocationQuery() != null) {
+
+        }
     }
 
     public MutableLiveData<GameSearchFilter> getFilter() {
@@ -89,7 +96,19 @@ public class SearchFilterDialogViewModel extends ViewModel {
         filter.setValue(newFilter);
     }
 
+    public void setFilters(GameSearchFilter filter) {
+        this.filter.setValue(filter);
+    }
+
+    public void setLocationName(String string) {
+        locationName.setValue(string);
+    }
+
     public GameSearchFilter getFilters() {
         return filter.getValue();
+    }
+
+    public LiveData<String> getLocationName() {
+        return locationName;
     }
 }

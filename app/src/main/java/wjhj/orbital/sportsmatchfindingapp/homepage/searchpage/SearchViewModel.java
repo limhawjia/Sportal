@@ -43,8 +43,12 @@ public class SearchViewModel extends ViewModel {
         searchFilters.setValue(new GameSearchFilter());
         liveGamesData = new MediatorLiveData<>();
         LiveData<Map<String, Game>> source1 = Transformations
-                .switchMap(searchFilters, filters -> repo.getGamesWithFilters(filters));
+                .switchMap(searchFilters, filters -> {
+                    Log.d("hi", "switching");
+                    return repo.getGamesWithFilters(filters);
+                });
         liveGamesData.addSource(source1, map -> {
+            Log.d("hi", "triggered");
             List<Game> games = new ArrayList<>(map.values());
             Collections.sort(games, sortComparator.getValue());
             liveGamesData.setValue(games);

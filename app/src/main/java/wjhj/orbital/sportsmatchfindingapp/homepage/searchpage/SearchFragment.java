@@ -13,11 +13,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.common.collect.ImmutableList;
+import com.google.firebase.firestore.GeoPoint;
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +35,20 @@ import wjhj.orbital.sportsmatchfindingapp.dialogs.SportMultiSelectDialogFragment
 import wjhj.orbital.sportsmatchfindingapp.game.GameActivity;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesCardAdapter;
+import wjhj.orbital.sportsmatchfindingapp.maps.LocationPickerMapFragment;
 import wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter;
 
-public class SearchFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class SearchFragment extends Fragment implements
+        AdapterView.OnItemSelectedListener, SearchFilterDialogFragment.SearchFilterDialogListener {
     private ImmutableList<Sport> mUserPreferences;
     private FragmentSearchBinding binding;
     private SearchViewModel searchViewModel;
+    private MutableLiveData<String> locationName;
 
     private static String SPORTS_PREFERENCES_TAG = " sports_preferences";
     private static String SEARCH_PAGE_DEBUG = "search_debug";
+    public static int START_FILTER_DIALOG = 1;
+    public static String LOCATION_PICKER_TAG = "location";
 
     public SearchFragment() {
     }
@@ -85,7 +96,8 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemSelect
         setUpRecyclerView(binding.searchRecyclerView);
 
         binding.filtersButton.setOnClickListener(view -> {
-            DialogFragment dialog = new SearchFilterDialogFragment(searchViewModel.getSearchFilters().getValue());
+            SearchFilterDialogFragment dialog = new SearchFilterDialogFragment(searchViewModel.getSearchFilters().getValue());
+            dialog.setTargetFragment(this, START_FILTER_DIALOG);
             dialog.show(requireFragmentManager(), "filter");
         });
 
@@ -159,5 +171,10 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemSelect
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    @Override
+    public void onSearchFilterDialogPositiveButtonClicked(GameSearchFilter filters) {
+        this.updateFilterFromSearchFilterDialog(filters);
     }
 }

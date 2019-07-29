@@ -97,6 +97,7 @@
     <string name="intermediate">Intermediate</string>
     <string name="advanced">Advanced</string>
     <string name="select_sports">Select sports</string>
+    <string name="search_location">Location:</string>
 
     <string name="preferences_pick_profile_pic">Pick a profile pic:</string>
     <string name="preferences_enter_details">Enter details:</string>

@@ -21,6 +21,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.common.collect.ImmutableList;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.GeoPoint;
+import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
 import com.sendbird.android.SendBird;
 
 import java.util.List;
@@ -37,6 +42,7 @@ import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesSwipeViewFragment;
 import wjhj.orbital.sportsmatchfindingapp.homepage.searchpage.SearchFragment;
 import wjhj.orbital.sportsmatchfindingapp.homepage.socialpage.SocialSwipeViewFragment;
+import wjhj.orbital.sportsmatchfindingapp.maps.LocationPickerMapFragment;
 import wjhj.orbital.sportsmatchfindingapp.messaging.SendBirdConnectionManager;
 import wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
@@ -47,11 +53,11 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModelFactory;
 
 @SuppressWarnings({"FieldCanBeLocal"})
 public class HomepageActivity extends AppCompatActivity implements
-        SearchFilterDialogFragment.SearchFilterDialogListener,
-        SportMultiSelectDialogFragment.SportMultiSelectDialogListener {
-
+        SportMultiSelectDialogFragment.SportMultiSelectDialogListener,
+        SearchFilterDialogFragment.SearchFilterDialogListener {
     public static final String DISPLAY_PROFILE_PIC_TAG = "display_profile_pic";
     private static final int ADD_GAME_RC = 1;
+    private static final String LOCATION_PICKER_TAG = "location";
 
     private FirebaseUser currUser;
     @SuppressWarnings({"unused"})
@@ -233,14 +239,7 @@ public class HomepageActivity extends AppCompatActivity implements
         return true;
     }
 
-    @Override
-    public void onSearchFilterDialogPositiveButtonClicked(GameSearchFilter filters) {
-        SearchFragment fragment =
-                (SearchFragment) getSupportFragmentManager().findFragmentByTag("Search");
-        if (fragment != null) {
-            fragment.updateFilterFromSearchFilterDialog(filters);
-        }
-    }
+
 
     @Override
     public void onSportMultiSelectDialogPositiveButtonSelected(List<Sport> selection) {
@@ -248,6 +247,15 @@ public class HomepageActivity extends AppCompatActivity implements
                 (SearchFragment) getSupportFragmentManager().findFragmentByTag("Search");
         if (fragment != null) {
             fragment.updateSports(selection);
+        }
+    }
+
+    @Override
+    public void onSearchFilterDialogPositiveButtonClicked(GameSearchFilter filter) {
+        SearchFragment fragment =
+                (SearchFragment) getSupportFragmentManager().findFragmentByTag("Search");
+        if (fragment != null) {
+            fragment.updateFilterFromSearchFilterDialog(filter);
         }
     }
 }
