@@ -7,8 +7,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.common.base.Optional;
 import com.google.firebase.auth.FirebaseAuth;
 import com.sendbird.android.BaseChannel;
@@ -28,7 +26,7 @@ import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 public class GamesBoardViewModel extends ViewModel {
 
     private static final String CONNECTION_HANDLER = "connection_handler";
-    private static final String GROUP_CHAT_HANDLER = "group_chat_handler";
+    private static final String GROUP_CHAT_HANDLER_ID = "group_chat_handler";
     private static final int CHAT_MESSAGES_LIMIT = 30;
 
     private final SportalRepo repo;
@@ -62,14 +60,16 @@ public class GamesBoardViewModel extends ViewModel {
         setUpConnectionManger();
         tryLoadChannel();
         setUpChannelHandler();
-
-
     }
 
 
     private void setUpConnectionManger() {
         SendBirdConnectionManager.addConnectionManagementHandler(CONNECTION_HANDLER,
-                reconnect -> tryLoadChannel());
+                reconnect -> {
+                    Timber.d("Reconnected to games board");
+                    tryLoadChannel();
+                    setUpChannelHandler();
+                });
     }
 
     private void tryLoadChannel() {
@@ -111,6 +111,7 @@ public class GamesBoardViewModel extends ViewModel {
             });
 
         } else {
+
             SendBirdConnectionManager.createGameBoardChannel(mGameUid)
                     .addOnSuccessListener(groupChannel -> {
                         groupChannel.join(e -> {
@@ -129,17 +130,23 @@ public class GamesBoardViewModel extends ViewModel {
     }
 
     private void setUpChannelHandler() {
-        GroupChannel channel = groupChannelLiveData.getValue();
-        if (channel != null) {
-            SendBird.addChannelHandler(GROUP_CHAT_HANDLER, new SendBird.ChannelHandler() {
-                @Override
-                public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
-                    if (baseChannel.getUrl().equals(channel.getUrl())) {
-                        addMessage(baseMessage);
+        groupChannelLiveData.observeForever(new Observer<GroupChannel>() {
+            @Override
+            public void onChanged(GroupChannel groupChannel) {
+                Timber.d("Handler set up");
+                SendBird.addChannelHandler(GROUP_CHAT_HANDLER_ID, new SendBird.ChannelHandler() {
+                    @Override
+                    public void onMessageReceived(BaseChannel baseChannel, BaseMessage baseMessage) {
+                        if (baseChannel.getUrl().equals(groupChannel.getUrl())) {
+                            addMessage(baseMessage);
+                        }
                     }
-                }
-            });
-        }
+                });
+
+                groupChannelLiveData.removeObserver(this);
+            }
+        });
+
 
     }
 

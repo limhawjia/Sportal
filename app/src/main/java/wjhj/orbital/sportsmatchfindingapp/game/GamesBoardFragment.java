@@ -15,13 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.sendbird.android.BaseMessage;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.UserMessage;
 
 import java9.util.stream.Collectors;
 import java9.util.stream.StreamSupport;
-import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.GamesBoardFragmentBinding;
 import wjhj.orbital.sportsmatchfindingapp.messaging.SportalUserMessage;
@@ -134,8 +132,9 @@ public class GamesBoardFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull DataBindingViewHolder<SportalUserMessage> holder, int position) {
             SportalUserMessage message = getItem(position);
-            if (position < getCurrentList().size() - 1 && isContinuous(message, getItem(position + 1))) {
-
+            if (position < getCurrentList().size() - 1) {
+                SportalUserMessage prevMessage = getItem(position + 1);
+                message.setFullView(!isContinuous(message, prevMessage));
             }
 
             holder.bind(message);

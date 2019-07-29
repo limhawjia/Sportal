@@ -56,7 +56,11 @@ public class ChatPageViewModel extends ViewModel {
 
     private void setUpConnectionManger() {
         SendBirdConnectionManager.addConnectionManagementHandler(CONNECTION_HANDLER,
-                reconnect -> refresh());
+                reconnect -> {
+                    Timber.d("Reconnected to private chat");
+                    refresh();
+                    setUpChannelHandler();
+                });
     }
 
     private void setUpChannelHandler() {
@@ -92,7 +96,7 @@ public class ChatPageViewModel extends ViewModel {
     }
 
     private void loadLatestMessages(PrivateChat chat) {
-        if(isMessageListLoading()) {
+        if (isMessageListLoading()) {
             return;
         }
 
@@ -112,7 +116,7 @@ public class ChatPageViewModel extends ViewModel {
     }
 
     void loadPreviousMessages() {
-        if(isMessageListLoading()) {
+        if (isMessageListLoading()) {
             return;
         }
 
@@ -148,15 +152,15 @@ public class ChatPageViewModel extends ViewModel {
 
         UserMessage tempUserMessage = chat.getChannel().sendUserMessage(messageText,
                 (userMessage, e) -> {
-            if (e != null) {
-                Timber.d(e, "Send message failed");
-                removeFailedMessage(userMessage);
-                return;
-            }
+                    if (e != null) {
+                        Timber.d(e, "Send message failed");
+                        removeFailedMessage(userMessage);
+                        return;
+                    }
 
-            markMessageSent(userMessage);
+                    markMessageSent(userMessage);
 
-        });
+                });
         messageTextLiveData.setValue("");
         addMessage(tempUserMessage);
     }
