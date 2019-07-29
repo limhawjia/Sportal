@@ -110,11 +110,11 @@
             android:paddingBottom="16dp"
             android:text="@string/sign_up"
             android:textAlignment="center"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimaryLight"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/login_button"
-            app:strokeColor="@color/colorPrimaryDark" />
+            app:strokeColor="@color/colorPrimaryLight" />
 
         <TextView
             android:id="@+id/textView"
