@@ -96,7 +96,7 @@ public class SportalRepo implements ISportalRepo {
                 });
         mGamesCache = CacheBuilder.newBuilder()
                 .maximumSize(200)
-                .expireAfterAccess(20, TimeUnit.MINUTES)
+                .expireAfterAccess(15, TimeUnit.MINUTES)
                 .build(new CacheLoader<String, LiveData<Game>>() {
                     @Override
                     public LiveData<Game> load(@NonNull String key) {

@@ -223,7 +223,7 @@ public class AddGameViewModel extends ViewModel {
         locationPoint = gameData.getLocation();
         placeName.setInput(gameData.getPlaceName());
         minPlayersInput.setInput(String.valueOf(gameData.getMinPlayers()));
-        maxPlayersInput.setInput(String.valueOf(gameData.getMinPlayers()));
+        maxPlayersInput.setInput(String.valueOf(gameData.getMaxPlayers()));
         skillLevel.setInput(gameData.getSkillLevel());
         gameDescription.setInput(gameData.getDescription().orNull());
     }

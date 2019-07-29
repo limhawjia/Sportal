@@ -119,6 +119,7 @@ public class HomepageActivity extends AppCompatActivity implements
     public void onDestroy() {
         super.onDestroy();
         disconnectFromChatClient();
+        Timber.d("homepage destroyed");
     }
 
     private void checkLoggedIn() {
