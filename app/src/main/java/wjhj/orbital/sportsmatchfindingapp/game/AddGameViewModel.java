@@ -179,6 +179,7 @@ public class AddGameViewModel extends ViewModel {
                         .withUid(newGameUid)
                         .withCreatorUid(creatorUid)
                         .withDescription(Optional.fromNullable(gameDescription.getInput()))
+                        .addParticipatingUid(creatorUid)
                         .build();
 
                 repo.addGame(newGameUid, game)
