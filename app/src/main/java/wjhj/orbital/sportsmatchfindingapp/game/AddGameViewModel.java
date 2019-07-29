@@ -1,16 +1,15 @@
 package wjhj.orbital.sportsmatchfindingapp.game;
 
-import android.util.Log;
 
 import androidx.databinding.ObservableInt;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.android.gms.tasks.Task;
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 import com.google.firebase.firestore.GeoPoint;
-import com.mapbox.geojson.Point;
+import com.sendbird.android.GroupChannel;
 
 import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
@@ -20,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java9.util.stream.StreamSupport;
+import timber.log.Timber;
+import wjhj.orbital.sportsmatchfindingapp.messaging.SendBirdConnectionManager;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.utils.Result;
 import wjhj.orbital.sportsmatchfindingapp.utils.ValidationInput;
@@ -43,8 +44,7 @@ public class AddGameViewModel extends ViewModel {
     private List<ValidationInput<?>> validations;
     private SportalRepo repo;
 
-    private boolean editing;
-    private String gameUid;
+    private Game editGame;
 
     public AddGameViewModel() {
         sportSelection = new ObservableInt();
@@ -161,39 +161,59 @@ public class AddGameViewModel extends ViewModel {
                 return;
             }
 
-            if (!editing) {
-                gameUid = repo.generateGameUid();
-            }
-            Game game = Game.builder()
-                    .withGameName(gameName.getInput())
-                    .withSport(Sport.values()[sportSelection.get()])
-                    .withLocation(locationPoint)
-                    .withPlaceName(placeName.getInput())
-                    .withMinPlayers(Integer.valueOf(minPlayersInput.getInput()))
-                    .withMaxPlayers(Integer.valueOf(maxPlayersInput.getInput()))
-                    .withSkillLevel(skillLevel.getInput())
-                    .withDate(date.getInput())
-                    .withTime(time.getInput())
-                    .withDuration(duration.getInput())
-                    .withUid(gameUid)
-                    .withCreatorUid(creatorUid)
-                    .withDescription(Optional.fromNullable(gameDescription.getInput()))
-                    .build();
+            Game game;
+            if (editGame == null) {
+                String newGameUid = repo.generateGameUid();
 
-            if (!editing) {
-                repo.addGame(gameUid, game)
+                game = Game.builder()
+                        .withGameName(gameName.getInput())
+                        .withSport(Sport.values()[sportSelection.get()])
+                        .withLocation(locationPoint)
+                        .withPlaceName(placeName.getInput())
+                        .withMinPlayers(Integer.valueOf(minPlayersInput.getInput()))
+                        .withMaxPlayers(Integer.valueOf(maxPlayersInput.getInput()))
+                        .withSkillLevel(skillLevel.getInput())
+                        .withDate(date.getInput())
+                        .withTime(time.getInput())
+                        .withDuration(duration.getInput())
+                        .withUid(newGameUid)
+                        .withCreatorUid(creatorUid)
+                        .withDescription(Optional.fromNullable(gameDescription.getInput()))
+                        .build();
+
+                repo.addGame(newGameUid, game)
                         .addOnSuccessListener(aVoid -> newGameResult.postValue(new Result<>(game)))
                         .addOnFailureListener(e -> newGameResult.postValue(new Result<>(e)));
+
+                SendBirdConnectionManager.createGameBoardChannel(newGameUid)
+                        .addOnSuccessListener(groupChannel ->
+                                repo.updateGame(game.getUid(),
+                                        game.withGameBoardChannelUrl(groupChannel.getUrl())))
+                        .addOnFailureListener(e -> Timber.d(e, "Create group channel failure"));
             } else {
-                repo.updateGame(gameUid, game)
+
+                game = editGame.withGameName(gameName.getInput())
+                        .withSport(Sport.values()[sportSelection.get()])
+                        .withLocation(locationPoint)
+                        .withPlaceName(placeName.getInput())
+                        .withMinPlayers(Integer.valueOf(minPlayersInput.getInput()))
+                        .withMaxPlayers(Integer.valueOf(maxPlayersInput.getInput()))
+                        .withSkillLevel(skillLevel.getInput())
+                        .withDate(date.getInput())
+                        .withTime(time.getInput())
+                        .withDuration(duration.getInput())
+                        .withCreatorUid(creatorUid)
+                        .withDescription(Optional.fromNullable(gameDescription.getInput()));
+
+                repo.updateGame(editGame.getUid(), game)
                         .addOnSuccessListener(aVoid -> newGameResult.postValue(new Result<>(game)))
                         .addOnFailureListener(e -> newGameResult.postValue(new Result<>(e)));
             }
         }
     }
 
-    public void setExistingGame(Game gameData) {
-        editing = true;
+    void setExistingGame(Game gameData) {
+        editGame = gameData;
         sportSelection.set(gameData.getSport().ordinal());
         gameName.setInput(gameData.getGameName());
         date.setInput(gameData.getDate());
@@ -205,10 +225,5 @@ public class AddGameViewModel extends ViewModel {
         maxPlayersInput.setInput(String.valueOf(gameData.getMinPlayers()));
         skillLevel.setInput(gameData.getSkillLevel());
         gameDescription.setInput(gameData.getDescription().orNull());
-        gameUid = gameData.getUid();
-    }
-
-    public String getGameUid() {
-        return gameUid;
     }
 }

@@ -4,27 +4,19 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import java9.util.stream.StreamSupport;
-import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGameDetailsBinding;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.FriendProfilesAdapter;
@@ -42,7 +34,7 @@ public class GameDetailsFragment extends Fragment implements FriendProfilesAdapt
 
     public static final String GAME_UID = "game_uid";
 
-    private String mGameuId;
+    private String mGameUid;
 
     private GameDetailsViewModel viewModel;
     private FragmentGameDetailsBinding binding;
@@ -73,7 +65,7 @@ public class GameDetailsFragment extends Fragment implements FriendProfilesAdapt
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mGameuId = getArguments().getString(GAME_UID);
+            mGameUid = getArguments().getString(GAME_UID);
         }
         repo = SportalRepo.getInstance();
         initViewModel();
@@ -130,7 +122,7 @@ public class GameDetailsFragment extends Fragment implements FriendProfilesAdapt
     }
 
     private void initViewModel() {
-        GameDetailsViewModelFactory factory = new GameDetailsViewModelFactory(mGameuId);
+        GameUidViewModelFactory factory = new GameUidViewModelFactory(mGameUid);
 
         viewModel = ViewModelProviders.of(this, factory).get(GameDetailsViewModel.class);
         viewModel.getResult().observe(this, bool -> {
@@ -148,7 +140,7 @@ public class GameDetailsFragment extends Fragment implements FriendProfilesAdapt
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
                 RecyclerView.HORIZONTAL, false));
         recyclerView.setHasFixedSize(true);
-        LiveData<List<UserProfile>> participants = repo.getParticipatingUsers(mGameuId);
+        LiveData<List<UserProfile>> participants = repo.getParticipatingUsers(mGameUid);
         participants.observe(this, adapter::updateFriends);
     }
 }

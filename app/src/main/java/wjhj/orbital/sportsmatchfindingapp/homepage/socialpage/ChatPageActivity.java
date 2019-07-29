@@ -2,7 +2,6 @@ package wjhj.orbital.sportsmatchfindingapp.homepage.socialpage;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,9 +22,6 @@ import com.sendbird.android.BaseMessage;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.UserMessage;
 
-import java.util.List;
-
-import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.ChatPageActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.messaging.PrivateChat;
@@ -110,7 +106,7 @@ public class ChatPageActivity extends AppCompatActivity {
                 true);
         manager.setSmoothScrollbarEnabled(true);
 
-        MessageAdapter adapter = new MessageAdapter(new DiffUtil.ItemCallback<BaseMessage>() {
+        PrivateMessageAdapter adapter = new PrivateMessageAdapter(new DiffUtil.ItemCallback<BaseMessage>() {
             @Override
             public boolean areItemsTheSame(@NonNull BaseMessage oldItem, @NonNull BaseMessage newItem) {
                 return oldItem.getMessageId() == newItem.getMessageId();
@@ -148,9 +144,9 @@ public class ChatPageActivity extends AppCompatActivity {
     }
 
 
-    static class MessageAdapter extends DataBindingAdapter<BaseMessage> {
+    static class PrivateMessageAdapter extends DataBindingAdapter<BaseMessage> {
 
-        MessageAdapter(@NonNull DiffUtil.ItemCallback<BaseMessage> diffCallback) {
+        PrivateMessageAdapter(@NonNull DiffUtil.ItemCallback<BaseMessage> diffCallback) {
             super(diffCallback);
         }
 

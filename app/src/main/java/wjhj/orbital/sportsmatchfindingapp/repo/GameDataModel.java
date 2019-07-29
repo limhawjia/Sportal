@@ -23,6 +23,7 @@ class GameDataModel {
     private String duration;
     private String uid;
     private String creatorUid;
+    private String gameBoardChannelUrl;
     private List<String> participatingUids;
 
     // Mandatory no args constructor
@@ -43,6 +44,7 @@ class GameDataModel {
         duration = game.getDuration().toString();
         uid = game.getUid();
         creatorUid = game.getCreatorUid();
+        gameBoardChannelUrl = game.getGameBoardChannelUrl().orNull();
         participatingUids = game.getParticipatingUids();
     }
 
@@ -98,8 +100,13 @@ class GameDataModel {
         return creatorUid;
     }
 
+    public String getGameBoardChannelUrl() {
+        return gameBoardChannelUrl;
+    }
+
     public List<String> getParticipatingUids() {
         return participatingUids;
     }
+
 }
 
