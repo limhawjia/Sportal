@@ -14,7 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="136dp"
         android:layout_margin="8dp"
-        android:padding="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
         android:clickable="true"
         android:focusable="true"
         app:cardBackgroundColor="@color/white"
@@ -28,9 +31,9 @@
 
             <ImageView
                 android:id="@+id/friends_card_display_pic"
-                android:layout_width="104dp"
-                android:layout_height="104dp"
-                android:layout_margin="8dp"
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:layout_margin="24dp"
                 android:circularImageUri="@{item.displayPicUri}"
                 android:contentDescription="@string/image"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -42,7 +45,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center_horizontal"
-                android:background="@color/colorPrimaryLight">
+                android:background="@color/white">
 
                 <TextView
                     android:id="@+id/friends_card_display_name"
@@ -68,34 +71,23 @@
                     android:drawableStart="@drawable/ic_location_on_black_16dp"
                     android:drawablePadding="4dp"
                     android:text="@{item.country.toString()}"
-                    android:textColor="@color/dark_gray"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/friends_card_display_pic"
-                    app:layout_constraintTop_toBottomOf="@id/friends_card_display_name" />
+                    android:textColor="@color/dark_gray" />
 
                 <TextView
                     android:id="@+id/friends_card_preferences_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
                     android:layout_marginTop="8dp"
                     android:fontFamily="sans-serif"
                     android:gravity="center"
                     android:text="@string/friend_card_sports_you_have_in_common"
-                    android:textColor="@color/dark_gray"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/friends_card_display_pic"
-                    app:layout_constraintTop_toBottomOf="@id/friends_card_user_country" />
+                    android:textColor="@color/dark_gray" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/friends_card_common_preferences_list"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
-                    android:layout_margin="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/friends_card_display_pic"
-                    app:layout_constraintTop_toBottomOf="@id/friends_card_preferences_text" />
+                    android:layout_margin="8dp" />
             </LinearLayout>
 
         </LinearLayout>
