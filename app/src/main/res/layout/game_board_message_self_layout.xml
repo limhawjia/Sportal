@@ -15,8 +15,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:layout_marginBottom="3dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:gravity="end">
 
         <androidx.cardview.widget.CardView
@@ -38,9 +38,10 @@
                     android:layout_margin="4dp"
                     android:text="@{item.messageText}"
                     android:textColor="@color/black"
-                    android:maxEms="18"
+                    android:maxEms="16"
                     android:ellipsize="none"
                     android:singleLine="false"
+                    android:gravity="start"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -50,8 +51,8 @@
                     android:id="@+id/game_board_message_timestamp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginStart="4dp"
                     android:text="@{DateUtils.formatDateTimeForChat(item.createdAt)}"
                     android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"

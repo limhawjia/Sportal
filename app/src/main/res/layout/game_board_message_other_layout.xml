@@ -6,19 +6,31 @@
 
         <variable
             name="item"
-            type="wjhj.orbital.sportsmatchfindingapp.messaging.SportalUserMessage"/>
+            type="wjhj.orbital.sportsmatchfindingapp.messaging.SportalUserMessage" />
 
         <import type="wjhj.orbital.sportsmatchfindingapp.utils.DateUtils" />
+
+        <import type="android.view.View" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp"
         android:layout_marginStart="12dp"
+        android:layout_marginTop="3dp"
         android:layout_marginEnd="12dp"
-        android:gravity="start">
+        android:layout_marginBottom="3dp"
+        android:gravity="start|top">
+
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:circularImageUri="@{item.displayPicUri}"
+            android:contentDescription="@string/image"
+            android:visibility="@{item.fullView ? View.VISIBLE : View.INVISIBLE}" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/game_board_message_other_card"
@@ -33,26 +45,41 @@
                 android:padding="8dp">
 
                 <TextView
+                    android:id="@+id/game_board_message_display_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="4dp"
+                    android:gravity="start"
+                    android:text="@{item.displayName}"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
                     android:id="@+id/game_board_message_other_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
+                    android:ellipsize="none"
+                    android:maxEms="16"
                     android:text="@{item.messageText}"
                     android:textColor="@color/black"
-                    android:maxEms="18"
-                    android:ellipsize="none"
-                    android:singleLine="false"
+                    android:gravity="start"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/game_board_message_other_timestamp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/game_board_message_other_timestamp"/>
+                    app:layout_constraintTop_toBottomOf="@id/game_board_message_display_name" />
 
                 <TextView
                     android:id="@+id/game_board_message_other_timestamp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:text="@{DateUtils.formatDateTimeForChat(item.createdAt)}"
                     android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
