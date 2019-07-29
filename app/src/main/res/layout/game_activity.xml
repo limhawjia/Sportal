@@ -7,21 +7,30 @@
 
         <include
             android:id="@+id/top_toolbar"
-            layout="@layout/top_toolbar">
-        </include>
+            layout="@layout/top_toolbar"></include>
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/game_activity_view_pager"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/top_toolbar">
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/game_activity_tab_layout"
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/game_activity_view_pager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent"
+                android:layout_below="@id/top_toolbar">
 
-        </androidx.viewpager.widget.ViewPager>
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/game_activity_tab_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
+            </androidx.viewpager.widget.ViewPager>
+
+            <FrameLayout
+                android:id="@+id/game_activity_secondary_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
     </RelativeLayout>
 </layout>

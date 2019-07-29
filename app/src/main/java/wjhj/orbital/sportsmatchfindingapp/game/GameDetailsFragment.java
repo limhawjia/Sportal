@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,8 +18,10 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGameDetailsBinding;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
+import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileFragment;
 import wjhj.orbital.sportsmatchfindingapp.user.FriendProfilesAdapter;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 
@@ -103,7 +106,10 @@ public class GameDetailsFragment extends Fragment implements FriendProfilesAdapt
 
     @Override
     public void onUserProfileClick(String uid) {
+        FragmentManager fm = requireFragmentManager();
+        DisplayUserProfileFragment fragment = DisplayUserProfileFragment.newInstance(uid);
 
+        fm.beginTransaction().replace(R.id.game_activity_secondary_container, fragment).commit();
     }
 
     /**
