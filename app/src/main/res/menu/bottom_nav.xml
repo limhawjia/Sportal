@@ -7,20 +7,9 @@
         android:title="@string/navbar_home" />
 
     <item
-        android:id="@+id/nav_games"
-        android:icon="@drawable/ic_whatshot_black_24dp"
-        android:title="@string/navbar_games" />
-
-    <item
         android:id="@+id/nav_search"
         android:icon="@drawable/ic_search_black_24dp"
         android:title="@string/navbar_search" />
-    <!--
-    <item
-        android:id="@+id/nav_explore"
-        android:icon="@drawable/ic_explore_black_24px"
-        android:title="@string/navbar_explore" />
-    -->
 
     <item
         android:id="@+id/nav_social"

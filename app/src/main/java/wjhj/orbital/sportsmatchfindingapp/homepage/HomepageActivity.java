@@ -57,7 +57,6 @@ public class HomepageActivity extends AppCompatActivity implements
         SearchFilterDialogFragment.SearchFilterDialogListener {
     public static final String DISPLAY_PROFILE_PIC_TAG = "display_profile_pic";
     private static final int ADD_GAME_RC = 1;
-    private static final String LOCATION_PICKER_TAG = "location";
 
     private FirebaseUser currUser;
     @SuppressWarnings({"unused"})
@@ -90,6 +89,12 @@ public class HomepageActivity extends AppCompatActivity implements
             Intent addGameIntent = new Intent(this, AddGameActivity.class);
             startActivityForResult(addGameIntent, ADD_GAME_RC);
         });
+
+        Fragment fragment = GamesSwipeViewFragment.newInstance();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.homepage_fragment_container, fragment, "Home")
+                .commit();
     }
 
     @Override
@@ -169,12 +174,8 @@ public class HomepageActivity extends AppCompatActivity implements
         String tag = "";
         switch (item.getItemId()) {
             case R.id.nav_home:
-                //todo
-                tag = "Home";
-                break;
-            case R.id.nav_games:
                 fragment = GamesSwipeViewFragment.newInstance();
-                tag = "Games";
+                tag = "Home";
                 break;
             case R.id.nav_search:
                 ImmutableList.Builder<Sport> builder = new ImmutableList.Builder<>();
