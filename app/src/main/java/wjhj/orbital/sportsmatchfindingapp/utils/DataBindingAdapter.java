@@ -64,7 +64,7 @@ public abstract class DataBindingAdapter<T> extends ListAdapter<T, DataBindingAd
     public abstract int getItemViewType(int position);
 
 
-    static class DataBindingViewHolder<T> extends RecyclerView.ViewHolder {
+    protected static class DataBindingViewHolder<T> extends RecyclerView.ViewHolder {
 
         private ViewDataBinding binding;
         private ItemClickListener<T> listener;
@@ -84,7 +84,7 @@ public abstract class DataBindingAdapter<T> extends ListAdapter<T, DataBindingAd
             }
         }
 
-        void bind(T item) {
+        public void bind(T item) {
             binding.setVariable(BR.item, item);
 
             if (listener != null) {

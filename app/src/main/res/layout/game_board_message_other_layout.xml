@@ -6,7 +6,7 @@
 
         <variable
             name="item"
-            type="com.sendbird.android.UserMessage" />
+            type="wjhj.orbital.sportsmatchfindingapp.messaging.SportalUserMessage"/>
 
         <import type="wjhj.orbital.sportsmatchfindingapp.utils.DateUtils" />
     </data>
@@ -37,7 +37,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-                    android:text="@{item.message}"
+                    android:text="@{item.messageText}"
                     android:textColor="@color/black"
                     android:maxEms="18"
                     android:ellipsize="none"

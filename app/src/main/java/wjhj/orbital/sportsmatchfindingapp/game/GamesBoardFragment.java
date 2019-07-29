@@ -19,9 +19,12 @@ import com.sendbird.android.BaseMessage;
 import com.sendbird.android.SendBird;
 import com.sendbird.android.UserMessage;
 
+import java9.util.stream.Collectors;
+import java9.util.stream.StreamSupport;
 import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.GamesBoardFragmentBinding;
+import wjhj.orbital.sportsmatchfindingapp.messaging.SportalUserMessage;
 import wjhj.orbital.sportsmatchfindingapp.utils.DataBindingAdapter;
 
 /**
@@ -81,15 +84,15 @@ public class GamesBoardFragment extends Fragment {
                 true);
         manager.setSmoothScrollbarEnabled(true);
 
-        GameBoardMessageAdapter adapter = new GameBoardMessageAdapter(new DiffUtil.ItemCallback<BaseMessage>() {
+        GameBoardMessageAdapter adapter = new GameBoardMessageAdapter(new DiffUtil.ItemCallback<SportalUserMessage>() {
             @Override
-            public boolean areItemsTheSame(@NonNull BaseMessage oldItem, @NonNull BaseMessage newItem) {
-                return oldItem.getMessageId() == newItem.getMessageId();
+            public boolean areItemsTheSame(@NonNull SportalUserMessage oldItem, @NonNull SportalUserMessage newItem) {
+                return oldItem.getUserMessage().getMessageId() == newItem.getUserMessage().getMessageId();
             }
 
             @Override
-            public boolean areContentsTheSame(@NonNull BaseMessage oldItem, @NonNull BaseMessage newItem) {
-                return oldItem.equals(newItem);
+            public boolean areContentsTheSame(@NonNull SportalUserMessage oldItem, @NonNull SportalUserMessage newItem) {
+                return oldItem.getUserMessage().equals(newItem.getUserMessage());
             }
         });
 
@@ -115,27 +118,45 @@ public class GamesBoardFragment extends Fragment {
             }
         });
 
-        viewModel.getMessagesLiveData().observe(getViewLifecycleOwner(), adapter::submitList);
+        viewModel.getMessagesLiveData().observe(getViewLifecycleOwner(), messages ->
+                adapter.submitList(StreamSupport.stream(messages)
+                        .filter(message -> message instanceof UserMessage)
+                        .map(message -> new SportalUserMessage((UserMessage) message))
+                        .collect(Collectors.toList())));
     }
 
-    static class GameBoardMessageAdapter extends DataBindingAdapter<BaseMessage> {
+    static class GameBoardMessageAdapter extends DataBindingAdapter<SportalUserMessage> {
 
-        GameBoardMessageAdapter(@NonNull DiffUtil.ItemCallback<BaseMessage> diffCallback) {
+        GameBoardMessageAdapter(@NonNull DiffUtil.ItemCallback<SportalUserMessage> diffCallback) {
             super(diffCallback);
         }
 
         @Override
-        public int getItemViewType(int position) {
-            BaseMessage message = getItem(position);
-            if (message instanceof UserMessage) {
-                if (((UserMessage) message).getSender().getUserId().equals(SendBird.getCurrentUser().getUserId())) {
-                    Timber.d(((UserMessage) message).getSender().getUserId());
-                    return R.layout.game_board_message_self_layout;
-                } else {
-                    return R.layout.game_board_message_other_layout;
-                }
+        public void onBindViewHolder(@NonNull DataBindingViewHolder<SportalUserMessage> holder, int position) {
+            SportalUserMessage message = getItem(position);
+            if (position < getCurrentList().size() - 1 && isContinuous(message, getItem(position + 1))) {
+
             }
-            return R.layout.game_board_message_other_layout; // To be changed if more message types are supported in the future.
+
+            holder.bind(message);
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            SportalUserMessage message = getItem(position);
+            if (message.getSender().getUserId().equals(SendBird.getCurrentUser().getUserId())) {
+                return R.layout.game_board_message_self_layout;
+            } else {
+                return R.layout.game_board_message_other_layout;
+            }
+
+        }
+
+        private boolean isContinuous(SportalUserMessage currMsg, SportalUserMessage prevMsg) {
+            if (currMsg == null || prevMsg == null) {
+                return false;
+            }
+            return currMsg.getSender().getUserId().equals(prevMsg.getSender().getUserId());
         }
     }
 
