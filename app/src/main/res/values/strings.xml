@@ -108,7 +108,7 @@
     <string name="user_profile_edit_profile">Edit Profile</string>
     <string name="display_profile_friends">Friends</string>
     <string name="display_user_add_friend">Add Friend</string>
-    <string name="display_user_games_played">Games Played</string>
+    <string name="display_user_games_played">Games played</string>
     <string name="display_user_friends">Friends</string>
     <string name="display_user_friends_caps">FRIENDS</string>
     <string name="display_user_no_friends_msg">No friends (yet)</string>
@@ -141,7 +141,7 @@
     <string name="friend_request_accept">Accept</string>
     <string name="friend_request_decline">Decline</string>
     <string name="social_requests_no_requests_text">No friend requests</string>
-    <string name="friend_card_sports_you_have_in_common">SPORTS IN COMMON:</string>
+    <string name="friend_card_sports_you_have_in_common">Sports in common:</string>
     <string name="chat_page_send">Send</string>
     <string name="chat_page_message_hint">Message</string>
     <string name="games_board_no_permission">Oops, you are not participating in this game!</string>
