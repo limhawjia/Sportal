@@ -129,7 +129,7 @@
                         style="?android:attr/listSeparatorTextViewStyle"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/gray"
+                        android:background="@color/light_gray"
                         android:gravity="center_horizontal" />
 
                     <LinearLayout

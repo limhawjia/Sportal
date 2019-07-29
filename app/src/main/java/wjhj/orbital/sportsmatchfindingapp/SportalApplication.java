@@ -2,6 +2,7 @@ package wjhj.orbital.sportsmatchfindingapp;
 
 import android.app.Application;
 
+import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.sendbird.android.SendBird;
 
 import timber.log.Timber;
@@ -17,5 +18,6 @@ public class SportalApplication extends Application {
         }
 
         SendBird.init(getString(R.string.sendbird_app_id), this);
+        AndroidThreeTen.init(this);
     }
 }
