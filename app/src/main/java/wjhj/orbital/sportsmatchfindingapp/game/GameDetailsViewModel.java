@@ -107,8 +107,7 @@ public class GameDetailsViewModel extends ViewModel {
         mIsOwner = Transformations.map(mOwner, owner ->
                 FirebaseAuth.getInstance().getUid().equals(owner.getUid()));
         mIsParticipant = Transformations.map(mParticipants, participants -> {
-            Log.d("hi", "changed");
-            Log.d("hi", String.valueOf(participants.contains(FirebaseAuth.getInstance().getUid())));
+            Timber.d(String.valueOf(participants.contains(FirebaseAuth.getInstance().getUid())));
             return participants.contains(FirebaseAuth.getInstance().getUid());
         });
         mIsDisabled = new MutableLiveData<>();
@@ -184,7 +183,7 @@ public class GameDetailsViewModel extends ViewModel {
         return mIsParticipant;
     }
 
-    public LiveData<Boolean> getResult() {
+    LiveData<Boolean> getResult() {
         return mResult;
     }
 

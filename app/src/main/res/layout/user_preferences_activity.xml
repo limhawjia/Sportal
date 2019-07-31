@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="userPreferences"
             type="wjhj.orbital.sportsmatchfindingapp.user.UserPreferencesViewModel" />
@@ -82,8 +81,7 @@
                     android:layout_height="match_parent"
                     android:background="@color/colorPrimaryDark"
                     android:contentDescription="@string/image"
-                    android:imageUri="@{userPreferences.getDisplayPicUri()}"
-                    android:scaleType="fitXY" />
+                    android:circularImageUri="@{userPreferences.getDisplayPicUri()}" />
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -268,7 +266,8 @@
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"
                     android:src="@drawable/ic_error_outline_red_24dp"
-                    android:visibility="@{userPreferences.gender.errMessage == null ? View.GONE : View.VISIBLE}" />
+                    android:visibility="@{userPreferences.gender.errMessage == null ? View.GONE : View.VISIBLE}"
+                    android:contentDescription="@string/image" />
 
             </LinearLayout>
 

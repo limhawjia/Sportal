@@ -21,9 +21,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.common.collect.ImmutableList;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
@@ -79,10 +78,14 @@ public class HomepageActivity extends AppCompatActivity implements
 
         binding.bottomNav.setOnNavigationItemSelectedListener(navListener);
         ((Toolbar) binding.topToolbar).setOnMenuItemClickListener(menuListener);
-        binding.homepageAddGameButton.setOnClickListener(view -> {
-            Intent addGameIntent = new Intent(this, AddGameActivity.class);
-            startActivityForResult(addGameIntent, ADD_GAME_RC);
-        });
+
+        userProfileViewModel.getCurrUser().observe(this, userProfile ->
+                binding.homepageAddGameButton.setOnClickListener(view -> {
+                    Intent addGameIntent = new Intent(this, AddGameActivity.class);
+                    addGameIntent.putExtra(AddGameActivity.CURR_COUNTRY_TAG, userProfile.getCountry().toString());
+                    startActivityForResult(addGameIntent, ADD_GAME_RC);
+                }));
+
 
         Fragment fragment = GamesSwipeViewFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -106,7 +109,6 @@ public class HomepageActivity extends AppCompatActivity implements
         checkProfileSetup();
         connectToChatClient();
     }
-
 
 
     @Override
@@ -153,7 +155,7 @@ public class HomepageActivity extends AppCompatActivity implements
     private void connectToChatClient() {
         SendBirdConnectionManager.login(currUser.getUid(), (user, e) -> {
             if (e != null) {
-                Timber.d(e,"Connection error");
+                Timber.d(e, "Connection error");
             } else {
                 Timber.d("Connected to chat client");
             }
@@ -234,7 +236,6 @@ public class HomepageActivity extends AppCompatActivity implements
         getMenuInflater().inflate(R.menu.top_options_menu, menu);
         return true;
     }
-
 
 
     @Override

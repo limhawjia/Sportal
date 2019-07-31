@@ -56,6 +56,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
 
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
@@ -68,10 +69,11 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
 
     private static final String DROPPED_MARKER_LAYER_ID = "DROPPED_MARKER_LAYER_ID";
     private static final String PLACES_AUTOCOMPLETE_TAG = "places_autocomplete";
-    private static final String LOCATION_PICKER_TAG = "location_picker";
+    private static final String CURR_COUNTRY_TAG = "curr_country";
 
     private MapboxMap mapboxMap;
     private MapView mapView;
+    private String mCurrCountry;
     private PlaceAutocompleteFragment autocompleteFragment;
     private OnMapFragmentCancelledListener closeListener;
     private LocationPickerListener locationPickerListener;
@@ -87,9 +89,12 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
     }
 
     @NonNull
-    public static LocationPickerMapFragment newInstance(@Nullable MapboxMapOptions mapboxMapOptions) {
+    public static LocationPickerMapFragment newInstance(@Nullable MapboxMapOptions mapboxMapOptions,
+                                                        String currCountry) {
         LocationPickerMapFragment mapFragment = new LocationPickerMapFragment();
         mapFragment.setArguments(MapFragmentUtils.createFragmentArgs(mapboxMapOptions));
+        Bundle args = new Bundle();
+        args.putString(CURR_COUNTRY_TAG, currCountry);
         return mapFragment;
     }
 
@@ -102,6 +107,15 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
         } catch (ClassCastException e) {
             throw new ClassCastException(getActivity().getClass().getSimpleName()
                     + " must implement OnMapFragmentCancelledListener and LocationPickerListener");
+        }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            mCurrCountry = getArguments().getString(CURR_COUNTRY_TAG);
         }
     }
 
@@ -133,18 +147,19 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
             mapboxMap.addOnCameraMoveStartedListener(reason -> {
                 if (reason == MapboxMap.OnCameraMoveStartedListener.REASON_API_GESTURE) {
 
-                    if (hoveringMarker.getVisibility() == View.INVISIBLE ) {
+                    if (hoveringMarker.getVisibility() == View.INVISIBLE) {
                         // Set hovering marker to visible again.
                         hoveringMarker.setVisibility(View.VISIBLE);
 
                         // Hide the selected location SymbolLayer
-                        if (style.getLayer(DROPPED_MARKER_LAYER_ID) != null) {
-                            style.getLayer(DROPPED_MARKER_LAYER_ID).setProperties(visibility(Property.NONE));
+                        Layer droppedMarkerLayer = style.getLayer(DROPPED_MARKER_LAYER_ID);
+                        if (droppedMarkerLayer != null) {
+                            droppedMarkerLayer.setProperties(visibility(Property.NONE));
                         }
 
                         // Reset button
                         selectLocationButton.setText(requireActivity().getString(R.string.add_game_select_location));
-                        selectLocationButton.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
+                        selectLocationButton.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.colorPrimary));
                         selectLocationButton.setEnabled(true);
                     }
                 }
@@ -247,6 +262,7 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
             PlaceOptions options = PlaceOptions.builder()
                     .limit(4)
                     .historyCount(0)
+                    .country(mCurrCountry)
                     .build(PlaceOptions.MODE_CARDS);
             autocompleteFragment = PlaceAutocompleteFragment
                     .newInstance(getString(R.string.mapbox_access_token), options);
@@ -271,8 +287,10 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
                 @Override
                 public void onPlaceSelected(CarmenFeature carmenFeature) {
                     Point center = carmenFeature.center();
-                    LatLng latLng = new LatLng(center.latitude(), center.longitude());
-                    mapboxMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                    if (center != null) {
+                        LatLng latLng = new LatLng(center.latitude(), center.longitude());
+                        mapboxMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                    }
                     selectLocation(carmenFeature, center, loadedMapStyle);
 
                     closeFragment();
@@ -328,8 +346,8 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
 
                     } else {
                         hoveringMarker.setVisibility(View.INVISIBLE);
-                        selectLocationButton.setText(getActivity().getString(R.string.add_game_try_again));
-                        selectLocationButton.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.gray));
+                        selectLocationButton.setText(requireActivity().getString(R.string.add_game_try_again));
+                        selectLocationButton.setBackgroundColor(ContextCompat.getColor(requireActivity(), R.color.gray));
                         selectLocationButton.setEnabled(false);
 
                         Toast failureToast = Toast.makeText(getActivity(),
@@ -341,12 +359,12 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
 
                 @Override
                 public void onFailure(@NonNull Call<GeocodingResponse> call, @NonNull Throwable t) {
-                    Log.d(LOCATION_PICKER_TAG, "Geocoding failed.", t);
+                    Timber.d(t, "Geocoding failed.");
                 }
             });
 
         } catch (ServicesException e) {
-            Log.d(LOCATION_PICKER_TAG, "Services exception.", e);
+            Timber.d(e, "Services exception.");
             e.printStackTrace();
         }
     }
@@ -366,7 +384,7 @@ public class LocationPickerMapFragment extends SupportMapFragment implements Per
             if (source != null) {
                 source.setGeoJson(point);
             }
-            loadedMapStyle.getLayer(DROPPED_MARKER_LAYER_ID).setProperties(visibility(Property.VISIBLE));
+            layer.setProperties(visibility(Property.VISIBLE));
         }
 
         Toast successToast = Toast.makeText(getActivity(),

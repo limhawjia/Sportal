@@ -1,17 +1,10 @@
 package wjhj.orbital.sportsmatchfindingapp.utils;
 
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.provider.ContactsContract;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.databinding.BindingAdapter;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -22,7 +15,6 @@ import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalTime;
 import org.threeten.bp.format.DateTimeFormatter;
 
-import java.util.List;
 
 public class BindingAdapters {
 

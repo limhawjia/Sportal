@@ -21,6 +21,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
 
     public static final String LOCATION_NAME = "name";
     public static final String GEOPOINT = "point";
+    public static final String CURR_COUNTRY_TAG = "curr_country";
     private static String LOCATION_PICKER_TAG = "location_picker";
 
     GeoPoint geoPoint;
@@ -38,7 +39,7 @@ public class LocationPickerActivity extends AppCompatActivity implements
                 .zoom(13.3)
                 .build());
 
-        LocationPickerMapFragment mapFragment = LocationPickerMapFragment.newInstance(options);
+        LocationPickerMapFragment mapFragment = LocationPickerMapFragment.newInstance(options, null);
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.location_picker_fragment_container, mapFragment, LOCATION_PICKER_TAG)

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java9.util.stream.StreamSupport;
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.Authentications;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
@@ -83,7 +84,7 @@ public class UserPreferencesViewModel extends ViewModel {
         return this.birthday;
     }
 
-    public void setBirthday(LocalDate date) {
+    void setBirthday(LocalDate date) {
         this.birthday.setInput(date);
     }
 
@@ -99,7 +100,7 @@ public class UserPreferencesViewModel extends ViewModel {
         return this.gender;
     }
 
-    public LiveData<List<Sport>> getSportPreferences() {
+    LiveData<List<Sport>> getSportPreferences() {
         return sportPreferences;
     }
 
@@ -107,7 +108,7 @@ public class UserPreferencesViewModel extends ViewModel {
         this.sportPreferences.setValue(sportPreferences);
     }
 
-    public void updateSportPreferences(boolean[] sportSelections) {
+    void updateSportPreferences(boolean[] sportSelections) {
         List<Sport> sportsPreferences = sportPreferences.getValue();
         if (sportsPreferences == null) {
             sportsPreferences = new ArrayList<>();
@@ -127,7 +128,7 @@ public class UserPreferencesViewModel extends ViewModel {
         setSportPreferences(sportsPreferences);
     }
 
-    public boolean[] getSportSelections() {
+    boolean[] getSportSelections() {
         boolean[] selections = new boolean[Sport.values().length];
         List<Sport> currList = sportPreferences.getValue();
         if (currList != null) {
@@ -139,12 +140,12 @@ public class UserPreferencesViewModel extends ViewModel {
         return selections;
     }
 
-    public MutableLiveData<Boolean> getSuccess() {
+    MutableLiveData<Boolean> getSuccess() {
         return success;
     }
 
 
-    public void linkWithExistingProfile(String uid) {
+    void linkWithExistingProfile(String uid) {
         LiveData<UserProfile> existingProfile = repo.getUser(uid);
 
         existingProfile.observeForever(new Observer<UserProfile>() {
@@ -204,7 +205,7 @@ public class UserPreferencesViewModel extends ViewModel {
                         .addOnSuccessListener(uri ->
                                 repo.updateUser(currUserUid, userProfile.withDisplayPicUri(uri)))
                         .addOnFailureListener(e ->
-                                Log.d("preferences", "profile pic upload failed", e));
+                                Timber.d(e, "profile pic upload failed"));
             }
 
             success.setValue(true);

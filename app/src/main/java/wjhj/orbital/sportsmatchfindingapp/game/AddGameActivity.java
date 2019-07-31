@@ -42,10 +42,13 @@ public class AddGameActivity extends AppCompatActivity implements
         LocationPickerMapFragment.LocationPickerListener,
         SkillLevelPickerFragment.SkillLevelPickerListener {
 
+    public static String CURR_COUNTRY_TAG = "curr_country";
     private static String LOCATION_PICKER_TAG = "location_picker";
 
     private AddGameActivityBinding binding;
     private AddGameViewModel viewModel;
+    private String mEditGameUid;
+    private String mCurrCountry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,15 +58,19 @@ public class AddGameActivity extends AppCompatActivity implements
 
         Toolbar toolbar = (Toolbar) binding.topToolbar;
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.add_game_toolbar_text);
+        toolbar.setTitle(R.string.add_game_toolbar_text);
 
         viewModel = ViewModelProviders.of(this).get(AddGameViewModel.class);
 
         if (getIntent().getExtras() != null) {
-            String gameUid = getIntent().getStringExtra(GameActivity.GAME_UID);
-            getSupportActionBar().setTitle(R.string.edit_game);
+            mEditGameUid = getIntent().getStringExtra(GameActivity.GAME_UID);
+            mCurrCountry = getIntent().getStringExtra(AddGameActivity.CURR_COUNTRY_TAG);
+        }
+
+        if (mEditGameUid != null) {
+            toolbar.setTitle(R.string.edit_game);
             binding.addGameButton.setText(R.string.make_changes);
-            SportalRepo.getInstance().getGame(gameUid)
+            SportalRepo.getInstance().getGame(mEditGameUid)
                     .observe(this, viewModel::setExistingGame);
         }
 
@@ -121,7 +128,7 @@ public class AddGameActivity extends AppCompatActivity implements
                 .zoom(13.3)
                 .build());
 
-        LocationPickerMapFragment mapFragment = LocationPickerMapFragment.newInstance(options);
+        LocationPickerMapFragment mapFragment = LocationPickerMapFragment.newInstance(options, mCurrCountry);
         getSupportFragmentManager()
                 .beginTransaction()
                 .add(R.id.add_game_page_container, mapFragment, LOCATION_PICKER_TAG)

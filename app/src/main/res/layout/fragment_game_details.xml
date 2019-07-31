@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -28,7 +29,7 @@
                 tools:context=".game.GameDetailsFragment">
 
                 <LinearLayout
-                    android:id="@+id/picture"
+                    android:id="@+id/game_picture"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:layout_marginTop="8dp">
@@ -36,57 +37,48 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:contentDescription="@string/image"
                         android:scaleType="centerCrop"
                         android:src="@drawable/football" />
+
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/Sport"
+                <TextView
+                    android:id="@+id/games_sport_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/picture"
-                    android:layout_marginTop="16dp"
+                    android:layout_below="@id/game_picture"
                     android:background="@color/colorPrimary"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingLeft="8dp"
-                        android:text="@{viewModel.sport.toString().toUpperCase()}"
-                        android:textColor="@color/white"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
+                    android:gravity="center|start"
+                    android:padding="12dp"
+                    android:text="@{viewModel.sport.toString().toUpperCase()}"
+                    android:textColor="@color/white"
+                    android:textSize="23sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/days_left"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/Sport"
-                    android:background="@color/white"
-                    android:padding="8dp">
+                    android:layout_below="@id/games_sport_text"
+                    android:background="@color/white">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:paddingLeft="8dp"
+                        android:padding="12dp"
                         android:text="@{viewModel.dayOfWeek.toUpperCase()}"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
+                        android:textSize="21sp" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:paddingRight="8dp"
+                        android:padding="12dp"
                         android:text="@{viewModel.daysLeft}"
                         android:textAlignment="viewEnd"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
+                        android:textSize="21sp" />
                 </LinearLayout>
 
 
@@ -94,8 +86,8 @@
                     android:id="@+id/participants"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
                     android:layout_below="@id/days_left"
-                    android:layout_marginTop="16dp"
                     android:background="@color/white"
                     android:orientation="vertical">
 
@@ -175,6 +167,7 @@
                             android:layout_weight="1"
                             android:paddingLeft="16dp"
                             android:paddingRight="16dp"
+                            android:textColor="@color/black"
                             android:text="@{@string/game_details_participating(safeUnbox(viewModel.participating), safeUnbox(viewModel.maxPlayers))}"
                             android:textSize="12sp" />
 
@@ -201,6 +194,7 @@
                             android:layout_marginTop="8dp"
                             android:progress="@{safeUnbox(viewModel.progress)}" />
                     </LinearLayout>
+
                 </LinearLayout>
 
 
@@ -209,7 +203,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/participants"
-                    android:layout_marginTop="16dp"
                     android:background="@color/gray"
                     android:paddingLeft="16dp"
                     android:paddingTop="8dp"
@@ -228,43 +221,43 @@
                     android:background="@color/white"
                     android:orientation="vertical"
                     android:paddingLeft="8dp"
+                    android:paddingTop="4dp"
                     android:paddingRight="8dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
                         android:drawableStart="@drawable/ic_date_range_black_24dp"
                         android:drawablePadding="16dp"
                         android:gravity="center_vertical"
-                        android:padding="8dp"
                         android:text="@{viewModel.date}" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
                         android:drawableStart="@drawable/ic_access_time_black_24dp"
                         android:drawablePadding="16dp"
                         android:gravity="center_vertical"
-                        android:padding="8dp"
                         android:text="@{viewModel.time}" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
                         android:drawableStart="@drawable/ic_hourglass_empty_black_24dp"
                         android:drawablePadding="16dp"
                         android:gravity="center_vertical"
-                        android:paddingLeft="8dp"
-                        android:paddingRight="8dp"
                         android:text="@{viewModel.duration}" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
                         android:drawableStart="@drawable/ic_levels_black_24dp"
                         android:drawablePadding="16dp"
                         android:gravity="center_vertical"
-                        android:padding="8dp"
                         android:text="@{viewModel.skillLevel}" />
 
 
@@ -296,7 +289,7 @@
                         android:text="@{viewModel.description}" />
                 </LinearLayout>
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/owner_information"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -310,62 +303,69 @@
                     android:paddingBottom="8dp">
 
                     <TextView
+                        android:id="@+id/games_about_owner"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="8dp"
                         android:text="@string/about_owner"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
+                        android:layout_weight="1"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:text="@{viewModel.ownerName}"
+                        android:textSize="20sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/games_about_owner"/>
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:paddingLeft="16dp"
-                            android:paddingRight="16dp"
-                            android:text="@{viewModel.ownerName}"
-                            android:textSize="24sp" />
+                    <ImageView
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:circularImageUri="@{viewModel.ownerDisplayUri}"
+                        android:contentDescription="@string/image"
+                        android:scaleType="fitXY"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/games_about_owner"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
 
-                        <ImageView
-                            android:layout_width="36dp"
-                            android:layout_height="36dp"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:imageUri="@{viewModel.ownerDisplayUri}"
-                            android:scaleType="centerCrop" />
-                    </LinearLayout>
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </RelativeLayout>
+
         </ScrollView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <TextView
                 android:id="@+id/line"
                 style="?android:attr/listSeparatorTextViewStyle"
-                android:gravity="center_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/offWhite" />
+                android:background="@color/offWhite"
+                android:gravity="center_horizontal" />
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:background="@{safeUnbox(viewModel.isParticipant) ? @color/red : @color/colorPrimary}"
+                android:clickable="@{!safeUnbox(viewModel.disabled)}"
+                android:onClick="@{viewModel::onButtonClicked}"
                 android:text="@{safeUnbox(viewModel.isParticipant) ? `Leave` : `Join`}"
                 android:textColor="@color/white"
-                android:visibility="@{safeUnbox(viewModel.isOwner) ? View.GONE : View.VISIBLE}"
-                android:clickable="@{!safeUnbox(viewModel.disabled)}"
-                android:onClick="@{viewModel::onButtonClicked}"/>
+                android:visibility="@{safeUnbox(viewModel.isOwner) ? View.GONE : View.VISIBLE}" />
 
         </LinearLayout>
     </LinearLayout>
