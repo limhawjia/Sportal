@@ -23,14 +23,14 @@ import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileFragment;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 import wjhj.orbital.sportsmatchfindingapp.utils.BatchTransformations;
-import wjhj.orbital.sportsmatchfindingapp.utils.DataBindingAdapter;
+import wjhj.orbital.sportsmatchfindingapp.utils.DataBindingListAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link SocialRequestsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SocialRequestsFragment extends Fragment implements DataBindingAdapter.ItemClickListener<UserProfile> {
+public class SocialRequestsFragment extends Fragment implements DataBindingListAdapter.ItemClickListener<UserProfile> {
     private static final String CURR_USER_UID_TAG = "curr_user_uid";
 
     private SportalRepo repo;
@@ -114,7 +114,7 @@ public class SocialRequestsFragment extends Fragment implements DataBindingAdapt
     }
 
 
-    static class FriendRequestAdapter extends DataBindingAdapter<UserProfile> {
+    static class FriendRequestAdapter extends DataBindingListAdapter<UserProfile> {
 
         FriendRequestAdapter(@NonNull DiffUtil.ItemCallback<UserProfile> diffCallback) {
             super(diffCallback);

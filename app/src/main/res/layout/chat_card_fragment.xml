@@ -9,7 +9,7 @@
 
         <variable
             name="listener"
-            type="wjhj.orbital.sportsmatchfindingapp.utils.DataBindingAdapter.ItemClickListener" />
+            type="wjhj.orbital.sportsmatchfindingapp.utils.DataBindingListAdapter.ItemClickListener" />
         <import type="android.view.View" />
     </data>
 

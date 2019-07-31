@@ -9,7 +9,7 @@
             type="wjhj.orbital.sportsmatchfindingapp.user.AbstractUserProfile" />
         <variable
             name="listener"
-            type="wjhj.orbital.sportsmatchfindingapp.utils.DataBindingAdapter.ItemClickListener" />
+            type="wjhj.orbital.sportsmatchfindingapp.utils.DataBindingListAdapter.ItemClickListener" />
     </data>
 
     <RelativeLayout

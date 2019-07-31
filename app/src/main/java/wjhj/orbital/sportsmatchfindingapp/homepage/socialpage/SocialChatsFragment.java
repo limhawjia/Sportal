@@ -17,12 +17,12 @@ import android.view.ViewGroup;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.SocialChatsFragmentBinding;
 import wjhj.orbital.sportsmatchfindingapp.messaging.PrivateChat;
-import wjhj.orbital.sportsmatchfindingapp.utils.DataBindingAdapter;
+import wjhj.orbital.sportsmatchfindingapp.utils.DataBindingListAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SocialChatsFragment extends Fragment implements DataBindingAdapter.ItemClickListener<PrivateChat> {
+public class SocialChatsFragment extends Fragment implements DataBindingListAdapter.ItemClickListener<PrivateChat> {
     private static final String CURR_USER_UID_TAG = "curr_user_uid";
 
     private SocialChatsViewModel viewModel;
@@ -106,7 +106,7 @@ public class SocialChatsFragment extends Fragment implements DataBindingAdapter.
     }
 
 
-    static class FriendChatChannelAdapter extends DataBindingAdapter<PrivateChat> {
+    static class FriendChatChannelAdapter extends DataBindingListAdapter<PrivateChat> {
 
         FriendChatChannelAdapter(@NonNull DiffUtil.ItemCallback<PrivateChat> diffCallback) {
             super(diffCallback);

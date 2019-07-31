@@ -7,13 +7,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
 
@@ -21,14 +21,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.common.collect.ImmutableList;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.GeoPoint;
-import com.mapbox.geojson.Point;
-import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
-import com.sendbird.android.SendBird;
-
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
@@ -42,7 +37,6 @@ import wjhj.orbital.sportsmatchfindingapp.game.Sport;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesSwipeViewFragment;
 import wjhj.orbital.sportsmatchfindingapp.homepage.searchpage.SearchFragment;
 import wjhj.orbital.sportsmatchfindingapp.homepage.socialpage.SocialSwipeViewFragment;
-import wjhj.orbital.sportsmatchfindingapp.maps.LocationPickerMapFragment;
 import wjhj.orbital.sportsmatchfindingapp.messaging.SendBirdConnectionManager;
 import wjhj.orbital.sportsmatchfindingapp.repo.GameSearchFilter;
 import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;

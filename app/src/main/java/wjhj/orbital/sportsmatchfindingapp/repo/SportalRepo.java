@@ -616,15 +616,15 @@ public class SportalRepo implements ISportalRepo {
         MutableLiveData<T> liveData = new MutableLiveData<>();
         docRef.addSnapshotListener((value, err) -> {
             if (err != null) {
-                Log.d(DATA_DEBUG, "database snapshot error", err);
-            } else if (value.exists()) {
+                Timber.d(err, "database snapshot error");
+            } else if (value != null && value.exists()) {
                 try {
                     liveData.postValue(value.toObject(valueType));
                 } catch (RuntimeException e) {
-                    Log.d(DATA_DEBUG, "deserialization error", e);
+                    Timber.d(e, "deserialization error");
                 }
             } else {
-                Log.d(DATA_DEBUG, "document does not exist");
+                Timber.d("document does not exist");
             }
         });
         return liveData;
@@ -634,7 +634,7 @@ public class SportalRepo implements ISportalRepo {
         MutableLiveData<List<T>> liveData = new MutableLiveData<>();
         query.addSnapshotListener((value, err) -> {
             if (err != null) {
-                Log.d(DATA_DEBUG, "database snapshot error", err);
+                Timber.d(err, "database snapshot error");
             } else {
                 assert value != null;
                 liveData.postValue(value.toObjects(valueType));
@@ -654,8 +654,8 @@ public class SportalRepo implements ISportalRepo {
         return db.collection(collectionPath)
                 .document(docID)
                 .delete()
-                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, docID + " successfully deleted!"))
-                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Error deleting document", e));
+                .addOnSuccessListener(aVoid -> Timber.d("%s successfully deleted!", docID))
+                .addOnFailureListener(e -> Timber.d(e, "Error deleting document"));
     }
 
     // METHODS TO CONVERT BETWEEN DOMAIN MODEL AND DATA MODEL
@@ -744,5 +744,4 @@ public class SportalRepo implements ISportalRepo {
             return list;
         }
     }
-
 }

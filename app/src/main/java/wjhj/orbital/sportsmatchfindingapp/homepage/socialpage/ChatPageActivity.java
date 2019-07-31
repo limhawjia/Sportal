@@ -26,7 +26,7 @@ import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.ChatPageActivityBinding;
 import wjhj.orbital.sportsmatchfindingapp.messaging.PrivateChat;
 import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileFragment;
-import wjhj.orbital.sportsmatchfindingapp.utils.DataBindingAdapter;
+import wjhj.orbital.sportsmatchfindingapp.utils.DataBindingListAdapter;
 
 public class ChatPageActivity extends AppCompatActivity {
     public static final String CURR_USER_UID_TAG = "curr_user_uid";
@@ -144,7 +144,7 @@ public class ChatPageActivity extends AppCompatActivity {
     }
 
 
-    static class PrivateMessageAdapter extends DataBindingAdapter<BaseMessage> {
+    static class PrivateMessageAdapter extends DataBindingListAdapter<BaseMessage> {
 
         PrivateMessageAdapter(@NonNull DiffUtil.ItemCallback<BaseMessage> diffCallback) {
             super(diffCallback);

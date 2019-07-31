@@ -8,25 +8,35 @@ import org.threeten.bp.format.DateTimeFormatter;
 
 public class DateUtils {
     public static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
-    public static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
+    public static DateTimeFormatter DDMM_FORMATTER = DateTimeFormatter.ofPattern("dd/MM");
+    public static DateTimeFormatter DDMMYYYY_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    private DateUtils() {}
+    private DateUtils() {
+    }
 
     public static String formatTime(long timeInMillis) {
         LocalDateTime localDateTime = toLocalDateTime(timeInMillis);
         return localDateTime.toLocalTime().format(TIME_FORMATTER);
     }
 
-    public static String formatDate(long timeInMillis) {
+    public static String formatDateDDMM(long timeInMillis) {
+
         LocalDateTime localDateTime = toLocalDateTime(timeInMillis);
-        return localDateTime.toLocalDate().format(DATE_FORMATTER);
+        return localDateTime.toLocalDate().format(DDMM_FORMATTER);
+    }
+
+    public static String formatDateDDMMYYYY(long timeInMillis) {
+        LocalDateTime localDateTime = toLocalDateTime(timeInMillis);
+        return localDateTime.toLocalDate().format(DDMMYYYY_FORMATTER);
     }
 
     public static String formatDateTimeForChat(long timeInMillis) {
         if (isToday(timeInMillis)) {
             return formatTime(timeInMillis);
+        } else if (isThisYear(timeInMillis)) {
+            return formatDateDDMM(timeInMillis);
         } else {
-            return formatDate(timeInMillis);
+            return formatDateDDMMYYYY(timeInMillis);
         }
 
     }
@@ -38,5 +48,10 @@ public class DateUtils {
     public static boolean isToday(long timeInMillis) {
         LocalDateTime localDateTime = toLocalDateTime(timeInMillis);
         return localDateTime.toLocalDate().isEqual(LocalDate.now());
+    }
+
+    public static boolean isThisYear(long timeInMillis) {
+        LocalDateTime localDateTime = toLocalDateTime(timeInMillis);
+        return localDateTime.getYear() == LocalDate.now().getYear();
     }
 }

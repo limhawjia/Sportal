@@ -23,7 +23,7 @@ import java9.util.stream.StreamSupport;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.GamesBoardFragmentBinding;
 import wjhj.orbital.sportsmatchfindingapp.messaging.SportalUserMessage;
-import wjhj.orbital.sportsmatchfindingapp.utils.DataBindingAdapter;
+import wjhj.orbital.sportsmatchfindingapp.utils.DataBindingListAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -123,7 +123,7 @@ public class GamesBoardFragment extends Fragment {
                         .collect(Collectors.toList())));
     }
 
-    static class GameBoardMessageAdapter extends DataBindingAdapter<SportalUserMessage> {
+    static class GameBoardMessageAdapter extends DataBindingListAdapter<SportalUserMessage> {
 
         GameBoardMessageAdapter(@NonNull DiffUtil.ItemCallback<SportalUserMessage> diffCallback) {
             super(diffCallback);

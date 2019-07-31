@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import wjhj.orbital.sportsmatchfindingapp.BR;
 
-public abstract class DataBindingAdapter<T> extends ListAdapter<T, DataBindingAdapter.DataBindingViewHolder<T>> {
+public abstract class DataBindingListAdapter<T> extends ListAdapter<T, DataBindingListAdapter.DataBindingViewHolder<T>> {
 
     private ItemClickListener<T> listener;
     private LifecycleOwner lifecycleOwner;
@@ -26,7 +26,7 @@ public abstract class DataBindingAdapter<T> extends ListAdapter<T, DataBindingAd
      *
      * @param diffCallback diffCallback for T
      */
-    public DataBindingAdapter(@NonNull DiffUtil.ItemCallback<T> diffCallback) {
+    public DataBindingListAdapter(@NonNull DiffUtil.ItemCallback<T> diffCallback) {
         super(diffCallback);
     }
 

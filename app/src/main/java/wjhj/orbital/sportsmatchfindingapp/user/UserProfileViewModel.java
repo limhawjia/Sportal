@@ -57,7 +57,6 @@ public class UserProfileViewModel extends ViewModel {
                 List<String> ids = entry.getValue();
 
                 for (String id : ids) {
-                    Timber.d(id);
                     mapMediatorLiveData.addSource(repo.getGame(id), value -> {
                         games.put(value.getUid(), value);
                         allGamesMap.put(entry.getKey(), new ArrayList<>(games.values()));
