@@ -232,10 +232,10 @@ public class SportalRepo implements ISportalRepo {
 
         return batch.commit()
                 .addOnSuccessListener(docRef -> {
-                    Log.d(DATA_DEBUG, "Add game complete.");
-                    new GeoFirestore(colRef).setLocation(gameUid, game.getLocation());
+                    Timber.d("Add game complete.");
+                    new GeoFirestore(colRef).setLocation(gameUid, game.getLocation(), Timber::d);
                 })
-                .addOnFailureListener(e -> Log.d(DATA_DEBUG, "Add game failed.", e));
+                .addOnFailureListener(e -> Timber.d(e, "Add game failed."));
     }
 
     @Override
@@ -253,7 +253,7 @@ public class SportalRepo implements ISportalRepo {
                 GameDataModel newRecord = toGameDataModel(game);
                 transaction.set(docRef, newRecord, SetOptions.merge());
             }
-            new GeoFirestore(colRef).setLocation(game.getUid(),game.getLocation());
+            new GeoFirestore(colRef).setLocation(game.getUid(), game.getLocation(), Timber::d);
             return null;
         });
     }

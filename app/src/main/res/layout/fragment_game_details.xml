@@ -28,20 +28,15 @@
                 android:background="@color/offWhite"
                 tools:context=".game.GameDetailsFragment">
 
-                <LinearLayout
+
+                <ImageView
                     android:id="@+id/game_picture"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:layout_marginTop="8dp">
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:contentDescription="@string/image"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/football" />
-
-                </LinearLayout>
+                    android:layout_marginTop="8dp"
+                    android:contentDescription="@string/image"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/football"/>
 
                 <TextView
                     android:id="@+id/games_sport_text"
@@ -86,10 +81,10 @@
                     android:id="@+id/participants"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="16dp"
                     android:layout_below="@id/days_left"
                     android:background="@color/white"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:paddingBottom="16dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -167,8 +162,8 @@
                             android:layout_weight="1"
                             android:paddingLeft="16dp"
                             android:paddingRight="16dp"
-                            android:textColor="@color/black"
                             android:text="@{@string/game_details_participating(safeUnbox(viewModel.participating), safeUnbox(viewModel.maxPlayers))}"
+                            android:textColor="@color/black"
                             android:textSize="12sp" />
 
                         <TextView
@@ -311,7 +306,7 @@
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -322,20 +317,20 @@
                         android:text="@{viewModel.ownerName}"
                         android:textSize="20sp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/games_about_owner"/>
+                        app:layout_constraintTop_toBottomOf="@id/games_about_owner" />
 
                     <ImageView
                         android:layout_width="52dp"
                         android:layout_height="52dp"
-                        android:layout_marginTop="16dp"
                         android:layout_marginLeft="16dp"
+                        android:layout_marginTop="16dp"
                         android:layout_marginRight="16dp"
                         android:circularImageUri="@{viewModel.ownerDisplayUri}"
                         android:contentDescription="@string/image"
                         android:scaleType="fitXY"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/games_about_owner"
-                        app:layout_constraintBottom_toBottomOf="parent"/>
+                        app:layout_constraintTop_toTopOf="@id/games_about_owner" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

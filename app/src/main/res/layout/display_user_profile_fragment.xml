@@ -32,9 +32,9 @@
 
                 <ImageView
                     android:id="@+id/display_user_profile_pic"
-                    android:layout_width="136dp"
-                    android:layout_height="136dp"
-                    android:layout_margin="20dp"
+                    android:layout_width="124dp"
+                    android:layout_height="124dp"
+                    android:layout_margin="12dp"
                     android:circularImageUri="@{viewModel.displayPicUri}"
                     android:contentDescription="@string/image"
                     app:layout_constraintStart_toStartOf="parent"
@@ -133,8 +133,7 @@
                             android:drawablePadding="8dp"
                             android:text="@{viewModel.gender.toString()}"
                             android:textColor="@color/dark_gray"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
+                            android:textSize="14sp"/>
 
                         <TextView
                             android:id="@+id/display_user_country"
@@ -144,9 +143,10 @@
                             android:drawableStart="@drawable/ic_location_on_black_24dp"
                             android:drawablePadding="8dp"
                             android:text="@{viewModel.country.toString()}"
+                            android:maxLines="1"
+                            android:ellipsize="end"
                             android:textColor="@color/dark_gray"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
+                            android:textSize="14sp"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

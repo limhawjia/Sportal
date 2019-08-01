@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
@@ -15,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -35,7 +38,7 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
  */
 public class GameDetailsFragment extends Fragment implements FriendProfilesAdapter.UserProfileClickListener {
 
-    public static final String GAME_UID = "game_uid";
+    private static final String GAME_UID = "game_uid";
 
     private String mGameUid;
 
@@ -75,13 +78,16 @@ public class GameDetailsFragment extends Fragment implements FriendProfilesAdapt
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         binding = FragmentGameDetailsBinding.inflate(inflater, container, false);
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
+
+        Glide.with(this).load(R.drawable.football).into(binding.gamePicture);
+
         setUpParticipantsRecyclerView(binding.participantsRecycler);
 
         return binding.getRoot();
@@ -89,7 +95,7 @@ public class GameDetailsFragment extends Fragment implements FriendProfilesAdapt
 
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 //        if (context instanceof OnFragmentInteractionListener) {
 //
