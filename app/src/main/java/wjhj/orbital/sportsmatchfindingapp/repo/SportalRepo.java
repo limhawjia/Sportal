@@ -69,7 +69,7 @@ public class SportalRepo implements ISportalRepo {
     private final LoadingCache<String, LiveData<UserProfile>> mUserProfilesCache;
     private final LoadingCache<String, LiveData<Game>> mGamesCache;
 
-    private static SportalRepo instance;
+    private static volatile SportalRepo instance;
 
     public static SportalRepo getInstance() {
         if (instance == null) {
@@ -115,8 +115,8 @@ public class SportalRepo implements ISportalRepo {
         return db.collection(USERS_PATH)
                 .document(uid)
                 .set(dataModel)
-                .addOnSuccessListener(aVoid -> Log.d(DATA_DEBUG, uid + " added"))
-                .addOnFailureListener(e -> Log.d(DATA_DEBUG, uid + " add failed", e));
+                .addOnSuccessListener(aVoid -> Timber.d("%s added", uid))
+                .addOnFailureListener(e -> Timber.d(e, "%s add failed", uid));
     }
 
     @Override
