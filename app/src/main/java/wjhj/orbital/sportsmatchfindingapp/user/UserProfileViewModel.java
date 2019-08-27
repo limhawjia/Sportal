@@ -7,6 +7,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.google.common.collect.ImmutableList;
 
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.chrono.ChronoLocalDateTime;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -58,8 +61,13 @@ public class UserProfileViewModel extends ViewModel {
 
                 for (String id : ids) {
                     mapMediatorLiveData.addSource(repo.getGame(id), value -> {
-                        games.put(value.getUid(), value);
-                        allGamesMap.put(entry.getKey(), new ArrayList<>(games.values()));
+
+                        if (isGameComplete(value)) {
+                            allGamesMap.get(GameStatus.COMPLETED).add(value);
+                        } else {
+                            games.put(value.getUid(), value);
+                            allGamesMap.put(entry.getKey(), new ArrayList<>(games.values()));
+                        }
                         mapMediatorLiveData.postValue(allGamesMap);
                     });
                 }
@@ -70,5 +78,10 @@ public class UserProfileViewModel extends ViewModel {
 
     public LiveData<ImmutableList<Sport>> getSportsPreferences() {
         return sportsPreferences;
+    }
+
+    private boolean isGameComplete(Game game) {
+        return game.getStartDateTime().plus(game.getDuration())
+                .isAfter(LocalDateTime.now());
     }
 }

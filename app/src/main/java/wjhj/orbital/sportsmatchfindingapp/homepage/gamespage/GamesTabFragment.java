@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.FragmentGamesTabBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.Difficulty;
@@ -31,7 +32,6 @@ import wjhj.orbital.sportsmatchfindingapp.user.UserProfileViewModel;
  * create an instance of this fragment.
  */
 public class GamesTabFragment extends Fragment implements AdapterView.OnItemSelectedListener {
-    private static String GAMES_PAGE_DEBUG = "games_tab_page";
     private static String TAB_NAME_TAG = "tab_name";
 
     private GameStatus mGameStatus;
@@ -60,7 +60,7 @@ public class GamesTabFragment extends Fragment implements AdapterView.OnItemSele
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(GAMES_PAGE_DEBUG, "Created tab");
+        Timber.d("Created games tab");
 
         if (getArguments() != null) {
             mGameStatus = GameStatus.fromString(getArguments().getString(TAB_NAME_TAG));
