@@ -70,8 +70,8 @@
                         android:layout_height="wrap_content"
                         android:text="@{game.sport.toString()}"
                         android:textAllCaps="true"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
 
                     <ImageView
                         android:layout_width="14sp"
@@ -130,14 +130,29 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@{(game.participatingUids.size() &lt; game.minPlayers) ? @color/red : @color/green}"
-                        android:paddingLeft="10dp"
+                        android:paddingLeft="8dp"
                         android:paddingTop="8dp"
-                        android:paddingRight="10dp"
+                        android:paddingRight="8dp"
                         android:paddingBottom="8dp"
                         android:layout_marginStart="16dp"
+                        android:visibility="@{game.complete ? View.GONE : View.VISIBLE}"
                         android:text="@{(game.participatingUids.size &lt; game.minPlayers) ? `NOT READY` : `GAME ON`}"
                         android:textColor="@color/white"
-                        android:textStyle="bold" />
+                        android:fontFamily="sans-serif-medium"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/gray"
+                        android:paddingLeft="8dp"
+                        android:paddingTop="8dp"
+                        android:paddingRight="8dp"
+                        android:paddingBottom="8dp"
+                        android:layout_marginStart="16dp"
+                        android:visibility="@{game.complete ? View.VISIBLE : View.GONE}"
+                        android:text="@string/game_completed"
+                        android:textColor="@color/white"
+                        android:fontFamily="sans-serif-medium"/>
 
                 </LinearLayout>
 
@@ -167,7 +182,8 @@
                         android:drawableStart="@drawable/ic_date_range_black_24dp"
                         android:drawablePadding="8dp"
                         android:gravity="center_vertical"
-                        android:setTextDate="@{game.date}" />
+                        android:setTextDate="@{game.date}"
+                        android:textSize="14sp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -178,7 +194,8 @@
                         android:drawablePadding="8dp"
                         android:duration="@{game.duration}"
                         android:gravity="center_vertical"
-                        android:setTextTime="@{game.time}" />
+                        android:setTextTime="@{game.time}"
+                        android:textSize="14sp"/>
                 </LinearLayout>
 
                 <TextView
@@ -191,7 +208,9 @@
                     android:maxLines="1"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
-                    android:text="@{game.placeName}" />
+                    android:text="@{game.placeName}"
+                    android:textSize="14sp"/>
+
             </LinearLayout>
 
         </LinearLayout>

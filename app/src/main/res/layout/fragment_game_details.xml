@@ -28,34 +28,34 @@
                 android:background="@color/offWhite"
                 tools:context=".game.GameDetailsFragment">
 
-
-                <ImageView
-                    android:id="@+id/game_picture"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginTop="8dp"
-                    android:contentDescription="@string/image"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/football"/>
-
                 <TextView
                     android:id="@+id/games_sport_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/game_picture"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="8dp"
                     android:background="@color/colorPrimary"
                     android:gravity="center|start"
                     android:padding="12dp"
                     android:text="@{viewModel.sport.toString().toUpperCase()}"
                     android:textColor="@color/white"
-                    android:textSize="23sp"
+                    android:textSize="21sp"
                     android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/game_picture"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_below="@id/games_sport_text"
+                    android:contentDescription="@string/image"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/football"/>
 
                 <LinearLayout
                     android:id="@+id/days_left"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/games_sport_text"
+                    android:layout_below="@id/game_picture"
                     android:background="@color/white">
 
                     <TextView
@@ -64,16 +64,17 @@
                         android:layout_weight="1"
                         android:padding="12dp"
                         android:text="@{viewModel.dayOfWeek.toUpperCase()}"
-                        android:textSize="21sp" />
+                        android:textSize="18sp" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:padding="12dp"
-                        android:text="@{viewModel.daysLeft}"
+                        android:text='@{viewModel.daysLeft}'
+                        android:visibility="@{safeUnbox(viewModel.isCompleted()) ? View.INVISIBLE : View.VISIBLE}"
                         android:textAlignment="viewEnd"
-                        android:textSize="21sp" />
+                        android:textSize="18sp" />
                 </LinearLayout>
 
 
@@ -89,7 +90,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@{safeUnbox(viewModel.ready) ? @color/green : @color/red}"
+                        android:background="@{safeUnbox(viewModel.isCompleted()) ? @color/gray : safeUnbox(viewModel.ready) ? @color/green : @color/red}"
                         android:orientation="vertical"
                         android:paddingLeft="16dp"
                         android:paddingTop="8dp"
@@ -101,17 +102,27 @@
                             android:layout_height="wrap_content"
                             android:text="@{safeUnbox(viewModel.minPlayers) - safeUnbox(viewModel.participating) + ` MORE PLAYERS NEEDED`}"
                             android:textColor="@color/white"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:visibility="@{safeUnbox(viewModel.ready) ? View.GONE : View.VISIBLE}" />
+                            android:textSize="15sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:visibility="@{safeUnbox(viewModel.ready) || safeUnbox(viewModel.isCompleted()) ? View.GONE : View.VISIBLE}" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/game_ready"
                             android:textColor="@color/white"
-                            android:textSize="16sp"
-                            android:visibility="@{!safeUnbox(viewModel.ready) ? View.GONE : View.VISIBLE}" />
+                            android:textSize="15sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:visibility="@{!safeUnbox(viewModel.ready) || safeUnbox(viewModel.isCompleted()) ? View.GONE : View.VISIBLE}" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/game_details_game_is_over"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            android:fontFamily="sans-serif-medium"
+                            android:visibility="@{safeUnbox(viewModel.isCompleted()) ? View.VISIBLE : View.GONE}" />
                     </LinearLayout>
 
                     <TextView
@@ -205,8 +216,8 @@
                     android:paddingBottom="8dp"
                     android:text="@string/details"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textSize="15sp"
+                    android:fontFamily="sans-serif-medium"/>
 
                 <LinearLayout
                     android:id="@+id/details"
@@ -255,6 +266,15 @@
                         android:gravity="center_vertical"
                         android:text="@{viewModel.skillLevel}" />
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:drawableStart="@drawable/ic_location_on_black_24dp"
+                        android:drawablePadding="16dp"
+                        android:gravity="center_vertical"
+                        android:text="@{viewModel.placeName}"/>
+
 
                 </LinearLayout>
 
@@ -274,8 +294,8 @@
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
                         android:text="@string/more_info"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textSize="16sp"
+                        android:textColor="@color/black"/>
 
                     <TextView
                         android:layout_width="match_parent"
@@ -303,8 +323,8 @@
                         android:layout_height="wrap_content"
                         android:padding="8dp"
                         android:text="@string/about_owner"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@color/black"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -315,7 +335,7 @@
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
                         android:text="@{viewModel.ownerName}"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/games_about_owner" />
 

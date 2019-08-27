@@ -1,7 +1,6 @@
 package wjhj.orbital.sportsmatchfindingapp.game;
 
 import android.net.Uri;
-import android.util.Log;
 import android.view.View;
 
 import androidx.lifecycle.LiveData;
@@ -11,6 +10,7 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.GeoPoint;
 
 import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
@@ -38,6 +38,8 @@ public class GameDetailsViewModel extends ViewModel {
     private LiveData<String> mTime;
     private LiveData<String> mSkillLevel;
     private LiveData<String> mDuration;
+    private LiveData<GeoPoint> mGeoPoint;
+    private LiveData<String> mPlaceName;
     private MediatorLiveData<Integer> mProgress;
     private LiveData<UserProfile> mOwner;
     private LiveData<String> mDescription;
@@ -78,6 +80,8 @@ public class GameDetailsViewModel extends ViewModel {
         mTime = Transformations.map(mGame, game -> timeFormatter.format(game.getTime()));
         mDuration = Transformations.map(mGame, game -> toDurationString(game.getDuration()));
         mSkillLevel = Transformations.map(mGame, game -> game.getSkillLevel().toString());
+        mGeoPoint = Transformations.map(mGame, Game::getLocation);
+        mPlaceName = Transformations.map(mGame, Game::getPlaceName);
         mProgress = new MediatorLiveData<>();
         mProgress.addSource(mNumParticipating, num -> {
             Integer min = mMinPlayers.getValue();
@@ -139,15 +143,25 @@ public class GameDetailsViewModel extends ViewModel {
         return mReady;
     }
 
-    public LiveData<Sport> getSport() { return mSport; }
+    public LiveData<Sport> getSport() {
+        return mSport;
+    }
 
-    public LiveData<String> getDate() { return mDate; }
+    public LiveData<String> getDate() {
+        return mDate;
+    }
 
-    public LiveData<String> getTime() { return mTime ;}
+    public LiveData<String> getTime() {
+        return mTime;
+    }
 
-    public LiveData<String> getDuration() { return mDuration; }
+    public LiveData<String> getDuration() {
+        return mDuration;
+    }
 
-    public LiveData<String> getSkillLevel() { return mSkillLevel; }
+    public LiveData<String> getSkillLevel() {
+        return mSkillLevel;
+    }
 
     public LiveData<Integer> getProgress() {
         return mProgress;
@@ -169,7 +183,17 @@ public class GameDetailsViewModel extends ViewModel {
         return mDayOfWeek;
     }
 
-    public LiveData<String> getOwnerName() { return mOwnerName; }
+    public LiveData<String> getPlaceName() {
+        return mPlaceName;
+    }
+
+    public LiveData<GeoPoint> getGeoPoint() {
+        return mGeoPoint;
+    }
+
+    public LiveData<String> getOwnerName() {
+        return mOwnerName;
+    }
 
     public LiveData<Uri> getOwnerDisplayUri() {
         return mOwnerDisplayUri;
@@ -189,6 +213,10 @@ public class GameDetailsViewModel extends ViewModel {
 
     public LiveData<Boolean> getDisabled() {
         return mIsDisabled;
+    }
+
+    public LiveData<Boolean> isCompleted() {
+        return Transformations.map(mGame, Game::isComplete);
     }
 
     private String toDurationString(Duration duration) {

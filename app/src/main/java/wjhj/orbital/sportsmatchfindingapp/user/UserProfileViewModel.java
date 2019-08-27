@@ -62,7 +62,7 @@ public class UserProfileViewModel extends ViewModel {
                 for (String id : ids) {
                     mapMediatorLiveData.addSource(repo.getGame(id), value -> {
 
-                        if (isGameComplete(value)) {
+                        if (value.isComplete()) {
                             List<Game> existingCompleted = allGamesMap.get(GameStatus.COMPLETED);
                             if (existingCompleted == null) {
                                 existingCompleted = new ArrayList<>();
@@ -84,10 +84,5 @@ public class UserProfileViewModel extends ViewModel {
 
     public LiveData<ImmutableList<Sport>> getSportsPreferences() {
         return sportsPreferences;
-    }
-
-    private boolean isGameComplete(Game game) {
-        return game.getStartDateTime().plus(game.getDuration())
-                .isBefore(LocalDateTime.now());
     }
 }

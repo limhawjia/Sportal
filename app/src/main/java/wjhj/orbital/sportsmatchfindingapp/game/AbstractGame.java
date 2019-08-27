@@ -59,7 +59,6 @@ public abstract class AbstractGame {
     public String dateString() {
         LocalDate startDay = getDate();
         LocalDate endDay = getStartDateTime().plus(getDuration()).toLocalDate();
-        //TODO: test if date will wrap around midnight
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         if (startDay.equals(endDay)) {
@@ -86,7 +85,7 @@ public abstract class AbstractGame {
         }
     }
 
-    public boolean hasEnoughPlayers() {
+    private boolean hasEnoughPlayers() {
         return numExtraPlayersNeeded() <= 0;
     }
 
@@ -95,7 +94,13 @@ public abstract class AbstractGame {
         return playersNeeded < 0 ? 0 : playersNeeded;
     }
 
+    public boolean isComplete() {
+        return getStartDateTime().plus(getDuration())
+                .isBefore(LocalDateTime.now());
+    }
+
     private boolean hasMaxPlayers() {
         return getParticipatingUids().size() >= getMaxPlayers();
     }
+
 }

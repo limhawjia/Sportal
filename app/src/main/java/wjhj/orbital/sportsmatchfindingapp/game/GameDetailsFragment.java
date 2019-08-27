@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
@@ -18,6 +19,12 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.GeoPoint;
+import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
+import com.mapbox.mapboxsdk.maps.SupportMapFragment;
 
 import java.util.List;
 
@@ -115,7 +122,10 @@ public class GameDetailsFragment extends Fragment implements FriendProfilesAdapt
         FragmentManager fm = requireFragmentManager();
         DisplayUserProfileFragment fragment = DisplayUserProfileFragment.newInstance(uid);
 
-        fm.beginTransaction().replace(R.id.game_activity_secondary_container, fragment).commit();
+        fm.beginTransaction()
+                .replace(R.id.game_activity_secondary_container, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     /**
@@ -149,9 +159,11 @@ public class GameDetailsFragment extends Fragment implements FriendProfilesAdapt
     private void setUpParticipantsRecyclerView(RecyclerView recyclerView) {
         FriendProfilesAdapter adapter = new FriendProfilesAdapter(this);
         recyclerView.setAdapter(adapter);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
                 RecyclerView.HORIZONTAL, false));
         recyclerView.setHasFixedSize(true);
+
         LiveData<List<UserProfile>> participants = repo.getParticipatingUsers(mGameUid);
         participants.observe(this, adapter::updateFriends);
     }

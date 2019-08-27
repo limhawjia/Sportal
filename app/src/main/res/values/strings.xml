@@ -131,7 +131,7 @@
     <string name="game_ready">GAME IS ON!</string>
     <string name="more_info">More details: </string>
     <string name="about_owner">About the owner:</string>
-    <string name="details">Details</string>
+    <string name="details">DETAILS</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -145,5 +145,7 @@
     <string name="chat_page_send">Send</string>
     <string name="chat_page_message_hint">Message</string>
     <string name="games_board_no_permission">Oops, you are not participating in this game!</string>
+    <string name="game_details_game_is_over">GAME IS OVER</string>
+    <string name="game_completed">COMPLETED</string>
 
 </resources>
