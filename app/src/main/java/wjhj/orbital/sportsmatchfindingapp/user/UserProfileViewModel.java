@@ -63,7 +63,13 @@ public class UserProfileViewModel extends ViewModel {
                     mapMediatorLiveData.addSource(repo.getGame(id), value -> {
 
                         if (isGameComplete(value)) {
-                            allGamesMap.get(GameStatus.COMPLETED).add(value);
+                            List<Game> existingCompleted = allGamesMap.get(GameStatus.COMPLETED);
+                            if (existingCompleted == null) {
+                                existingCompleted = new ArrayList<>();
+                            }
+                            existingCompleted.add(value);
+                            allGamesMap.put(GameStatus.COMPLETED, existingCompleted);
+
                         } else {
                             games.put(value.getUid(), value);
                             allGamesMap.put(entry.getKey(), new ArrayList<>(games.values()));
@@ -82,6 +88,6 @@ public class UserProfileViewModel extends ViewModel {
 
     private boolean isGameComplete(Game game) {
         return game.getStartDateTime().plus(game.getDuration())
-                .isAfter(LocalDateTime.now());
+                .isBefore(LocalDateTime.now());
     }
 }
