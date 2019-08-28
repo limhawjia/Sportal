@@ -65,6 +65,7 @@ public class HomepageActivity extends AppCompatActivity implements
         checkLoggedIn();
         checkProfileSetup();
         connectToChatClient();
+        SportalRepo.getInstance().refreshCache();
 
         UserProfileViewModelFactory factory = new UserProfileViewModelFactory(currUser.getUid());
         userProfileViewModel = ViewModelProviders.of(this, factory)

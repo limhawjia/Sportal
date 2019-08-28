@@ -687,7 +687,11 @@ public class SportalRepo implements ISportalRepo {
 
                 for (Map.Entry<String, List<String>> entry : gamesMap.entrySet()) {
                     if (entry.getKey().equals(status.toString())) {
-                        entry.getValue().add(gameUid);
+
+                        if (!entry.getValue().contains(gameUid)) {
+                            entry.getValue().add(gameUid);
+                        }
+
                     } else {
                         entry.getValue().remove(gameUid);
                     }

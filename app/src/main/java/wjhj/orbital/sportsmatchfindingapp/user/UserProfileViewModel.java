@@ -61,23 +61,9 @@ public class UserProfileViewModel extends ViewModel {
 
                 for (String id : ids) {
                     mapMediatorLiveData.addSource(repo.getGame(id), value -> {
+                        games.put(value.getUid(), value);
+                        allGamesMap.put(entry.getKey(), new ArrayList<>(games.values()));
 
-                        if (value.isComplete()) {
-                            List<Game> existingCompleted = allGamesMap.get(GameStatus.COMPLETED);
-                            if (existingCompleted == null) {
-                                existingCompleted = new ArrayList<>();
-                            }
-
-                            if (!existingCompleted.contains(value)) {
-                                existingCompleted.add(value);
-                            }
-
-                            allGamesMap.put(GameStatus.COMPLETED, existingCompleted);
-
-                        } else {
-                            games.put(value.getUid(), value);
-                            allGamesMap.put(entry.getKey(), new ArrayList<>(games.values()));
-                        }
                         mapMediatorLiveData.postValue(allGamesMap);
                     });
                 }
