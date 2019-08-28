@@ -102,10 +102,48 @@ public class SportalRepo implements ISportalRepo {
                     @Override
                     public LiveData<Game> load(@NonNull String key) {
                         DocumentReference ref = db.collection(GAMES_PATH).document(key);
+                        ref.get().addOnSuccessListener(snapshot -> {
+                            if (snapshot.exists()) {
+                                GameDataModel dataModel = snapshot.toObject(GameDataModel.class);
+                                if (dataModel != null && toGame(dataModel).isComplete()) {
+                                    changeGameStatus(GameStatus.COMPLETED, dataModel);
+                                }
+                            }
+                        });
                         return Transformations.map(convertToLiveData(ref, GameDataModel.class),
                                 SportalRepo.this::toGame);
                     }
                 });
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private void changeGameStatus(GameStatus status, GameDataModel dataModel) {
+        StreamSupport.stream(dataModel.getParticipatingUids())
+                .forEach(id -> changeGameStatusForUser(status, dataModel.getUid(), id));
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    private Task<UserProfileDataModel> changeGameStatusForUser(GameStatus status, String gameUid, String userUid) {
+        return db.runTransaction(transaction -> {
+            DocumentReference docRef = db.collection(USERS_PATH).document(userUid);
+            UserProfileDataModel dataModel = transaction.get(docRef)
+                    .toObject(UserProfileDataModel.class);
+
+            if (dataModel != null) {
+                Map<String, List<String>> gamesMap = dataModel.getGames();
+
+                for (Map.Entry<String, List<String>> entry : gamesMap.entrySet()) {
+                    if (entry.getKey().equals(status.toString())) {
+                        entry.getValue().add(gameUid);
+                    } else {
+                        entry.getValue().remove(gameUid);
+                    }
+                }
+                transaction.set(docRef, dataModel, SetOptions.merge());
+            }
+            return dataModel;
+        }).addOnSuccessListener(dataModel ->
+                Timber.d("Change status of game %s succeess", gameUid));
     }
 
     @Override

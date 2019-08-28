@@ -50,9 +50,6 @@ public class GameActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Timber.d("Game page created");
-
         gameUid = getIntent().getStringExtra(GAME_UID);
         mGameLiveData = SportalRepo.getInstance().getGame(gameUid);
 

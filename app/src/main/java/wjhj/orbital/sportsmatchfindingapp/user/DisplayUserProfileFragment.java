@@ -26,7 +26,6 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Collections;
 
-import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.auth.Authentications;
 import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
@@ -212,11 +211,9 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
     private void initGamesCardRecyclerView(RecyclerView recyclerView) {
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         GamesCardAdapter adapter = new GamesCardAdapter(game -> {
-            Timber.d("button clicked");
             Intent intent = new Intent(requireActivity(), GameActivity.class);
             intent.putExtra(GameActivity.GAME_UID, game.getUid());
             startActivity(intent);
-            Timber.d("activity started");
         });
 
         if (viewModel.isCurrentUser()) {
@@ -279,6 +276,7 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
         auths.logOutGoogle(requireContext());
         SportalRepo.getInstance().refreshCache();
         Intent logoutIntent = new Intent(requireContext(), LoginActivity.class);
+        logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK );
         startActivity(logoutIntent);
         requireFragmentManager().popBackStack();
     }
