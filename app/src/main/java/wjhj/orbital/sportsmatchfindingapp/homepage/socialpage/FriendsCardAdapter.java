@@ -29,11 +29,26 @@ public class FriendsCardAdapter extends ListAdapter<UserProfile, FriendsCardAdap
 
     private FriendsCardListener listener;
     private Task<List<Sport>> currUserPreferencesTask;
+    private List<UserProfile> currentFriendsList;
 
     FriendsCardAdapter(FriendsCardListener listener, Task<List<Sport>> currUserPreferencesTask) {
         super(new UserProfileItemCallback());
         this.listener = listener;
         this.currUserPreferencesTask = currUserPreferencesTask;
+        this.currentFriendsList = new ArrayList<>();
+    }
+
+    public void submitCurrentFriendsList(List<UserProfile> list) {
+        currentFriendsList = list;
+        submitList(list);
+    }
+
+    public void submitSearchList(List<UserProfile> list) {
+        submitList(list);
+    }
+
+    public void revertToCurrentFriendsView() {
+        submitList(currentFriendsList);
     }
 
     @NonNull

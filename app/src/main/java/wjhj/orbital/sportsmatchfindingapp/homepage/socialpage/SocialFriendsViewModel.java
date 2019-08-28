@@ -1,6 +1,7 @@
 package wjhj.orbital.sportsmatchfindingapp.homepage.socialpage;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
@@ -17,16 +18,23 @@ import wjhj.orbital.sportsmatchfindingapp.utils.BatchTransformations;
 
 public class SocialFriendsViewModel extends ViewModel {
 
-    private final SportalRepo repo;
-
     private LiveData<UserProfile> currUser;
     private LiveData<List<UserProfile>> friends;
+    private MutableLiveData<String> searchText;
+    private LiveData<List<UserProfile>> searchedProfiles;
 
     public SocialFriendsViewModel(String userUid) {
-        repo = SportalRepo.getInstance();
+        SportalRepo repo = SportalRepo.getInstance();
         currUser = repo.getUser(userUid);
         LiveData<List<String>> friendUids = Transformations.map(currUser, UserProfile::getFriendUids);
         friends = BatchTransformations.switchMapList(friendUids, repo::getUser, UserProfile::getUid);
+        searchText = new MutableLiveData<>();
+        searchedProfiles = Transformations.switchMap(searchText, text -> {
+            if (!text.isEmpty()) {
+                return repo.selectUsersStartingWith("displayName", text);
+            }
+            return null;
+        });
     }
 
     LiveData<List<UserProfile>> getFriends() {
@@ -45,4 +53,11 @@ public class SocialFriendsViewModel extends ViewModel {
         return taskCompletionSource.getTask();
     }
 
+    public MutableLiveData<String> getSearchText() {
+        return searchText;
+    }
+
+    LiveData<List<UserProfile>> getSearchedProfiles() {
+        return searchedProfiles;
+    }
 }

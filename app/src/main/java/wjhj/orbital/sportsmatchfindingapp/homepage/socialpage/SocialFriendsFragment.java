@@ -73,7 +73,14 @@ public class SocialFriendsFragment extends Fragment implements FriendsCardAdapte
 
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(mAdapter);
-        viewModel.getFriends().observe(getViewLifecycleOwner(), mAdapter::submitList);
+        viewModel.getFriends().observe(getViewLifecycleOwner(), mAdapter::submitCurrentFriendsList);
+
+        viewModel.getSearchedProfiles().observe(getViewLifecycleOwner(), mAdapter::submitSearchList);
+        viewModel.getSearchText().observe(getViewLifecycleOwner(), text -> {
+            if (text.isEmpty()) {
+                mAdapter.revertToCurrentFriendsView();
+            }
+        });
     }
 
 
