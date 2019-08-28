@@ -214,7 +214,7 @@ public class SportalRepo implements ISportalRepo {
 
     @Override
     public Task<Void> deleteUser(String userUid) {
-        return deleteDocument(userUid, USERS_PATH);
+        throw new UnsupportedOperationException();
     }
 
     // Should be called when building a game to get the uid for the game.
