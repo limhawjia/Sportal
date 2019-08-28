@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,7 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wjhj.orbital.sportsmatchfindingapp.databinding.FriendsCardViewBinding;
+import wjhj.orbital.sportsmatchfindingapp.game.Game;
 import wjhj.orbital.sportsmatchfindingapp.game.Sport;
+import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesDiffCallback;
 import wjhj.orbital.sportsmatchfindingapp.user.PreferencesIconAdapter;
 import wjhj.orbital.sportsmatchfindingapp.user.UserProfile;
 

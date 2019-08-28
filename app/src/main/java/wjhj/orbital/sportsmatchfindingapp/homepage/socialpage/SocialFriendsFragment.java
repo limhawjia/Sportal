@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.SocialFriendsFragmentBinding;
 import wjhj.orbital.sportsmatchfindingapp.user.DisplayUserProfileFragment;
 
@@ -27,6 +26,7 @@ public class SocialFriendsFragment extends Fragment implements FriendsCardAdapte
     private SocialFriendsViewModel viewModel;
     private SocialFriendsFragmentBinding binding;
     private String currUserUid;
+    private FriendsCardAdapter mAdapter;
 
 
     public SocialFriendsFragment() {
@@ -68,12 +68,12 @@ public class SocialFriendsFragment extends Fragment implements FriendsCardAdapte
 
     private void initFriendsRecyclerView(RecyclerView recyclerView) {
         LinearLayoutManager manager = new LinearLayoutManager(requireContext());
-        FriendsCardAdapter adapter = new FriendsCardAdapter(this,
+        mAdapter = new FriendsCardAdapter(this,
                 viewModel.getCurrUserPreferencesTask());
 
         recyclerView.setLayoutManager(manager);
-        recyclerView.setAdapter(adapter);
-        viewModel.getFriends().observe(getViewLifecycleOwner(), adapter::submitList);
+        recyclerView.setAdapter(mAdapter);
+        viewModel.getFriends().observe(getViewLifecycleOwner(), mAdapter::submitList);
     }
 
 

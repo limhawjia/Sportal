@@ -67,7 +67,11 @@ public class UserProfileViewModel extends ViewModel {
                             if (existingCompleted == null) {
                                 existingCompleted = new ArrayList<>();
                             }
-                            existingCompleted.add(value);
+
+                            if (!existingCompleted.contains(value)) {
+                                existingCompleted.add(value);
+                            }
+
                             allGamesMap.put(GameStatus.COMPLETED, existingCompleted);
 
                         } else {
