@@ -5,7 +5,7 @@ apply plugin: 'com.google.gms.google-services'
 android {
     signingConfigs {
         release {
-            storeFile file('C:\\Users\\Wei Jie\\keystores\\orbital-keystore.jks')
+            storeFile file('C\\:\\Users\\Wei Jie\\keystores\\orbital-keystore.jks')
             storePassword 'wjhjAngryOnion'
             keyAlias = 'sportalKey'
             keyPassword 'sportalAngryOnion'
