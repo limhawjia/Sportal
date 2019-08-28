@@ -213,7 +213,7 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         GamesCardAdapter adapter = new GamesCardAdapter(game -> {
             Timber.d("button clicked");
-            Intent intent = new Intent(requireContext(), GameActivity.class);
+            Intent intent = new Intent(requireActivity(), GameActivity.class);
             intent.putExtra(GameActivity.GAME_UID, game.getUid());
             startActivity(intent);
             Timber.d("activity started");

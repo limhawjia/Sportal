@@ -94,7 +94,7 @@ public class GamesTabFragment extends Fragment implements AdapterView.OnItemSele
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         GamesCardAdapter mGamesCardAdapter = new GamesCardAdapter(game -> {
-            Intent intent = new Intent(requireContext(), GameActivity.class);
+            Intent intent = new Intent(requireActivity(), GameActivity.class);
             intent.putExtra(GameActivity.GAME_UID, game.getUid());
             startActivity(intent);
         });
