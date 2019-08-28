@@ -20,8 +20,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.auth.User;
@@ -75,26 +77,25 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (mGameLiveData.getValue() != null) {
-            String creatorUid = mGameLiveData.getValue().getCreatorUid();
-            String currUserUid = FirebaseAuth.getInstance().getUid();
-            if (creatorUid != null && creatorUid.equals(currUserUid)) {
-                getMenuInflater().inflate(R.menu.game_owner_menu, menu);
+        TaskCompletionSource<Boolean> isOwnerTask = new TaskCompletionSource<>();
+
+        mGameLiveData.observeForever(new Observer<Game>() {
+            @Override
+            public void onChanged(Game game) {
+                String currUserUid = FirebaseAuth.getInstance().getUid();
+                isOwnerTask.setResult(game.getCreatorUid().equals(currUserUid));
+                mGameLiveData.removeObserver(this);
             }
-            return true;
-        } else {
-            mGameLiveData.observe(this, game -> {
-                if (game != null) {
-                    String creatorUid = mGameLiveData.getValue().getCreatorUid();
-                    String currUserUid = FirebaseAuth.getInstance().getUid();
-                    if (creatorUid != null && creatorUid.equals(currUserUid)) {
+        });
+
+        isOwnerTask.getTask()
+                .addOnSuccessListener(isOwner -> {
+                    if (isOwner) {
                         getMenuInflater().inflate(R.menu.game_owner_menu, menu);
                     }
-                    invalidateOptionsMenu();
-                }
-            });
-            return false;
-        }
+                });
+
+        return true;
     }
 
     @Override

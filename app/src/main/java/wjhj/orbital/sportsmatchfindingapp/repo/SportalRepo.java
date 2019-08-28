@@ -699,8 +699,7 @@ public class SportalRepo implements ISportalRepo {
                 transaction.set(docRef, dataModel, SetOptions.merge());
             }
             return dataModel;
-        }).addOnSuccessListener(dataModel ->
-                Timber.d("Change status of game %s success", gameUid));
+        });
     }
 
     // ---------------------------------------------------------------------------------------------

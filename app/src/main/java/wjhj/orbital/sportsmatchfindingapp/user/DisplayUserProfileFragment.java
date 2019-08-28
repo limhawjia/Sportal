@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -64,6 +66,7 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         if (getArguments() != null) {
             mDisplayedUserUid = getArguments().getString(DISPLAYED_USER_UID_TAG);
@@ -97,6 +100,7 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
         toolbar.setOnMenuItemClickListener(menuListener);
 
 
+
         initActionButton(binding.displayUserActionButton);
 
         initPreferencesRecyclerView(binding.displayUserProfilePreferences);
@@ -124,6 +128,12 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
         if (bottomNav != null) {
             bottomNav.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.top_options_menu, menu);
+        super.onCreateOptionsMenu(menu,inflater);
     }
 
     private void initActionButton(Button actionButton) {
