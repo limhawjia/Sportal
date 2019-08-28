@@ -39,7 +39,7 @@
                     android:layout_margin="4dp"
                     android:text="@{item.message}"
                     android:textColor="@color/black"
-                    android:maxEms="18"
+                    android:maxEms="16"
                     android:ellipsize="none"
                     android:singleLine="false"
                     app:layout_constraintBottom_toBottomOf="parent"

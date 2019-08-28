@@ -624,7 +624,7 @@ public class SportalRepo implements ISportalRepo {
                     Timber.d(e, "deserialization error");
                 }
             } else {
-                Timber.d("document does not exist");
+                Timber.d("document with id %s does not exist", docRef.getId());
             }
         });
         return liveData;

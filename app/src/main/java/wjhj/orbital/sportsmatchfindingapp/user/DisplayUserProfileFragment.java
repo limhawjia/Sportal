@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,21 +22,28 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Collections;
 
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
+import wjhj.orbital.sportsmatchfindingapp.auth.Authentications;
+import wjhj.orbital.sportsmatchfindingapp.auth.LoginActivity;
 import wjhj.orbital.sportsmatchfindingapp.databinding.DisplayUserProfileFragmentBinding;
 import wjhj.orbital.sportsmatchfindingapp.game.GameActivity;
+import wjhj.orbital.sportsmatchfindingapp.homepage.HomepageActivity;
 import wjhj.orbital.sportsmatchfindingapp.homepage.gamespage.GamesCardAdapter;
 import wjhj.orbital.sportsmatchfindingapp.homepage.socialpage.ChatPageActivity;
+import wjhj.orbital.sportsmatchfindingapp.repo.SportalRepo;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class DisplayUserProfileFragment extends Fragment implements FriendProfilesAdapter.UserProfileClickListener {
 
-    private static String DISPLAYED_USER_UID_TAG = "user_uid";
+    public static final String DISPLAY_PROFILE_TAG = "display_profile: ";
+    private static final String DISPLAYED_USER_UID_TAG = "user_uid";
 
     private DisplayUserProfileFragmentBinding binding;
     private DisplayUserProfileViewModel viewModel;
@@ -83,6 +93,10 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
         binding = DisplayUserProfileFragmentBinding.inflate(inflater, container, false);
         binding.setLifecycleOwner(getViewLifecycleOwner());
         binding.setViewModel(viewModel);
+        Toolbar toolbar = (Toolbar) binding.displayUserTopToolbar;
+        ((AppCompatActivity) requireActivity()).setSupportActionBar(toolbar);
+        toolbar.setOnMenuItemClickListener(menuListener);
+
 
         initActionButton(binding.displayUserActionButton);
 
@@ -126,6 +140,22 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
                     true);
             actionButton.setTextColor(ContextCompat.getColor(requireActivity(), R.color.black));
         } else {
+            viewModel.isFriend().observe(getViewLifecycleOwner(), isFriend -> {
+                if (isFriend) {
+                    updateButton(actionButton,
+                            ContextCompat.getColor(requireActivity(), R.color.colorPrimary),
+                            requireActivity().getString(R.string.display_profile_friends),
+                            v -> {},
+                            false);
+                } else {
+                    updateButton(actionButton,
+                            ContextCompat.getColor(requireActivity(), R.color.green),
+                            requireActivity().getString(R.string.display_user_add_friend),
+                            v-> viewModel.addFriend(),
+                            true);
+                }
+            });
+
             viewModel.isReceivedFriendRequest().observe(getViewLifecycleOwner(), received -> {
                 if (received) {
                     updateButton(actionButton,
@@ -144,22 +174,6 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
                             requireActivity().getString(R.string.display_profile_friend_request_pending),
                             v -> {},
                             false);
-                }
-            });
-
-            viewModel.isFriend().observe(getViewLifecycleOwner(), isFriend -> {
-                if (isFriend) {
-                    updateButton(actionButton,
-                            ContextCompat.getColor(requireActivity(), R.color.colorPrimary),
-                            requireActivity().getString(R.string.display_profile_friends),
-                            v -> {},
-                            false);
-                } else {
-                    updateButton(actionButton,
-                            ContextCompat.getColor(requireActivity(), R.color.green),
-                            requireActivity().getString(R.string.display_user_add_friend),
-                            v-> viewModel.addFriend(),
-                            true);
                 }
             });
         }
@@ -198,9 +212,11 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
     private void initGamesCardRecyclerView(RecyclerView recyclerView) {
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         GamesCardAdapter adapter = new GamesCardAdapter(game -> {
+            Timber.d("button clicked");
             Intent intent = new Intent(requireContext(), GameActivity.class);
             intent.putExtra(GameActivity.GAME_UID, game.getUid());
             startActivity(intent);
+            Timber.d("activity started");
         });
 
         if (viewModel.isCurrentUser()) {
@@ -221,10 +237,49 @@ public class DisplayUserProfileFragment extends Fragment implements FriendProfil
 
     @Override
     public void onUserProfileClick(String uid) {
-        FragmentManager manager = requireActivity().getSupportFragmentManager();
+        FragmentManager manager = requireFragmentManager();
         manager.beginTransaction()
-                .replace(R.id.homepage_secondary_fragment_container, DisplayUserProfileFragment.newInstance(uid))
+                .replace(android.R.id.content, DisplayUserProfileFragment.newInstance(uid))
                 .addToBackStack(null)
                 .commit();
+    }
+
+    private Toolbar.OnMenuItemClickListener menuListener = item -> {
+        switch (item.getItemId()) {
+            case R.id.options_profile:
+                openProfilePage();
+                break;
+            case R.id.options_logout:
+                logOut();
+                break;
+        }
+        return true;
+    };
+
+    private void openProfilePage() {
+        FragmentManager manager = requireFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        Fragment fragment = manager.findFragmentByTag(HomepageActivity.DISPLAY_PROFILE_PIC_TAG);
+
+        if (fragment == null) {
+            transaction.add(android.R.id.content,
+                    DisplayUserProfileFragment.newInstance(FirebaseAuth.getInstance().getUid()),
+                    HomepageActivity.DISPLAY_PROFILE_PIC_TAG)
+                    .addToBackStack(null);
+        } else {
+            transaction.replace(android.R.id.content,
+                    fragment, HomepageActivity.DISPLAY_PROFILE_PIC_TAG);
+        }
+        transaction.commit();
+    }
+
+    private void logOut() {
+        Authentications auths = new Authentications();
+        auths.logOutFirebase();
+        auths.logOutGoogle(requireContext());
+        SportalRepo.getInstance().refreshCache();
+        Intent logoutIntent = new Intent(requireContext(), LoginActivity.class);
+        startActivity(logoutIntent);
+        requireFragmentManager().popBackStack();
     }
 }

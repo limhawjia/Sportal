@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -77,11 +79,22 @@ public class SocialFriendsFragment extends Fragment implements FriendsCardAdapte
 
     @Override
     public void onCardClicked(String profileUid) {
-        DisplayUserProfileFragment fragment = DisplayUserProfileFragment.newInstance(profileUid);
-        requireActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.homepage_secondary_fragment_container, fragment)
-                .addToBackStack(null)
-                .commit();
+        FragmentManager manager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        String tag = DisplayUserProfileFragment.DISPLAY_PROFILE_TAG + profileUid;
+        Fragment fragment = manager
+                .findFragmentByTag(tag);
+
+        if (fragment == null) {
+            transaction.add(android.R.id.content,
+                    DisplayUserProfileFragment.newInstance(profileUid),
+                    tag)
+                    .addToBackStack(null);
+        } else {
+            transaction.replace(android.R.id.content,
+                    fragment, tag);
+        }
+        transaction.commit();
     }
 }

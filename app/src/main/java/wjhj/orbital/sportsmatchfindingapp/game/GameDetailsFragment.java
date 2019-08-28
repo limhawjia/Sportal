@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -119,13 +120,22 @@ public class GameDetailsFragment extends Fragment implements FriendProfilesAdapt
 
     @Override
     public void onUserProfileClick(String uid) {
-        FragmentManager fm = requireFragmentManager();
-        DisplayUserProfileFragment fragment = DisplayUserProfileFragment.newInstance(uid);
+        FragmentManager manager = requireActivity().getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
 
-        fm.beginTransaction()
-                .replace(R.id.game_activity_secondary_container, fragment)
-                .addToBackStack(null)
-                .commit();
+        String tag = DisplayUserProfileFragment.DISPLAY_PROFILE_TAG + uid;
+        Fragment fragment = manager.findFragmentByTag(tag);
+
+        if (fragment == null) {
+            transaction.add(android.R.id.content,
+                    DisplayUserProfileFragment.newInstance(uid),
+                    tag)
+                    .addToBackStack(null);
+        } else {
+            transaction.replace(android.R.id.content,
+                    fragment, tag);
+        }
+        transaction.commit();
     }
 
     /**

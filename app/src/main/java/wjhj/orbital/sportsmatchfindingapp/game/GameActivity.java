@@ -28,6 +28,7 @@ import com.google.firebase.firestore.auth.User;
 
 import java.util.List;
 
+import timber.log.Timber;
 import wjhj.orbital.sportsmatchfindingapp.R;
 import wjhj.orbital.sportsmatchfindingapp.databinding.GameActionbarBinding;
 import wjhj.orbital.sportsmatchfindingapp.databinding.GameActivityBinding;
@@ -49,6 +50,9 @@ public class GameActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Timber.d("Game page created");
+
         gameUid = getIntent().getStringExtra(GAME_UID);
         mGameLiveData = SportalRepo.getInstance().getGame(gameUid);
 

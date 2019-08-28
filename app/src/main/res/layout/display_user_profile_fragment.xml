@@ -12,338 +12,349 @@
         <import type="android.view.View" />
     </data>
 
-    <androidx.core.widget.NestedScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        tools:context=".user.DisplayUserProfileFragment">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/display_user_profile_container"
+        <include
+            android:id="@+id/display_user_top_toolbar"
+            layout="@layout/top_toolbar"/>
+
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:layout_below="@id/display_user_top_toolbar"
+            android:background="@color/white"
+            tools:context=".user.DisplayUserProfileFragment">
 
             <LinearLayout
+                android:id="@+id/display_user_profile_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/offWhite"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/display_user_profile_pic"
-                    android:layout_width="124dp"
-                    android:layout_height="124dp"
-                    android:layout_margin="12dp"
-                    android:circularImageUri="@{viewModel.displayPicUri}"
-                    android:contentDescription="@string/image"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:background="@color/offWhite"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/display_user_profile_pic"
+                        android:layout_width="124dp"
+                        android:layout_height="124dp"
+                        android:layout_margin="12dp"
+                        android:circularImageUri="@{viewModel.displayPicUri}"
+                        android:contentDescription="@string/image"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <LinearLayout
-                        android:id="@+id/user_stats_container"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="16dp"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:id="@+id/user_stats_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/display_user_game_count"
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="sans-serif-medium"
-                                android:gravity="center"
-                                android:text="@{viewModel.numGamesPlayed.toString()}"
-                                android:textColor="@color/black"
+                                android:layout_marginEnd="16dp"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/display_user_game_count"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="sans-serif-medium"
+                                    android:gravity="center"
+                                    android:text="@{viewModel.numGamesPlayed.toString()}"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/display_user_games_played"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/display_user_games_played"
+                                    android:textColor="@color/dark_gray"
+                                    android:textSize="12sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:gravity="center_horizontal"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/display_user_friend_count"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="sans-serif-medium"
+                                    android:text="@{viewModel.numFriends.toString()}"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/display_user_friend_count_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/display_user_friends"
+                                    android:textColor="@color/dark_gray"
+                                    android:textSize="12sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+
+                        <TextView
+                            android:id="@+id/line"
+                            style="?android:attr/listSeparatorTextViewStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/light_gray"
+                            android:gravity="center_horizontal" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="horizontal"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:id="@+id/display_user_gender"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="8dp"
+                                android:drawablePadding="8dp"
+                                android:drawableStartResource="@{viewModel.gender.drawableResourceId}"
+                                android:text="@{viewModel.gender.toString()}"
+                                android:textColor="@color/dark_gray"
                                 android:textSize="14sp" />
 
                             <TextView
-                                android:id="@+id/display_user_games_played"
+                                android:id="@+id/display_user_country"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/display_user_games_played"
+                                android:layout_marginStart="8dp"
+                                android:drawableStart="@drawable/ic_location_on_black_24dp"
+                                android:drawablePadding="8dp"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:text="@{viewModel.country.toString()}"
                                 android:textColor="@color/dark_gray"
-                                android:textSize="12sp" />
+                                android:textSize="14sp" />
                         </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
 
-                        <LinearLayout
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimaryLight"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="8dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/display_user_display_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:text="@{viewModel.displayName}"
+                            android:textColor="@color/black"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/display_user_bio"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="start|top"
+                            android:minLines="2"
+                            android:text="@{viewModel.bio}"
+                            android:textStyle="italic" />
+
+                    </LinearLayout>
+
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/image"
+                        android:onClickListener="@{v -> viewModel.sendMessage()}"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:src="@drawable/ic_chat_green_36dp"
+                        android:visibility="@{(viewModel.currentUser || !safeUnbox(viewModel.isFriend())) ? View.INVISIBLE : View.VISIBLE}" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/offWhite"
+                    android:gravity="bottom"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/display_user_looking_to_play"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:text="@string/display_user_looking_to_play"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/display_user_profile_preferences" />
 
-                            <TextView
-                                android:id="@+id/display_user_friend_count"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="sans-serif-medium"
-                                android:text="@{viewModel.numFriends.toString()}"
-                                android:textColor="@color/black"
-                                android:textSize="14sp" />
-
-                            <TextView
-                                android:id="@+id/display_user_friend_count_text"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/display_user_friends"
-                                android:textColor="@color/dark_gray"
-                                android:textSize="12sp" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-
-                    <TextView
-                        android:id="@+id/line"
-                        style="?android:attr/listSeparatorTextViewStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/light_gray"
-                        android:gravity="center_horizontal" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:padding="16dp">
-
-                        <TextView
-                            android:id="@+id/display_user_gender"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="8dp"
-                            android:drawableStartResource="@{viewModel.gender.drawableResourceId}"
-                            android:drawablePadding="8dp"
-                            android:text="@{viewModel.gender.toString()}"
-                            android:textColor="@color/dark_gray"
-                            android:textSize="14sp"/>
-
-                        <TextView
-                            android:id="@+id/display_user_country"
-                            android:layout_width="wrap_content"
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/display_user_profile_preferences"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:drawableStart="@drawable/ic_location_on_black_24dp"
-                            android:drawablePadding="8dp"
-                            android:text="@{viewModel.country.toString()}"
-                            android:maxLines="1"
-                            android:ellipsize="end"
-                            android:textColor="@color/dark_gray"
-                            android:textSize="14sp"/>
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_marginBottom="16dp" />
                     </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimaryLight"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingLeft="16dp"
-                android:paddingTop="8dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="8dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/display_user_display_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="start"
-                        android:text="@{viewModel.displayName}"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/display_user_bio"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:gravity="start|top"
-                        android:minLines="2"
-                        android:text="@{viewModel.bio}"
-                        android:textStyle="italic" />
-
-                </LinearLayout>
-
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/image"
-                    android:onClickListener="@{v -> viewModel.sendMessage()}"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:src="@drawable/ic_chat_green_36dp"
-                    android:visibility="@{(viewModel.currentUser || !safeUnbox(viewModel.isFriend())) ? View.INVISIBLE : View.VISIBLE}" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/offWhite"
-                android:gravity="bottom"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/display_user_looking_to_play"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/display_user_action_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:text="@string/display_user_looking_to_play"
-                        android:textColor="@color/black"
-                        android:textSize="14sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/display_user_profile_preferences" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/display_user_profile_preferences"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="16dp" />
+                        android:layout_marginBottom="4dp"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/display_user_action_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="4dp"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/offWhite"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
-
-                <ImageView
-                    android:id="@+id/display_user_divider_2"
-                    style="@style/Divider"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:contentDescription="@string/image" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="260dp"
-                    android:gravity="center"
-                    android:text="@string/display_user_add_friend_to_see_more"
-                    android:textSize="20sp"
-                    android:visibility="@{(viewModel.currentUser || safeUnbox(viewModel.isFriend())) ? View.GONE : View.VISIBLE}" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/display_user_divider_2"
-                    android:visibility="@{(viewModel.currentUser || safeUnbox(viewModel.isFriend())) ? View.VISIBLE : View.GONE}">
-
-                    <TextView
-                        android:id="@+id/display_user_friend_header"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="16dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="@string/display_user_friends_caps" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/display_user_friend_profiles"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/display_user_friend_header"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp" />
-
-                    <TextView
-                        android:id="@+id/display_user_no_friends_msg"
-                        android:layout_width="wrap_content"
-                        android:layout_height="52dp"
-                        android:layout_below="@id/display_user_friend_header"
-                        android:layout_margin="16dp"
-                        android:gravity="bottom"
-                        android:paddingBottom="20dp"
-                        android:text="@string/display_user_no_friends_msg"
-                        android:visibility="@{(viewModel.numFriends.equals(0)) ? View.VISIBLE : View.INVISIBLE}" />
+                    android:background="@color/offWhite"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp">
 
                     <ImageView
-                        android:id="@+id/display_user_divider_3"
+                        android:id="@+id/display_user_divider_2"
                         style="@style/Divider"
-                        android:layout_below="@id/display_user_no_friends_msg"
+                        android:layout_alignParentTop="true"
                         android:layout_marginLeft="8dp"
-                        android:layout_marginTop="8dp"
                         android:layout_marginRight="8dp"
-                        android:layout_marginBottom="8dp"
                         android:contentDescription="@string/image" />
 
                     <TextView
-                        android:id="@+id/display_user_games_header"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/display_user_divider_3"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="4dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="@{viewModel.currentUser ? @string/display_user_past_games_caps : @string/display_user_upcoming_games_caps}" />
-
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/display_user_games_recycler_view"
                         android:layout_width="match_parent"
-                        android:layout_height="420dp"
-                        android:layout_below="@id/display_user_games_header"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginBottom="16dp" />
+                        android:layout_height="260dp"
+                        android:gravity="center"
+                        android:text="@string/display_user_add_friend_to_see_more"
+                        android:textSize="20sp"
+                        android:visibility="@{(viewModel.currentUser || safeUnbox(viewModel.isFriend())) ? View.GONE : View.VISIBLE}" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/display_user_divider_2"
+                        android:visibility="@{(viewModel.currentUser || safeUnbox(viewModel.isFriend())) ? View.VISIBLE : View.GONE}">
+
+                        <TextView
+                            android:id="@+id/display_user_friend_header"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginBottom="16dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/display_user_friends_caps" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/display_user_friend_profiles"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/display_user_friend_header"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp" />
+
+                        <TextView
+                            android:id="@+id/display_user_no_friends_msg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="52dp"
+                            android:layout_below="@id/display_user_friend_header"
+                            android:layout_margin="16dp"
+                            android:gravity="bottom"
+                            android:paddingBottom="20dp"
+                            android:text="@string/display_user_no_friends_msg"
+                            android:visibility="@{(viewModel.numFriends.equals(0)) ? View.VISIBLE : View.INVISIBLE}" />
+
+                        <ImageView
+                            android:id="@+id/display_user_divider_3"
+                            style="@style/Divider"
+                            android:layout_below="@id/display_user_no_friends_msg"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginRight="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:contentDescription="@string/image" />
+
+                        <TextView
+                            android:id="@+id/display_user_games_header"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/display_user_divider_3"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@{viewModel.currentUser ? @string/display_user_past_games_caps : @string/display_user_upcoming_games_caps}" />
+
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/display_user_games_recycler_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="420dp"
+                            android:layout_below="@id/display_user_games_header"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginRight="8dp"
+                            android:layout_marginBottom="16dp" />
+
+                    </RelativeLayout>
 
                 </RelativeLayout>
 
-            </RelativeLayout>
+            </LinearLayout>
 
-        </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
-    </androidx.core.widget.NestedScrollView>
+    </RelativeLayout>
 </layout>
