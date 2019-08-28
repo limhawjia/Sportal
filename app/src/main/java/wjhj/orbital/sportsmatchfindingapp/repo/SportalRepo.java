@@ -122,30 +122,6 @@ public class SportalRepo implements ISportalRepo {
                 .forEach(id -> changeGameStatusForUser(status, dataModel.getUid(), id));
     }
 
-    @SuppressWarnings("UnusedReturnValue")
-    private Task<UserProfileDataModel> changeGameStatusForUser(GameStatus status, String gameUid, String userUid) {
-        return db.runTransaction(transaction -> {
-            DocumentReference docRef = db.collection(USERS_PATH).document(userUid);
-            UserProfileDataModel dataModel = transaction.get(docRef)
-                    .toObject(UserProfileDataModel.class);
-
-            if (dataModel != null) {
-                Map<String, List<String>> gamesMap = dataModel.getGames();
-
-                for (Map.Entry<String, List<String>> entry : gamesMap.entrySet()) {
-                    if (entry.getKey().equals(status.toString())) {
-                        entry.getValue().add(gameUid);
-                    } else {
-                        entry.getValue().remove(gameUid);
-                    }
-                }
-                transaction.set(docRef, dataModel, SetOptions.merge());
-            }
-            return dataModel;
-        }).addOnSuccessListener(dataModel ->
-                Timber.d("Change status of game %s succeess", gameUid));
-    }
-
     @Override
     public Task<Void> addUser(String uid, UserProfile userProfile) {
         UserProfileDataModel dataModel = toUserProfileDataModel(userProfile);
@@ -644,7 +620,10 @@ public class SportalRepo implements ISportalRepo {
         return deleteDocument(gameId, "Games");
     }
 
-    // HELPER METHOD
+    // --------------------------------------------------------------------------------------------
+    //  *** HELPER METHOD ***
+    // --------------------------------------------------------------------------------------------
+
     public void refreshCache() {
         mUserProfilesCache.invalidateAll();
         mGamesCache.invalidateAll();
@@ -696,7 +675,34 @@ public class SportalRepo implements ISportalRepo {
                 .addOnFailureListener(e -> Timber.d(e, "Error deleting document"));
     }
 
-    // METHODS TO CONVERT BETWEEN DOMAIN MODEL AND DATA MODEL
+    @SuppressWarnings("UnusedReturnValue")
+    private Task<UserProfileDataModel> changeGameStatusForUser(GameStatus status, String gameUid, String userUid) {
+        return db.runTransaction(transaction -> {
+            DocumentReference docRef = db.collection(USERS_PATH).document(userUid);
+            UserProfileDataModel dataModel = transaction.get(docRef)
+                    .toObject(UserProfileDataModel.class);
+
+            if (dataModel != null) {
+                Map<String, List<String>> gamesMap = dataModel.getGames();
+
+                for (Map.Entry<String, List<String>> entry : gamesMap.entrySet()) {
+                    if (entry.getKey().equals(status.toString())) {
+                        entry.getValue().add(gameUid);
+                    } else {
+                        entry.getValue().remove(gameUid);
+                    }
+                }
+                transaction.set(docRef, dataModel, SetOptions.merge());
+            }
+            return dataModel;
+        }).addOnSuccessListener(dataModel ->
+                Timber.d("Change status of game %s success", gameUid));
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // *** METHODS TO CONVERT BETWEEN DOMAIN MODEL AND DATA MODEL ***
+    // ---------------------------------------------------------------------------------------------
+
     private UserProfileDataModel toUserProfileDataModel(UserProfile userProfile) {
         return new UserProfileDataModel(userProfile);
     }
